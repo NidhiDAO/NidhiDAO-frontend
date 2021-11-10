@@ -10,11 +10,11 @@ import {
   Link,
   OutlinedInput,
   Paper,
+  SvgIcon,
   Tab,
   Tabs,
   Typography,
   Zoom,
-  Divider,
 } from "@material-ui/core";
 import NewReleases from "@material-ui/icons/NewReleases";
 import RebaseTimer from "../../components/RebaseTimer/RebaseTimer";
@@ -29,6 +29,7 @@ import { Skeleton } from "@material-ui/lab";
 import ExternalStakePool from "./ExternalStakePool";
 import { error } from "../../slices/MessagesSlice";
 import { ethers } from "ethers";
+import { ReactComponent as WalletIcon } from "../../assets/icons/wallet.svg";
 
 function a11yProps(index) {
   return {
@@ -58,9 +59,9 @@ function Stake() {
   const ohmBalance = useSelector(state => {
     return state.account.balances && state.account.balances.ohm;
   });
-  const oldSohmBalance = useSelector(state => {
-    return state.account.balances && state.account.balances.oldsohm;
-  });
+  // const oldSohmBalance = useSelector(state => {
+  //   return state.account.balances && state.account.balances.oldsohm;
+  // });
   const sohmBalance = useSelector(state => {
     return state.account.balances && state.account.balances.sohm;
   });
@@ -69,9 +70,6 @@ function Stake() {
   });
   const wsohmBalance = useSelector(state => {
     return state.account.balances && state.account.balances.wsohm;
-  });
-  const wsohmAsSohm = useSelector(state => {
-    return state.account.balances && state.account.balances.wsohmAsSohm;
   });
   const stakeAllowance = useSelector(state => {
     return state.account.staking && state.account.staking.ohmStake;
@@ -139,7 +137,14 @@ function Stake() {
   let modalButton = [];
 
   modalButton.push(
-    <Button variant="contained" color="primary" className="connect-button" onClick={connect} key={1}>
+    <Button
+      endIcon={<SvgIcon className="stake-wallet-icon" viewBox="0 0 24 19" color="primary" component={WalletIcon} />}
+      variant="contained"
+      color="primary"
+      className="connect-button"
+      onClick={connect}
+      key={1}
+    >
       Connect Wallet
     </Button>,
   );
@@ -149,7 +154,7 @@ function Stake() {
   };
 
   const trimmedBalance = Number(
-    [sohmBalance, fsohmBalance, wsohmAsSohm]
+    [sohmBalance, fsohmBalance, wsohmBalance]
       .filter(Boolean)
       .map(balance => Number(balance))
       .reduce((a, b) => a + b, 0)
@@ -160,27 +165,27 @@ function Stake() {
   const nextRewardValue = trim((stakingRebasePercentage / 100) * trimmedBalance, 4);
 
   return (
-    <div id="stake-view">
+    <div id="stake-view" className="stake-metrics">
       <Zoom in={true} onEntered={() => setZoomed(true)}>
         <Paper className={`ohm-card`}>
           <Grid container direction="column" spacing={2}>
             <Grid item>
               <div className="card-header">
-                <Typography variant="h5">Single Stake (3, 3)</Typography>
+                <Typography variant="h5">GURU Staking (3,3)</Typography>
                 <RebaseTimer />
 
-                {address && oldSohmBalance > 0.01 && (
-                  <Link
-                    className="migrate-sohm-button"
-                    style={{ textDecoration: "none" }}
-                    href="https://docs.olympusdao.finance/using-the-website/migrate"
-                    aria-label="migrate-sohm"
-                    target="_blank"
-                  >
-                    <NewReleases viewBox="0 0 24 24" />
-                    <Typography>Migrate sOHM!</Typography>
-                  </Link>
-                )}
+                {/*{address && oldSohmBalance > 0.01 && (*/}
+                {/*  <Link*/}
+                {/*    className="migrate-sohm-button"*/}
+                {/*    style={{ textDecoration: "none" }}*/}
+                {/*    href="https://docs.olympusdao.finance/using-the-website/migrate"*/}
+                {/*    aria-label="migrate-sohm"*/}
+                {/*    target="_blank"*/}
+                {/*  >*/}
+                {/*    <NewReleases viewBox="0 0 24 24" />*/}
+                {/*    <Typography>Migrate sOHM!</Typography>*/}
+                {/*  </Link>*/}
+                {/*)}*/}
               </div>
             </Grid>
 
@@ -242,7 +247,9 @@ function Stake() {
                   <div className="wallet-menu" id="wallet-menu">
                     {modalButton}
                   </div>
-                  <Typography variant="h6">Connect your wallet to stake OHM</Typography>
+                  <Typography color="textSecondary" variant="h6">
+                    Connect your wallet to stake GURU
+                  </Typography>
                 </div>
               ) : (
                 <>
@@ -369,47 +376,18 @@ function Stake() {
 
                   <div className={`stake-user-data`}>
                     <div className="data-row">
-                      <Typography variant="body1">Unstaked Balance</Typography>
+                      <Typography variant="body1">Your Balance</Typography>
                       <Typography variant="body1">
                         {isAppLoading ? <Skeleton width="80px" /> : <>{trim(ohmBalance, 4)} OHM</>}
                       </Typography>
                     </div>
 
                     <div className="data-row">
-                      <Typography variant="body1">Staked Balance</Typography>
+                      <Typography variant="body1">Your Staked Balance</Typography>
                       <Typography variant="body1">
                         {isAppLoading ? <Skeleton width="80px" /> : <>{trimmedBalance} sOHM</>}
                       </Typography>
                     </div>
-
-                    <div className="data-row" style={{ paddingLeft: "10px" }}>
-                      <Typography variant="body2" color="textSecondary">
-                        Single Staking
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {isAppLoading ? <Skeleton width="80px" /> : <>{trim(sohmBalance, 4)} sOHM</>}
-                      </Typography>
-                    </div>
-
-                    <div className="data-row" style={{ paddingLeft: "10px" }}>
-                      <Typography variant="body2" color="textSecondary">
-                        Staked Balance in Fuse
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {isAppLoading ? <Skeleton width="80px" /> : <>{trim(fsohmBalance, 4)} fsOHM</>}
-                      </Typography>
-                    </div>
-
-                    <div className="data-row" style={{ paddingLeft: "10px" }}>
-                      <Typography variant="body2" color="textSecondary">
-                        Wrapped Balance
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {isAppLoading ? <Skeleton width="80px" /> : <>{trim(wsohmBalance, 4)} wsOHM</>}
-                      </Typography>
-                    </div>
-
-                    <Divider color="secondary" />
 
                     <div className="data-row">
                       <Typography variant="body1">Next Reward Amount</Typography>
@@ -439,7 +417,7 @@ function Stake() {
         </Paper>
       </Zoom>
 
-      <ExternalStakePool />
+      {/*<ExternalStakePool />*/}
     </div>
   );
 }
