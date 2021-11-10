@@ -26,7 +26,7 @@ export type { LpBondCalcContract } from "./LpBondCalcContract";
 export type { LPStaking } from "./LPStaking";
 export type { MigrateToOHM } from "./MigrateToOHM";
 export type { MimirTokenSale } from "./MimirTokenSale";
-export type { OhmLusdCrucible } from "./OhmLusdCrucible";
+// export type { OhmLusdCrucible } from "./OhmLusdCrucible";
 export type { OHMPreSale } from "./OHMPreSale";
 export type { OlympusStaking } from "./OlympusStaking";
 export type { OlympusStakingv2 } from "./OlympusStakingv2";
