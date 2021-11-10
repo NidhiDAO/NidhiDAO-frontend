@@ -50,7 +50,7 @@ export const girth = responsiveFontSizes(
         },
       },
       typography: {
-        fontFamily: "Square",
+        fontFamily: "CoHeadline",
       },
       props: {
         MuiSvgIcon: {
