@@ -6,11 +6,11 @@
 
   @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
     .MuiBackdrop-root {
-      background: rgba(100, 100, 100, 0.1) !important;
-      backdrop-filter: blur(33px) !important;
-      -webkit-backdrop-filter: blur(33px) !important;
+      background: rgba(255, 255, 255, 0.05) !important;
+      backdrop-filter: blur(60px) !important;
+      -webkit-backdrop-filter: blur(60px) !important;
       .ohm-card {
-        opacity: 1 !important;
+        //opacity: 1 !important;
         height: auto;
       }
     }
@@ -31,11 +31,10 @@
     .ohm-modal {
       max-width: 688px;
       min-height: 605px;
-      opacity: 0.9;
+      //opacity: 0.9;
     }
   }
-  
-  .ohm-card {
+  .bond-card {
     max-width: 803px;
   }
 
