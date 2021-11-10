@@ -15,6 +15,14 @@ function getTestnetURI() {
 }
 
 /**
+ * kept as function to mimic `getMainnetURI()`
+ * @returns string
+ */
+function getMumbaiTestnetURI() {
+  return EnvHelper.mumbaiTestnetURI;
+}
+
+/**
  * determine if in IFrame for Ledger Live
  */
 function isIframe() {
@@ -102,6 +110,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
             rpc: {
               1: getMainnetURI(),
               4: getTestnetURI(),
+              80001: getMumbaiTestnetURI(),
             },
           },
         },
@@ -146,9 +155,11 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
   const _checkNetwork = (otherChainID: number): Boolean => {
     if (chainID !== otherChainID) {
       console.warn("You are switching networks");
-      if (otherChainID === 1 || otherChainID === 4) {
+      if (otherChainID === 1 || otherChainID === 4 || otherChainID === 80001) {
         setChainID(otherChainID);
-        otherChainID === 1 ? setUri(getMainnetURI()) : setUri(getTestnetURI());
+        if (otherChainID === 1) setUri(getMainnetURI());
+        else if (otherChainID === 80001) setUri(getMumbaiTestnetURI);
+        else setUri(getTestnetURI());
         return true;
       }
       return false;

@@ -40,6 +40,7 @@ export const loadAppDetails = createAsyncThunk(
 `;
 
     const graphData = await apollo(protocolMetricsQuery);
+    console.log(`graphData ${JSON.stringify(graphData)}`);
 
     if (!graphData || graphData == null) {
       console.error("Returned a null response when querying TheGraph");
@@ -87,7 +88,7 @@ export const loadAppDetails = createAsyncThunk(
     ) as OlympusStakingv2;
 
     const sohmMainContract = new ethers.Contract(
-      addresses[networkID].SOHM_ADDRESS as string,
+      addresses[networkID].SGURU_ADDRESS as string,
       sOHMv2,
       provider,
     ) as SOhmv2;
@@ -95,10 +96,14 @@ export const loadAppDetails = createAsyncThunk(
     // Calculating staking
     const epoch = await stakingContract.epoch();
     const stakingReward = epoch.distribute;
+    const ts = await sohmMainContract.totalSupply();
+    console.log(`ts`, ts);
     const circ = await sohmMainContract.circulatingSupply();
+    console.log(`circ`, circ);
     const stakingRebase = Number(stakingReward.toString()) / Number(circ.toString());
     const fiveDayRate = Math.pow(1 + stakingRebase, 5 * 3) - 1;
     const stakingAPY = Math.pow(1 + stakingRebase, 365 * 3) - 1;
+    console.log(`stakingAPY ${stakingAPY}`);
 
     // Current index
     const currentIndex = await stakingContract.index();
@@ -169,6 +174,8 @@ const loadMarketPrice = createAsyncThunk("app/loadMarketPrice", async ({ network
     marketPrice = await getMarketPrice({ networkID, provider });
     marketPrice = marketPrice / Math.pow(10, 9);
   } catch (e) {
+    console.log(`e`);
+    console.log(e);
     marketPrice = await getTokenPrice("olympus");
   }
   return { marketPrice };

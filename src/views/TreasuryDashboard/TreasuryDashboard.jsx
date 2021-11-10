@@ -156,7 +156,7 @@ function TreasuryDashboard() {
                   Current Index
                   <InfoTooltip
                     message={
-                      "The current index tracks the amount of sOHM accumulated since the beginning of staking. Basically, how much sOHM one would have if they staked and held a single OHM from day 1."
+                      "The current index tracks the amount of sOHM accumulated since the beginning of staking. Basically, how much sGURU one would have if they staked and held a single GURU from day 1."
                     }
                   />
                 </Typography>

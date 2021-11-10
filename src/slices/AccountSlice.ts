@@ -15,25 +15,48 @@ import { FuseProxy, IERC20, SOhmv2, WsOHM } from "src/typechain";
 export const getBalances = createAsyncThunk(
   "account/getBalances",
   async ({ address, networkID, provider }: IBaseAddressAsyncThunk) => {
-    const ohmContract = new ethers.Contract(addresses[networkID].OHM_ADDRESS as string, ierc20Abi, provider) as IERC20;
-    const ohmBalance = await ohmContract.balanceOf(address);
-    const sohmContract = new ethers.Contract(
-      addresses[networkID].SOHM_ADDRESS as string,
-      ierc20Abi,
-      provider,
-    ) as IERC20;
-    const sohmBalance = await sohmContract.balanceOf(address);
-    const wsohmContract = new ethers.Contract(addresses[networkID].WSOHM_ADDRESS as string, wsOHM, provider) as WsOHM;
-    const wsohmBalance = await wsohmContract.balanceOf(address);
-    // NOTE (appleseed): wsohmAsSohm is wsOHM given as a quantity of sOHM
-    const wsohmAsSohm = await wsohmContract.wOHMTosOHM(wsohmBalance);
+    let ohmBalance = BigNumber.from(0);
+    let sohmBalance = BigNumber.from(0);
+    let wsohmBalance = BigNumber.from(0);
+    let wsohmAsSohm = BigNumber.from(0);
     let poolBalance = BigNumber.from(0);
-    const poolTokenContract = new ethers.Contract(
-      addresses[networkID].PT_TOKEN_ADDRESS as string,
-      ierc20Abi,
-      provider,
-    ) as IERC20;
-    poolBalance = await poolTokenContract.balanceOf(address);
+    if (addresses[networkID].GURU_ADDRESS) {
+      const ohmContract = new ethers.Contract(
+        addresses[networkID].GURU_ADDRESS as string,
+        ierc20Abi,
+        provider,
+      ) as IERC20;
+      ohmBalance = await ohmContract.balanceOf(address);
+    }
+
+    if (addresses[networkID].SGURU_ADDRESS) {
+      const sohmContract = new ethers.Contract(
+        addresses[networkID].SGURU_ADDRESS as string,
+        ierc20Abi,
+        provider,
+      ) as IERC20;
+      sohmBalance = await sohmContract.balanceOf(address);
+    }
+
+    if (addresses[networkID].WSGURU_ADDRESS) {
+      const wsohmContract = new ethers.Contract(
+        addresses[networkID].WSGURU_ADDRESS as string,
+        wsOHM,
+        provider,
+      ) as WsOHM;
+      wsohmBalance = await wsohmContract.balanceOf(address);
+      // NOTE (appleseed): wsohmAsSohm is wsOHM given as a quantity of sOHM
+      wsohmAsSohm = await wsohmContract.wOHMTosOHM(wsohmBalance);
+    }
+
+    if (addresses[networkID].PT_TOKEN_ADDRESS) {
+      const poolTokenContract = new ethers.Contract(
+        addresses[networkID].PT_TOKEN_ADDRESS as string,
+        ierc20Abi,
+        provider,
+      ) as IERC20;
+      poolBalance = await poolTokenContract.balanceOf(address);
+    }
 
     return {
       balances: {
@@ -92,9 +115,9 @@ export const loadAccountDetails = createAsyncThunk(
     const daiContract = new ethers.Contract(addresses[networkID].DAI_ADDRESS as string, ierc20Abi, provider) as IERC20;
     const daiBalance = await daiContract.balanceOf(address);
 
-    if (addresses[networkID].OHM_ADDRESS) {
+    if (addresses[networkID].GURU_ADDRESS) {
       const ohmContract = new ethers.Contract(
-        addresses[networkID].OHM_ADDRESS as string,
+        addresses[networkID].GURU_ADDRESS as string,
         ierc20Abi,
         provider,
       ) as IERC20;
