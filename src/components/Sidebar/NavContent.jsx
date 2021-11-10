@@ -2,11 +2,11 @@ import { useCallback, useState } from "react";
 import { NavLink } from "react-router-dom";
 import Social from "./Social";
 import externalUrls from "./externalUrls";
-import { ReactComponent as StakeIcon } from "../../assets/icons/stake.svg";
+// import { ReactComponent as StakeIcon } from "../../assets/icons/stake.svg";
 import { ReactComponent as BondIcon } from "../../assets/icons/bond.svg";
 import { ReactComponent as DashboardIcon } from "../../assets/icons/dashboard.svg";
-import { ReactComponent as OlympusIcon } from "../../assets/icons/olympus-nav-header.svg";
-import { ReactComponent as PoolTogetherIcon } from "../../assets/icons/33-together.svg";
+import { ReactComponent as NidhiIcon } from "../../assets/icons/nidhiHeader.svg";
+// import { ReactComponent as PoolTogetherIcon } from "../../assets/icons/33-together.svg";
 import { trim, shorten } from "../../helpers";
 import { useAddress, useWeb3Context } from "src/hooks/web3Context";
 import useBonds from "../../hooks/Bonds";
@@ -17,8 +17,8 @@ import "./sidebar.scss";
 function NavContent() {
   const [isActive] = useState();
   const address = useAddress();
+  const { bonds } = useBonds();
   const { chainID } = useWeb3Context();
-  const { bonds } = useBonds(chainID);
 
   const checkPage = useCallback((match, location, page) => {
     const currentPath = location.pathname.replace("/", "");
@@ -28,6 +28,9 @@ function NavContent() {
     if (currentPath.indexOf("stake") >= 0 && page === "stake") {
       return true;
     }
+    // if (currentPath.indexOf("stake") >= 0 && page === "stake") {
+    //   return true;
+    // }
     if ((currentPath.indexOf("bonds") >= 0 || currentPath.indexOf("choose_bond") >= 0) && page === "bonds") {
       return true;
     }
@@ -41,20 +44,19 @@ function NavContent() {
           <Box className="branding-header">
             <Link href="https://olympusdao.finance" target="_blank">
               <SvgIcon
-                color="primary"
-                component={OlympusIcon}
-                viewBox="0 0 151 100"
-                style={{ minWdth: "151px", minHeight: "98px", width: "151px" }}
+                component={NidhiIcon}
+                viewBox="0 0 80 118"
+                style={{ minWdth: "129px", minHeight: "129px", width: "163px" }}
               />
             </Link>
 
-            {address && (
-              <div className="wallet-link">
-                <Link href={`https://etherscan.io/address/${address}`} target="_blank">
-                  {shorten(address)}
-                </Link>
-              </div>
-            )}
+            {/*{address && (*/}
+            {/*  <div className="wallet-link">*/}
+            {/*    <Link href={`https://etherscan.io/address/${address}`} target="_blank">*/}
+            {/*      {shorten(address)}*/}
+            {/*    </Link>*/}
+            {/*  </div>*/}
+            {/*)}*/}
           </Box>
 
           <div className="dapp-menu-links">
@@ -74,35 +76,35 @@ function NavContent() {
                 </Typography>
               </Link>
 
-              <Link
-                component={NavLink}
-                id="stake-nav"
-                to="/"
-                isActive={(match, location) => {
-                  return checkPage(match, location, "stake");
-                }}
-                className={`button-dapp-menu ${isActive ? "active" : ""}`}
-              >
-                <Typography variant="h6">
-                  <SvgIcon color="primary" component={StakeIcon} />
-                  Stake
-                </Typography>
-              </Link>
+              {/*<Link*/}
+              {/*  component={NavLink}*/}
+              {/*  id="stake-nav"*/}
+              {/*  to="/"*/}
+              {/*  isActive={(match, location) => {*/}
+              {/*    return checkPage(match, location, "stake");*/}
+              {/*  }}*/}
+              {/*  className={`button-dapp-menu ${isActive ? "active" : ""}`}*/}
+              {/*>*/}
+              {/*  <Typography variant="h6">*/}
+              {/*    <SvgIcon color="primary" component={StakeIcon} />*/}
+              {/*    Stake*/}
+              {/*  </Typography>*/}
+              {/*</Link>*/}
 
-              <Link
-                component={NavLink}
-                id="33-together-nav"
-                to="/33-together"
-                isActive={(match, location) => {
-                  return checkPage(match, location, "33-together");
-                }}
-                className={`button-dapp-menu ${isActive ? "active" : ""}`}
-              >
-                <Typography variant="h6">
-                  <SvgIcon color="primary" component={PoolTogetherIcon} />
-                  3,3 Together
-                </Typography>
-              </Link>
+              {/*<Link*/}
+              {/*  component={NavLink}*/}
+              {/*  id="33-together-nav"*/}
+              {/*  to="/33-together"*/}
+              {/*  isActive={(match, location) => {*/}
+              {/*    return checkPage(match, location, "33-together");*/}
+              {/*  }}*/}
+              {/*  className={`button-dapp-menu ${isActive ? "active" : ""}`}*/}
+              {/*>*/}
+              {/*  <Typography variant="h6">*/}
+              {/*    <SvgIcon color="primary" component={PoolTogetherIcon} />*/}
+              {/*    3,3 Together*/}
+              {/*  </Typography>*/}
+              {/*</Link>*/}
 
               <Link
                 component={NavLink}
@@ -129,11 +131,8 @@ function NavContent() {
                       ) : (
                         <Typography variant="body2">
                           {bond.displayName}
-
                           <span className="bond-pair-roi">
-                            {!bond.isAvailable[chainID]
-                              ? "Sold Out"
-                              : `${bond.bondDiscount && trim(bond.bondDiscount * 100, 2)}%`}
+                            {bond.bondDiscount && trim(bond.bondDiscount * 100, 2)}%
                           </span>
                         </Typography>
                       )}
@@ -144,7 +143,7 @@ function NavContent() {
             </div>
           </div>
         </div>
-        <Box className="dapp-menu-bottom" display="flex" justifyContent="space-between" flexDirection="column">
+        <Box className="dapp-menu-bottom" display="flex" justifyContent="flex-end" flexDirection="column">
           <div className="dapp-menu-external-links">
             {Object.keys(externalUrls).map((link, i) => {
               return (

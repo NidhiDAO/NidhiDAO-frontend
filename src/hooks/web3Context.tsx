@@ -87,6 +87,13 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>(
     new Web3Modal({
       // network: "mainnet", // optional
+      theme: {
+        background: "#182328",
+        main: "#FFFFFF",
+        secondary: "rgba(255, 255, 255, 0.2)",
+        border: "#182328",
+        hover: "rgb(16, 26, 32)",
+      },
       cacheProvider: true, // optional
       providerOptions: {
         walletconnect: {
