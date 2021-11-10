@@ -1,8 +1,8 @@
 {
-  "short_name": "OlympusDAO",
+  "short_name": "NidhiDAO",
   "start_url": ".",
   "homepage": "./",
-  "name": "OlympusDAO",
+  "name": "NidhiDAO",
   "launch_path": "/public/index.html",
   "icons": [
     {
