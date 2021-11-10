@@ -5,6 +5,14 @@
   align-items: center;
   overflow: hidden;
 
+  .stake-wallet-icon {
+    margin-left: 10px;
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    color: #000;
+  }
+
   .rebase-timer {
     margin: 0 !important;
     line-height: 110% !important;

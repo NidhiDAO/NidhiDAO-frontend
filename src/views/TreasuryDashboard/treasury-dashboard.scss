@@ -18,8 +18,9 @@
   .ohm-card {
     max-width: unset !important;
     width: 100%;
-    margin: auto;
-    max-height: 355px;
+    //margin: auto;
+    //max-height: 355px;
+    margin-bottom: 40px;
     .card-header {
       margin-bottom: 1rem;
     }
@@ -33,7 +34,7 @@
   }
   .hero-metrics {
     width: 100%;
-    margin-bottom: 23px;
+    margin-bottom: 40px;
     text-align: center;
     .ohm-card {
       max-width: unset !important;
@@ -44,7 +45,7 @@
         font-weight: bold;
       }
       div.metric {
-        margin: 3px;
+        margin: 14px;
         min-width: 140px;
         width: 30%;
       }

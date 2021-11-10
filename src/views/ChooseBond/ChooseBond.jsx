@@ -16,17 +16,15 @@ import { BondDataCard, BondTableData } from "./BondRow";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { formatCurrency } from "../../helpers";
 import useBonds from "../../hooks/Bonds";
-import { useWeb3Context } from "src/hooks/web3Context";
 
 import "./choosebond.scss";
 import { Skeleton } from "@material-ui/lab";
 import ClaimBonds from "./ClaimBonds";
-import isEmpty from "lodash/isEmpty";
+import _ from "lodash";
 import { allBondsMap } from "src/helpers/AllBonds";
 
 function ChooseBond() {
-  const { chainID } = useWeb3Context();
-  const { bonds } = useBonds(chainID);
+  const { bonds } = useBonds();
   const isSmallScreen = useMediaQuery("(max-width: 733px)"); // change to breakpoint query
   const isVerySmallScreen = useMediaQuery("(max-width: 420px)");
 
@@ -61,18 +59,18 @@ function ChooseBond() {
 
   return (
     <div id="choose-bond-view">
-      {!isAccountLoading && !isEmpty(accountBonds) && <ClaimBonds activeBonds={accountBonds} />}
+      {!isAccountLoading && !_.isEmpty(accountBonds) && <ClaimBonds activeBonds={accountBonds} />}
 
       <Zoom in={true}>
         <Paper className="ohm-card">
           <Box className="card-header">
-            <Typography variant="h5">Bond (1,1)</Typography>
+            <Typography variant="h5">Bond</Typography>
           </Box>
 
           <Grid container item xs={12} style={{ margin: "10px 0px 20px" }} className="bond-hero">
             <Grid item xs={6}>
               <Box textAlign={`${isVerySmallScreen ? "left" : "center"}`}>
-                <Typography variant="h5" color="textSecondary">
+                <Typography variant="h6" color="textSecondary">
                   Treasury Balance
                 </Typography>
                 <Typography variant="h4">
@@ -90,9 +88,9 @@ function ChooseBond() {
               </Box>
             </Grid>
 
-            <Grid item xs={6} className={`ohm-price`}>
+            <Grid item xs={6} className={`guru-price`}>
               <Box textAlign={`${isVerySmallScreen ? "right" : "center"}`}>
-                <Typography variant="h5" color="textSecondary">
+                <Typography variant="h6" color="textSecondary">
                   OHM Price
                 </Typography>
                 <Typography variant="h4">
@@ -128,7 +126,7 @@ function ChooseBond() {
       </Zoom>
 
       {isSmallScreen && (
-        <Box className="ohm-card-container">
+        <Box className="guru-card-container">
           <Grid container item spacing={2}>
             {bonds.map(bond => (
               <Grid item xs={12} key={bond.name}>
