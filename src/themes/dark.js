@@ -68,7 +68,7 @@ export const dark = responsiveFontSizes(
         graphStrokeColor: darkTheme.graphStrokeColor,
       },
       typography: {
-        fontFamily: "Square",
+        fontFamily: "CoHeadline",
       },
       props: {
         MuiSvgIcon: {

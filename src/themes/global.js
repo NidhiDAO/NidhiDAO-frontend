@@ -33,7 +33,7 @@ const commonSettings = {
   direction: "ltr",
   typography: {
     fontSize: 16,
-    fontFamily: "Square",
+    fontFamily: "CoHeadline",
     h1: {
       fontSize: "3.3rem",
     },
@@ -95,7 +95,6 @@ const commonSettings = {
           maxWidth: "833px",
           width: "97%",
           marginBottom: "1.8rem",
-          borderRadius: "10px",
           overflow: "hidden",
         },
         "&.ohm-menu": {
