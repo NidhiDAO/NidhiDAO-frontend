@@ -33,7 +33,7 @@ function TopBar({ theme, toggleTheme, handleDrawerToggle }) {
 
   return (
     <AppBar position="sticky" className={classes.appBar} elevation={0}>
-      <Toolbar disableGutters className="dapp-topbar">
+      <Toolbar disableGutters className="">
         <Button
           id="hamburger"
           aria-label="open drawer"
@@ -52,7 +52,7 @@ function TopBar({ theme, toggleTheme, handleDrawerToggle }) {
 
           <ConnectMenu theme={theme} />
 
-          <ThemeSwitcher theme={theme} toggleTheme={toggleTheme} />
+          {/*<ThemeSwitcher theme={theme} toggleTheme={toggleTheme} />*/}
         </Box>
       </Toolbar>
     </AppBar>

@@ -1,11 +1,11 @@
-#ohm-menu-button {
+#guru-menu-button {
   padding: 12px;
   svg {
     margin-right: 3px;
     color: inherit !important;
   }
 }
-.ohm-menu-button-hover {
+.guru-menu-button-hover {
   z-index: 9;
 }
 #ohm-popper,
@@ -57,8 +57,6 @@
     button {
       min-height: 56px !important;
       text-align: center !important;
-      padding-bottom: 60px;
-      padding-top: 12px;
     }
   }
 
