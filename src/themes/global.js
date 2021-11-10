@@ -90,8 +90,8 @@ const commonSettings = {
       root: {
         backdropFilter: "blur(33px)",
         "&.ohm-card": {
-          padding: "20px 30px 30px 30px",
-          borderRadius: "10px",
+          padding: "35px",
+          borderRadius: "6px",
           maxWidth: "833px",
           width: "97%",
           marginBottom: "1.8rem",
@@ -163,14 +163,14 @@ const commonSettings = {
     MuiToggleButton: {
       root: {
         border: 0,
-        borderRadius: "5px",
+        borderRadius: "6px",
         margin: "8px",
         padding: "10px",
       },
     },
     MuiButton: {
       root: {
-        borderRadius: "5px",
+        borderRadius: "6px",
         textTransform: "none",
         textDecoration: "none",
         whiteSpace: "nowrap",
@@ -240,9 +240,9 @@ const commonSettings = {
         padding: "0px",
         margin: "0px 10px",
         fontWeight: 400,
-        fontSize: "24px",
+        fontSize: "16px !important",
         fontStyle: "normal",
-        lineHeight: "24px",
+        // lineHeight: "24px",
       },
     },
   },
