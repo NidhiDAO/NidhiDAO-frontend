@@ -25,14 +25,16 @@ function AdvancedSettings({
     <Modal id="hades" open={open} onClose={handleClose} hideBackdrop>
       <Paper className="ohm-card ohm-popover">
         <Box display="flex">
-          <IconButton onClick={handleClose}>
+          <Typography variant="h3">Settings</Typography>
+          <IconButton className="settings-close" onClick={handleClose}>
             <SvgIcon color="primary" component={XIcon} />
           </IconButton>
-          <Typography variant="h3">Hades</Typography>
         </Box>
 
-        <Box className="card-content">
-          <InputLabel htmlFor="slippage">Slippage</InputLabel>
+        <Box className="card-content card-settings">
+          <InputLabel color="primary" htmlFor="slippage">
+            Slippage
+          </InputLabel>
           <FormControl variant="outlined" color="primary" fullWidth>
             <OutlinedInput
               id="slippage"
@@ -44,7 +46,7 @@ function AdvancedSettings({
               endAdornment={<InputAdornment position="end">%</InputAdornment>}
             />
             <div className="help-text">
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="body1" color="textSecondary">
                 Transaction may revert if price changes by more than slippage %
               </Typography>
             </div>
@@ -54,7 +56,7 @@ function AdvancedSettings({
           <FormControl variant="outlined" color="primary" fullWidth>
             <OutlinedInput id="recipient" value={recipientAddress} onChange={onRecipientAddressChange} type="text" />
             <div className="help-text">
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="body1" color="textSecondary">
                 Choose recipient address. By default, this is your currently connected address
               </Typography>
             </div>
