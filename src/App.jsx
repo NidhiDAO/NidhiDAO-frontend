@@ -183,11 +183,9 @@ function App() {
     setIsSidebarExpanded(false);
   };
 
-  // let themeMode = theme === "light" ? lightTheme : theme === "dark" ? darkTheme : gTheme;
-  let themeMode = darkTheme;
+  let themeMode = theme === "light" ? lightTheme : theme === "dark" ? darkTheme : gTheme;
   useEffect(() => {
-    // themeMode = theme === "light" ? lightTheme : darkTheme;
-    themeMode = darkTheme;
+    themeMode = theme === "light" ? lightTheme : darkTheme;
   }, [theme]);
 
   useEffect(() => {
