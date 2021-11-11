@@ -125,12 +125,16 @@ export const loadAccountDetails = createAsyncThunk(
       stakeAllowance = await ohmContract.allowance(address, addresses[networkID].STAKING_HELPER_ADDRESS);
     }
 
-    if (addresses[networkID].SOHM_ADDRESS) {
-      const sohmContract = new ethers.Contract(addresses[networkID].SOHM_ADDRESS as string, sOHMv2, provider) as SOhmv2;
+    if (addresses[networkID].SGURU_ADDRESS) {
+      const sohmContract = new ethers.Contract(
+        addresses[networkID].SGURU_ADDRESS as string,
+        sOHMv2,
+        provider,
+      ) as SOhmv2;
       sohmBalance = await sohmContract.balanceOf(address);
       unstakeAllowance = await sohmContract.allowance(address, addresses[networkID].STAKING_ADDRESS);
-      poolAllowance = await sohmContract.allowance(address, addresses[networkID].PT_PRIZE_POOL_ADDRESS);
-      wrapAllowance = await sohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS);
+      // poolAllowance = await sohmContract.allowance(address, addresses[networkID].PT_PRIZE_POOL_ADDRESS);
+      // wrapAllowance = await sohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS);
     }
 
     if (addresses[networkID].PT_TOKEN_ADDRESS) {
@@ -155,12 +159,16 @@ export const loadAccountDetails = createAsyncThunk(
       }
     }
 
-    if (addresses[networkID].WSOHM_ADDRESS) {
-      const wsohmContract = new ethers.Contract(addresses[networkID].WSOHM_ADDRESS as string, wsOHM, provider) as WsOHM;
+    if (addresses[networkID].WSGURU_ADDRESS) {
+      const wsohmContract = new ethers.Contract(
+        addresses[networkID].WSGURU_ADDRESS as string,
+        wsOHM,
+        provider,
+      ) as WsOHM;
       wsohmBalance = await wsohmContract.balanceOf(address);
       // NOTE (appleseed): wsohmAsSohm is used to calc your next reward amount
       wsohmAsSohm = await wsohmContract.wOHMTosOHM(wsohmBalance);
-      unwrapAllowance = await wsohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS);
+      unwrapAllowance = await wsohmContract.allowance(address, addresses[networkID].WSGURU_ADDRESS);
     }
 
     return {
