@@ -154,11 +154,11 @@ function TreasuryDashboard() {
               <Box className="metric index">
                 <Typography variant="h6" color="textSecondary">
                   Current Index
-                  <InfoTooltip
-                    message={
-                      "The current index tracks the amount of sOHM accumulated since the beginning of staking. Basically, how much sGURU one would have if they staked and held a single GURU from day 1."
-                    }
-                  />
+                  {/*<InfoTooltip*/}
+                  {/*  message={*/}
+                  {/*    "The current index tracks the amount of sOHM accumulated since the beginning of staking. Basically, how much sGURU one would have if they staked and held a single GURU from day 1."*/}
+                  {/*  }*/}
+                  {/*/>*/}
                 </Typography>
                 <Typography variant="h5">
                   {currentIndex ? trim(currentIndex, 2) + " sOHM" : <Skeleton type="text" />}

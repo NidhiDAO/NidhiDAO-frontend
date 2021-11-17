@@ -99,6 +99,12 @@ export const dark = responsiveFontSizes(
             },
           },
         },
+        MuiAlert: {
+          filledInfo: {
+            backgroundColor: colors.gold[500],
+            color: colors.dark[900],
+          },
+        },
         MuiDrawer: {
           paper: {
             backgroundColor: darkTheme.paperBg,
