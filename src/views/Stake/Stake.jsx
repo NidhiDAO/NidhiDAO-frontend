@@ -30,6 +30,7 @@ import ExternalStakePool from "./ExternalStakePool";
 import { error } from "../../slices/MessagesSlice";
 import { ethers } from "ethers";
 import { ReactComponent as WalletIcon } from "../../assets/icons/wallet.svg";
+import ConnectButton from "../../components/ConnectButton";
 
 function a11yProps(index) {
   return {
@@ -136,18 +137,7 @@ function Stake() {
 
   let modalButton = [];
 
-  modalButton.push(
-    <Button
-      endIcon={<SvgIcon className="stake-wallet-icon" viewBox="0 0 24 19" color="primary" component={WalletIcon} />}
-      variant="contained"
-      color="primary"
-      className="connect-button"
-      onClick={connect}
-      key={1}
-    >
-      Connect Wallet
-    </Button>,
-  );
+  modalButton.push(<ConnectButton />);
 
   const changeView = (event, newView) => {
     setView(newView);
@@ -194,7 +184,7 @@ function Stake() {
                 <Grid container spacing={2} alignItems="flex-end">
                   <Grid item xs={12} sm={4} md={4} lg={4}>
                     <div className="stake-apy">
-                      <Typography variant="h5" color="textSecondary">
+                      <Typography variant="h6" color="textSecondary">
                         APY
                       </Typography>
                       <Typography variant="h4">
@@ -209,7 +199,7 @@ function Stake() {
 
                   <Grid item xs={12} sm={4} md={4} lg={4}>
                     <div className="stake-tvl">
-                      <Typography variant="h5" color="textSecondary">
+                      <Typography variant="h6" color="textSecondary">
                         Total Value Deposited
                       </Typography>
                       <Typography variant="h4">
@@ -229,7 +219,7 @@ function Stake() {
 
                   <Grid item xs={12} sm={4} md={4} lg={4}>
                     <div className="stake-index">
-                      <Typography variant="h5" color="textSecondary">
+                      <Typography variant="h6" color="textSecondary">
                         Current Index
                       </Typography>
                       <Typography variant="h4">

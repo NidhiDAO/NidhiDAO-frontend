@@ -81,7 +81,7 @@ export const light = responsiveFontSizes(
           root: {
             backgroundColor: lightTheme.paperBg,
             "&.ohm-card": {
-              backgroundColor: lightTheme.paperBg,
+              // backgroundColor: lightTheme.paperBg,
             },
             "&.ohm-modal": {
               backgroundColor: lightTheme.modalBg,

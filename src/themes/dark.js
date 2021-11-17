@@ -114,7 +114,7 @@ export const dark = responsiveFontSizes(
               background: "rgba(255, 255, 255, 0.05)",
               border: "0.5px solid rgba(255, 255, 255, 0.2)",
               boxShadow: "0px 20px 20px rgba(0, 0, 0, 0.05)",
-              backgroundColor: darkTheme.paperBg,
+              // backgroundColor: darkTheme.paperBg,
               backdropFilter: "blur(40px)",
             },
             "&.bond-card": {

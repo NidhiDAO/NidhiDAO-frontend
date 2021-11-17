@@ -15,8 +15,8 @@
       }
     }
     .ohm-modal {
-      max-width: 688px;
-      min-height: 605px;
+      max-width: 577px;
+      min-height: 578px;
     }
   }
 
@@ -29,8 +29,8 @@
       }
     }
     .ohm-modal {
-      max-width: 688px;
-      min-height: 605px;
+      max-width: 577px;
+      min-height: 578px;
       //opacity: 0.9;
     }
   }
@@ -90,6 +90,22 @@
   width: 100%;
   margin: 5px !important;
 }
+
+.stake-wallet-icon {
+  margin-left: 10px;
+  position: absolute;
+  right: 20px;
+  top: 14px;
+  color: #000;
+}
+
+.connect-button {
+  //max-width: 300px !important;
+  min-height: 3rem !important;
+  min-width: 17.75rem !important;
+  margin-bottom: 15px;
+}
+
 
 .mobile #bond-view {
   .ohm-card {

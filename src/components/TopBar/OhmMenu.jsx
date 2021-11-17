@@ -112,7 +112,7 @@ function OhmMenu() {
       target="_blank"
       rel="noreferrer"
     >
-      <Button id="guru-menu-button" size="large" variant="contained" color="secondary" fullWidth>
+      <Button id="guru-menu-button" size="large" variant="contained" color="secondary">
         <Typography align="left">BUY GURU</Typography>
       </Button>
     </Link>

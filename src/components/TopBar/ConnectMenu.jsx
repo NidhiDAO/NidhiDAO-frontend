@@ -93,8 +93,11 @@ function ConnectMenu({ theme }) {
       ) : (
         <Button
           // className={buttonStyles}
-          size="large"
-          style={pendingTransactions.length > 0 ? { color: primaryColor } : {}}
+          variant="contained"
+          color="secondary"
+          fullWidth
+          // size="large"
+          style={pendingTransactions.length > 0 ? { color: primaryColor } : { padding: "9px", marginLeft: "9px" }}
           onClick={clickFunc}
           key={1}
         >

@@ -144,7 +144,7 @@ export function BondTableData({ bond }) {
       <TableCell>
         <Link component={NavLink} to={`/bonds/${bond.name}`}>
           <Button variant="contained" color="secondary" disabled={!bond.isAvailable[chainID]}>
-            <Typography variant="h6">{!bond.isAvailable[chainID] ? "Sold Out" : "Bond"}</Typography>
+            <Typography variant="h6">{!bond.isAvailable[chainID] ? "SOLD OUT" : "BOND"}</Typography>
           </Button>
         </Link>
       </TableCell>

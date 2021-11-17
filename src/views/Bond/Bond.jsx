@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { formatCurrency, trim } from "../../helpers";
-import { Backdrop, Box, Fade, Grid, Paper, Tab, Tabs, Typography } from "@material-ui/core";
+import { Backdrop, Box, Fade, Grid, Paper, Tab, Tabs, Typography, makeStyles } from "@material-ui/core";
 import TabPanel from "../../components/TabPanel";
 import BondHeader from "./BondHeader";
 import BondRedeem from "./BondRedeem";
@@ -17,7 +17,14 @@ function a11yProps(index) {
   };
 }
 
+const useStyles = makeStyles({
+  customStyleOnTab: {
+    width: "145px",
+  },
+});
+
 function Bond({ bond }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const { provider, address, chainID } = useWeb3Context();
 
@@ -86,8 +93,8 @@ function Bond({ bond }) {
                 onChange={changeView}
                 aria-label="bond tabs"
               >
-                <Tab label="BOND" {...a11yProps(0)} />
-                <Tab label="UNSTAKE" {...a11yProps(1)} />
+                <Tab label={<span className={classes.customStyleOnTab}>BOND</span>} {...a11yProps(0)} />
+                <Tab label={<span className={classes.customStyleOnTab}>UNSTAKE</span>} {...a11yProps(1)} />
               </Tabs>
 
               <TabPanel value={view} index={0}>
@@ -105,23 +112,23 @@ function Bond({ bond }) {
   );
 }
 
-export function DisplayBondPrice({ bond }) {
-  const { chainID } = useWeb3Context();
-  return (
-    <>
-      {!bond.isAvailable[chainID] ? (
-        <>--</>
-      ) : (
-        `${new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-          maximumFractionDigits: 2,
-          minimumFractionDigits: 2,
-        }).format(bond.bondPrice)}`
-      )}
-    </>
-  );
-}
+// export function DisplayBondPrice({ bond }) {
+//   const { chainID } = useWeb3Context();
+//   return (
+//     <>
+//       {!bond.isAvailable[chainID] ? (
+//         <>--</>
+//       ) : (
+//         `${new Intl.NumberFormat("en-US", {
+//           style: "currency",
+//           currency: "USD",
+//           maximumFractionDigits: 2,
+//           minimumFractionDigits: 2,
+//         }).format(bond.bondPrice)}`
+//       )}
+//     </>
+//   );
+// }
 
 export function DisplayBondDiscount({ bond }) {
   const { chainID } = useWeb3Context();

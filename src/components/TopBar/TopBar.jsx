@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => ({
   appBar: {
     [theme.breakpoints.up("sm")]: {
       width: "100%",
-      padding: "10px",
+      padding: "20px",
     },
     justifyContent: "flex-end",
     alignItems: "flex-end",
@@ -33,7 +33,7 @@ function TopBar({ theme, toggleTheme, handleDrawerToggle }) {
 
   return (
     <AppBar position="sticky" className={classes.appBar} elevation={0}>
-      <Toolbar disableGutters className="">
+      <Toolbar disableGutters className="dapp-topbar">
         <Button
           id="hamburger"
           aria-label="open drawer"

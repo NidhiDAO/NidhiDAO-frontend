@@ -129,7 +129,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
 
   return (
     <Box display="flex" flexDirection="column">
-      <Box display="flex" justifyContent="space-around" flexWrap="wrap">
+      <Box className="wallet-menu" display="flex" justifyContent="space-around" flexWrap="wrap">
         {!address ? (
           <ConnectButton />
         ) : (
