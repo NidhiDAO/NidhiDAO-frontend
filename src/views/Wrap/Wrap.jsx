@@ -27,6 +27,7 @@ import { isPendingTxn, txnButtonText } from "src/slices/PendingTxnsSlice";
 import { Skeleton } from "@material-ui/lab";
 import { error } from "../../slices/MessagesSlice";
 import { ethers } from "ethers";
+import ConnectButton from "../../components/ConnectButton";
 
 function a11yProps(index) {
   return {
@@ -126,11 +127,7 @@ function Wrap() {
 
   let modalButton = [];
 
-  modalButton.push(
-    <Button variant="contained" color="primary" className="connect-button" onClick={connect} key={1}>
-      Connect Wallet
-    </Button>,
-  );
+  modalButton.push(<ConnectButton />);
 
   const changeView = (event, newView) => {
     setView(newView);

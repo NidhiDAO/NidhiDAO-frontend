@@ -9,7 +9,7 @@
     margin-left: 10px;
     position: absolute;
     right: 20px;
-    top: 10px;
+    top: 14px;
     color: #000;
   }
 
@@ -243,8 +243,9 @@
   .wallet-menu {
     text-align: center;
     .connect-button {
-      max-width: 300px !important;
-      min-width: 240px !important;
+      //max-width: 300px !important;
+      min-height: 3rem !important;
+      min-width: 17.75rem !important;
       margin-bottom: 15px;
     }
   }
