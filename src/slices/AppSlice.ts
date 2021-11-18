@@ -2,8 +2,9 @@ import { ethers } from "ethers";
 import { addresses } from "../constants";
 import { abi as OlympusStakingv2ABI } from "../abi/OlympusStakingv2.json";
 import { abi as sOHMv2 } from "../abi/sOhmv2.json";
+import { abi as GuruABI } from "../abi/Guru.json";
 import { setAll, getTokenPrice, getMarketPrice } from "../helpers";
-import apollo from "../lib/apolloClient.js";
+import allBonds from "../helpers/AllBonds";
 import { createSlice, createSelector, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "src/store";
 import { IBaseAsyncThunk } from "./interfaces";
@@ -17,37 +18,6 @@ const initialState = {
 export const loadAppDetails = createAsyncThunk(
   "app/loadAppDetails",
   async ({ networkID, provider }: IBaseAsyncThunk, { dispatch }) => {
-    const protocolMetricsQuery = `
-  query {
-    _meta {
-      block {
-        number
-      }
-    }
-    protocolMetrics(first: 1, orderBy: timestamp, orderDirection: desc) {
-      timestamp
-      ohmCirculatingSupply
-      sOhmCirculatingSupply
-      totalSupply
-      ohmPrice
-      marketCap
-      totalValueLocked
-      treasuryMarketValue
-      nextEpochRebase
-      nextDistributedOhm
-    }
-  }
-`;
-
-    const graphData = await apollo(protocolMetricsQuery);
-    console.log(`graphData ${JSON.stringify(graphData)}`);
-
-    if (!graphData || graphData == null) {
-      console.error("Returned a null response when querying TheGraph");
-      return;
-    }
-
-    const stakingTVL = parseFloat(graphData.data.protocolMetrics[0].totalValueLocked);
     // NOTE (appleseed): marketPrice from Graph was delayed, so get CoinGecko price
     // const marketPrice = parseFloat(graphData.data.protocolMetrics[0].ohmPrice);
     let marketPrice;
@@ -62,23 +32,6 @@ export const loadAppDetails = createAsyncThunk(
       return;
     }
 
-    const marketCap = parseFloat(graphData.data.protocolMetrics[0].marketCap);
-    const circSupply = parseFloat(graphData.data.protocolMetrics[0].ohmCirculatingSupply);
-    const totalSupply = parseFloat(graphData.data.protocolMetrics[0].totalSupply);
-    const treasuryMarketValue = parseFloat(graphData.data.protocolMetrics[0].treasuryMarketValue);
-    // const currentBlock = parseFloat(graphData.data._meta.block.number);
-
-    if (!provider) {
-      console.error("failed to connect to provider, please connect your wallet");
-      return {
-        stakingTVL,
-        marketPrice,
-        marketCap,
-        circSupply,
-        totalSupply,
-        treasuryMarketValue,
-      };
-    }
     const currentBlock = await provider.getBlockNumber();
 
     const stakingContract = new ethers.Contract(
@@ -93,17 +46,29 @@ export const loadAppDetails = createAsyncThunk(
       provider,
     ) as SOhmv2;
 
+    const guruMainContract = new ethers.Contract(addresses[networkID].GURU_ADDRESS as string, GuruABI, provider);
+
     // Calculating staking
     const epoch = await stakingContract.epoch();
+    console.log(`epoch`, epoch);
     const stakingReward = epoch.distribute;
     const ts = await sohmMainContract.totalSupply();
     console.log(`ts`, ts);
+    const totalSupply = (await guruMainContract.totalSupply()) / Math.pow(10, 9);
+    const marketCap = totalSupply * marketPrice;
     const circ = await sohmMainContract.circulatingSupply();
+    const circAny = circ as any;
+    const circSupply = circAny / Math.pow(10, 9);
+    const stakingTVL = circSupply * marketPrice;
     console.log(`circ`, circ);
     const stakingRebase = Number(stakingReward.toString()) / Number(circ.toString());
     const fiveDayRate = Math.pow(1 + stakingRebase, 5 * 3) - 1;
     const stakingAPY = Math.pow(1 + stakingRebase, 365 * 3) - 1;
     console.log(`stakingAPY ${stakingAPY}`);
+
+    const tokenAmountsPromises = allBonds.map(bond => bond.getTreasuryBalance(networkID, provider));
+    const tokenAmounts = await Promise.all(tokenAmountsPromises);
+    const treasuryMarketValue = tokenAmounts.reduce((tokenAmount0, tokenAmount1) => tokenAmount0 + tokenAmount1);
 
     // Current index
     const currentIndex = await stakingContract.index();
