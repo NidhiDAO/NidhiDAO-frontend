@@ -6,6 +6,7 @@ import externalUrls from "./externalUrls";
 import { ReactComponent as BondIcon } from "../../assets/icons/bond.svg";
 import { ReactComponent as DashboardIcon } from "../../assets/icons/dashboard.svg";
 import { ReactComponent as NidhiIcon } from "../../assets/icons/nidhiHeader.svg";
+import { ReactComponent as WalletIcon } from "../../assets/icons/wallet.svg";
 // import { ReactComponent as PoolTogetherIcon } from "../../assets/icons/33-together.svg";
 import { trim, shorten } from "../../helpers";
 import { useAddress, useWeb3Context } from "src/hooks/web3Context";
@@ -28,9 +29,9 @@ function NavContent() {
     if (currentPath.indexOf("stake") >= 0 && page === "stake") {
       return true;
     }
-    // if (currentPath.indexOf("stake") >= 0 && page === "stake") {
-    //   return true;
-    // }
+    if (currentPath.indexOf("claim") >= 0 && page === "claim") {
+      return true;
+    }
     if ((currentPath.indexOf("bonds") >= 0 || currentPath.indexOf("choose_bond") >= 0) && page === "bonds") {
       return true;
     }
@@ -140,6 +141,21 @@ function NavContent() {
                   ))}
                 </div>
               </div>
+              {/* 
+              <Link
+                component={NavLink}
+                id="claim-nav"
+                to="/claim"
+                isActive={(match, location) => {
+                  return checkPage(match, location, "claim");
+                }}
+                className={`button-dapp-menu ${isActive ? "active" : ""}`}
+              >
+                <Typography variant="h6">
+                  <SvgIcon color="primary" component={WalletIcon} />
+                  Early? Claim
+                </Typography>
+              </Link> */}
             </div>
           </div>
         </div>

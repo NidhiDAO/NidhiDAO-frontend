@@ -20,6 +20,7 @@ export const getBalances = createAsyncThunk(
     let wsohmBalance = BigNumber.from(0);
     let wsohmAsSohm = BigNumber.from(0);
     let poolBalance = BigNumber.from(0);
+    let aguruBalance = BigNumber.from(0);
     if (addresses[networkID].GURU_ADDRESS) {
       const ohmContract = new ethers.Contract(
         addresses[networkID].GURU_ADDRESS as string,
@@ -58,6 +59,15 @@ export const getBalances = createAsyncThunk(
       poolBalance = await poolTokenContract.balanceOf(address);
     }
 
+    if (addresses[networkID].AGURU_ADDRESS) {
+      const aguruContract = new ethers.Contract(
+        addresses[networkID].AGURU_ADDRESS as string,
+        sOHMv2,
+        provider,
+      ) as SOhmv2;
+      aguruBalance = await aguruContract.balanceOf(address);
+    }
+
     return {
       balances: {
         ohm: ethers.utils.formatUnits(ohmBalance, "gwei"),
@@ -65,6 +75,7 @@ export const getBalances = createAsyncThunk(
         wsohm: ethers.utils.formatEther(wsohmBalance),
         wsohmAsSohm: ethers.utils.formatUnits(wsohmAsSohm, "gwei"),
         pool: ethers.utils.formatUnits(poolBalance, "gwei"),
+        aguru: ethers.utils.formatUnits(aguruBalance, "gwei"),
       },
     };
   },
@@ -104,6 +115,8 @@ export const loadAccountDetails = createAsyncThunk(
     let unwrapAllowance = BigNumber.from(0);
     let stakeAllowance = BigNumber.from(0);
     let unstakeAllowance = BigNumber.from(0);
+    let aguruAllowance = BigNumber.from(0);
+    let aguruBalance = BigNumber.from(0);
     let lpStaked = 0;
     let pendingRewards = 0;
     let lpBondAllowance = 0;
@@ -137,39 +150,49 @@ export const loadAccountDetails = createAsyncThunk(
       // wrapAllowance = await sohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS);
     }
 
-    if (addresses[networkID].PT_TOKEN_ADDRESS) {
-      const poolTokenContract = new ethers.Contract(
-        addresses[networkID].PT_TOKEN_ADDRESS,
-        ierc20Abi,
+    if (addresses[networkID].AGURU_ADDRESS) {
+      const aguruContract = new ethers.Contract(
+        addresses[networkID].AGURU_ADDRESS as string,
+        sOHMv2,
         provider,
-      ) as IERC20;
-      poolBalance = await poolTokenContract.balanceOf(address);
+      ) as SOhmv2;
+      aguruBalance = await aguruContract.balanceOf(address);
+      aguruAllowance = await aguruContract.allowance(address, addresses[networkID].CLAIM_ADDRESS);
     }
 
-    for (const fuseAddressKey of ["FUSE_6_SOHM", "FUSE_18_SOHM"]) {
-      if (addresses[networkID][fuseAddressKey]) {
-        const fsohmContract = new ethers.Contract(
-          addresses[networkID][fuseAddressKey] as string,
-          fuseProxy,
-          provider.getSigner(),
-        ) as FuseProxy;
-        // fsohmContract.signer;
-        const balanceOfUnderlying = await fsohmContract.callStatic.balanceOfUnderlying(address);
-        fsohmBalance = balanceOfUnderlying.add(fsohmBalance);
-      }
-    }
+    // if (addresses[networkID].PT_TOKEN_ADDRESS) {
+    //   const poolTokenContract = new ethers.Contract(
+    //     addresses[networkID].PT_TOKEN_ADDRESS,
+    //     ierc20Abi,
+    //     provider,
+    //   ) as IERC20;
+    //   poolBalance = await poolTokenContract.balanceOf(address);
+    // }
 
-    if (addresses[networkID].WSGURU_ADDRESS) {
-      const wsohmContract = new ethers.Contract(
-        addresses[networkID].WSGURU_ADDRESS as string,
-        wsOHM,
-        provider,
-      ) as WsOHM;
-      wsohmBalance = await wsohmContract.balanceOf(address);
-      // NOTE (appleseed): wsohmAsSohm is used to calc your next reward amount
-      wsohmAsSohm = await wsohmContract.wOHMTosOHM(wsohmBalance);
-      unwrapAllowance = await wsohmContract.allowance(address, addresses[networkID].WSGURU_ADDRESS);
-    }
+    // for (const fuseAddressKey of ["FUSE_6_SOHM", "FUSE_18_SOHM"]) {
+    //   if (addresses[networkID][fuseAddressKey]) {
+    //     const fsohmContract = new ethers.Contract(
+    //       addresses[networkID][fuseAddressKey] as string,
+    //       fuseProxy,
+    //       provider.getSigner(),
+    //     ) as FuseProxy;
+    //     // fsohmContract.signer;
+    //     const balanceOfUnderlying = await fsohmContract.callStatic.balanceOfUnderlying(address);
+    //     fsohmBalance = balanceOfUnderlying.add(fsohmBalance);
+    //   }
+    // }
+
+    // if (addresses[networkID].WSGURU_ADDRESS) {
+    //   const wsohmContract = new ethers.Contract(
+    //     addresses[networkID].WSGURU_ADDRESS as string,
+    //     wsOHM,
+    //     provider,
+    //   ) as WsOHM;
+    //   wsohmBalance = await wsohmContract.balanceOf(address);
+    //   // NOTE (appleseed): wsohmAsSohm is used to calc your next reward amount
+    //   wsohmAsSohm = await wsohmContract.wOHMTosOHM(wsohmBalance);
+    //   unwrapAllowance = await wsohmContract.allowance(address, addresses[networkID].WSGURU_ADDRESS);
+    // }
 
     return {
       balances: {
@@ -180,10 +203,14 @@ export const loadAccountDetails = createAsyncThunk(
         wsohm: ethers.utils.formatEther(wsohmBalance),
         wsohmAsSohm: ethers.utils.formatUnits(wsohmAsSohm, "gwei"),
         pool: ethers.utils.formatUnits(poolBalance, "gwei"),
+        aguru: ethers.utils.formatUnits(aguruBalance, "gwei"),
       },
       staking: {
         ohmStake: +stakeAllowance,
         ohmUnstake: +unstakeAllowance,
+      },
+      claim: {
+        aguruAllowance: aguruAllowance,
       },
       wrapping: {
         ohmWrap: +wrapAllowance,

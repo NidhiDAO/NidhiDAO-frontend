@@ -2,6 +2,7 @@ import { ethers, BigNumber } from "ethers";
 import { addresses } from "../constants";
 import { abi as ierc20ABI } from "../abi/IERC20.json";
 import { abi as OlympusStakingABI } from "../abi/OlympusStakingv2.json";
+import { abi as ClaimABI } from "../abi/Claim.json";
 import { abi as StakingHelperABI } from "../abi/StakingHelper.json";
 import { clearPendingTxn, fetchPendingTxns, getStakingTypeText } from "./PendingTxnsSlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
@@ -19,7 +20,12 @@ interface IUAData {
   type: string | null;
 }
 
-function alreadyApprovedToken(token: string, stakeAllowance: BigNumber, unstakeAllowance: BigNumber) {
+function alreadyApprovedToken(
+  token: string,
+  stakeAllowance: BigNumber,
+  unstakeAllowance: BigNumber,
+  aguruAllowance: BigNumber,
+) {
   // set defaults
   let bigZero = BigNumber.from("0");
   let applicableAllowance = bigZero;
@@ -29,6 +35,8 @@ function alreadyApprovedToken(token: string, stakeAllowance: BigNumber, unstakeA
     applicableAllowance = stakeAllowance;
   } else if (token === "sohm") {
     applicableAllowance = unstakeAllowance;
+  } else if (token === "aguru") {
+    applicableAllowance = aguruAllowance;
   }
 
   // check if allowance exists
@@ -48,18 +56,27 @@ export const changeApproval = createAsyncThunk(
     const signer = provider.getSigner();
     const ohmContract = new ethers.Contract(addresses[networkID].GURU_ADDRESS as string, ierc20ABI, signer) as IERC20;
     const sohmContract = new ethers.Contract(addresses[networkID].SGURU_ADDRESS as string, ierc20ABI, signer) as IERC20;
+    const aguruContract = new ethers.Contract(
+      addresses[networkID].AGURU_ADDRESS as string,
+      ierc20ABI,
+      signer,
+    ) as IERC20;
     let approveTx;
     let stakeAllowance = await ohmContract.allowance(address, addresses[networkID].STAKING_HELPER_ADDRESS);
     let unstakeAllowance = await sohmContract.allowance(address, addresses[networkID].STAKING_ADDRESS);
+    let aguruAllowance = await aguruContract.allowance(address, addresses[networkID].CLAIM_ADDRESS);
 
     // return early if approval has already happened
-    if (alreadyApprovedToken(token, stakeAllowance, unstakeAllowance)) {
+    if (alreadyApprovedToken(token, stakeAllowance, unstakeAllowance, aguruAllowance)) {
       dispatch(info("Approval completed."));
       return dispatch(
         fetchAccountSuccess({
           staking: {
             ohmStake: +stakeAllowance,
             ohmUnstake: +unstakeAllowance,
+          },
+          claim: {
+            aguruAllowance,
           },
         }),
       );
@@ -77,10 +94,33 @@ export const changeApproval = createAsyncThunk(
           addresses[networkID].STAKING_ADDRESS,
           ethers.utils.parseUnits("1000000000", "gwei").toString(),
         );
+      } else if (token === "aguru") {
+        approveTx = await aguruContract.approve(
+          addresses[networkID].CLAIM_ADDRESS,
+          ethers.utils.parseUnits("1000000000", "gwei").toString(),
+        );
       }
 
-      const text = "Approve " + (token === "ohm" ? "Staking" : "Unstaking");
-      const pendingTxnType = token === "ohm" ? "approve_staking" : "approve_unstaking";
+      let text = "Approve ";
+
+      if (token === "ohm") {
+        text += "Staking";
+      } else if (token === "sohm") {
+        text += "Unstaking";
+      } else if (token === "aguru") {
+        text += "Claiming";
+      }
+
+      let pendingTxnType;
+
+      if (token === "ohm") {
+        pendingTxnType = "approve_staking";
+      } else if (token === "sohm") {
+        pendingTxnType = "approve_unstaking";
+      } else {
+        pendingTxnType = "approve_claiming";
+      }
+
       if (approveTx) {
         dispatch(fetchPendingTxns({ txnHash: approveTx.hash, text, type: pendingTxnType }));
 
@@ -98,12 +138,16 @@ export const changeApproval = createAsyncThunk(
     // go get fresh allowances
     stakeAllowance = await ohmContract.allowance(address, addresses[networkID].STAKING_HELPER_ADDRESS);
     unstakeAllowance = await sohmContract.allowance(address, addresses[networkID].STAKING_ADDRESS);
+    aguruAllowance = await aguruContract.allowance(address, addresses[networkID].CLAIM_ADDRESS);
 
     return dispatch(
       fetchAccountSuccess({
         staking: {
           ohmStake: +stakeAllowance,
           ohmUnstake: +unstakeAllowance,
+        },
+        claim: {
+          aguruAllowance,
         },
       }),
     );
@@ -166,6 +210,55 @@ export const changeStake = createAsyncThunk(
         segmentUA(uaData);
 
         dispatch(clearPendingTxn(stakeTx.hash));
+      }
+    }
+    dispatch(getBalances({ address, networkID, provider }));
+  },
+);
+
+export const exchangeAGURU = createAsyncThunk(
+  "stake/exchangeAGURU",
+  async ({ aguruBalance, provider, address, networkID }: any, { dispatch }) => {
+    if (!provider) {
+      dispatch(error("Please connect your wallet!"));
+      return;
+    }
+
+    const signer = provider.getSigner();
+    const claimContract = new ethers.Contract(addresses[networkID].CLAIM_ADDRESS as string, ClaimABI, signer);
+
+    let claimTx;
+    let uaData: IUAData = {
+      address: address,
+      value: "0",
+      approved: true,
+      txHash: null,
+      type: null,
+    };
+    try {
+      uaData.type = "claiming";
+      claimTx = await claimContract.migrate(ethers.utils.parseUnits(aguruBalance, "gwei"));
+      uaData.txHash = claimTx.hash;
+      dispatch(fetchPendingTxns({ txnHash: claimTx.hash, text: "Exchanging aGURU for GURU", type: "claiming" }));
+      await claimTx.wait();
+    } catch (e: unknown) {
+      uaData.approved = false;
+      const rpcError = e as IJsonRPCError;
+      if (rpcError.code === -32603 && rpcError.message.indexOf("ds-math-sub-underflow") >= 0) {
+        dispatch(
+          error(
+            "You may be trying to exchange more than your aGURU balance! Error code: 32603. Message: ds-math-sub-underflow",
+          ),
+        );
+      } else {
+        dispatch(error(rpcError.message));
+      }
+      return;
+    } finally {
+      if (claimTx) {
+        segmentUA(uaData);
+
+        dispatch(clearPendingTxn(claimTx.hash));
       }
     }
     dispatch(getBalances({ address, networkID, provider }));
