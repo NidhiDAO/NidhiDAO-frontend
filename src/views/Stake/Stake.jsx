@@ -114,11 +114,11 @@ function Stake() {
     // 1st catch if quantity > balance
     let gweiValue = ethers.utils.parseUnits(quantity, "gwei");
     if (action === "stake" && gweiValue.gt(ethers.utils.parseUnits(ohmBalance, "gwei"))) {
-      return dispatch(error("You cannot stake more than your OHM balance."));
+      return dispatch(error("You cannot stake more than your GURU balance."));
     }
 
     if (action === "unstake" && gweiValue.gt(ethers.utils.parseUnits(sohmBalance, "gwei"))) {
-      return dispatch(error("You cannot unstake more than your sOHM balance."));
+      return dispatch(error("You cannot unstake more than your sGURU balance."));
     }
 
     await dispatch(changeStake({ address, action, value: quantity.toString(), provider, networkID: chainID }));
@@ -267,13 +267,13 @@ function Stake() {
                                 <>
                                   First time staking <b>GURU</b>?
                                   <br />
-                                  Please approve NidhiDAO to use your <b>GURU</b> for staking.
+                                  Please approve Nidhi to use your <b>GURU</b> for staking.
                                 </>
                               ) : (
                                 <>
                                   First time unstaking <b>sGURU</b>?
                                   <br />
-                                  Please approve NidhiDAO to use your <b>sGURU</b> for unstaking.
+                                  Please approve Nidhi to use your <b>sGURU</b> for unstaking.
                                 </>
                               )}
                             </Typography>

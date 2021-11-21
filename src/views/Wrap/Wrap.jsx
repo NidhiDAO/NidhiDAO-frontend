@@ -148,7 +148,7 @@ function Wrap() {
                   aria-label="wsohm-wut"
                   target="_blank"
                 >
-                  <Typography>wsOHM</Typography> <SvgIcon component={InfoIcon} color="primary" />
+                  <Typography>wsGURU</Typography> <SvgIcon component={InfoIcon} color="primary" />
                 </Link>
               </div>
             </Grid>
@@ -159,7 +159,7 @@ function Wrap() {
                   <Grid item xs={12} sm={4} md={4} lg={4}>
                     <div className="wrap-sOHM">
                       <Typography variant="h5" color="textSecondary">
-                        sOHM Price
+                        sGURU Price
                       </Typography>
                       <Typography variant="h4">
                         {sOhmPrice ? formatCurrency(sOhmPrice, 2) : <Skeleton width="150px" />}
@@ -172,17 +172,17 @@ function Wrap() {
                         Current Index
                       </Typography>
                       <Typography variant="h4">
-                        {currentIndex ? <>{trim(currentIndex, 1)} OHM</> : <Skeleton width="150px" />}
+                        {currentIndex ? <>{trim(currentIndex, 1)} GURU</> : <Skeleton width="150px" />}
                       </Typography>
                     </div>
                   </Grid>
                   <Grid item xs={12} sm={4} md={4} lg={4}>
                     <div className="wrap-wsOHM">
                       <Typography variant="h5" color="textSecondary">
-                        wsOHM Price
+                        wsGURU Price
                         <InfoTooltip
                           message={
-                            "wsOHM = sOHM * index\n\nThe price of wsOHM is equal to the price of OHM multiplied by the current index"
+                            "wsGURU= sGURU * index\n\nThe price of wsGURU is equal to the price of GURU multiplied by the current index"
                           }
                         />
                       </Typography>
@@ -226,9 +226,9 @@ function Wrap() {
                             <Typography variant="body1" className="stake-note" color="textSecondary">
                               {view === 0 && (
                                 <>
-                                  First time wrapping <b>sOHM</b>?
+                                  First time wrapping <b>sGURU</b>?
                                   <br />
-                                  Please approve Olympus Dao to use your <b>sOHM</b> for wrapping.
+                                  Please approve Nidhi to use your <b>sGURU</b> for wrapping.
                                 </>
                               )}
                             </Typography>

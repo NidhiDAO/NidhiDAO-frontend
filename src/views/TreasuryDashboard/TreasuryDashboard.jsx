@@ -106,7 +106,7 @@ function TreasuryDashboard() {
 
               <Box className="metric price">
                 <Typography variant="h6" color="textSecondary">
-                  OHM Price
+                  GURU Price
                 </Typography>
                 <Typography variant="h5">
                   {/* appleseed-fix */}
@@ -129,7 +129,7 @@ function TreasuryDashboard() {
 
               <Box className="metric bpo">
                 <Typography variant="h6" color="textSecondary">
-                  Backing per OHM
+                  Backing per GURU
                 </Typography>
                 <Typography variant="h5">
                   {backingPerOhm ? formatCurrency(backingPerOhm, 2) : <Skeleton type="text" />}
@@ -161,7 +161,7 @@ function TreasuryDashboard() {
                   {/*/>*/}
                 </Typography>
                 <Typography variant="h5">
-                  {currentIndex ? trim(currentIndex, 2) + " sOHM" : <Skeleton type="text" />}
+                  {currentIndex ? trim(currentIndex, 2) + " sGURU" : <Skeleton type="text" />}
                 </Typography>
               </Box>
             </Box>
