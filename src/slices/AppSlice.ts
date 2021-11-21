@@ -143,7 +143,7 @@ const loadMarketPrice = createAsyncThunk("app/loadMarketPrice", async ({ network
   } catch (e) {
     console.log(`e`);
     console.log(e);
-    marketPrice = await getTokenPrice("olympus");
+    marketPrice = await getTokenPrice("guru");
   }
   return { marketPrice };
 });
