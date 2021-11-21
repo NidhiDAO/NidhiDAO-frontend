@@ -48,8 +48,8 @@ export const dai = new StableBond({
       reserveAddress: "0xB2180448f8945C8Cc8AE9809E67D6bd27d8B2f2C",
     },
     [NetworkID.Mumbai]: {
-      bondAddress: "0xC87284Bd5c4981AE33Ef589758326A9919697af1",
-      reserveAddress: "0xDCef58c7859d2C47145BdD0648221a9A1Cbaf637",
+      bondAddress: "0x3c2b484057e7ba8832c2abc7774b30fba691c789",
+      reserveAddress: "0x52439209dc5f526375b8ab036ef9ea15bf0ce63b",
     },
   },
 });
@@ -141,8 +141,8 @@ export const guru_dai = new LPBond({
       reserveAddress: "0x8D5a22Fb6A1840da602E56D1a260E56770e0bCE2",
     },
     [NetworkID.Mumbai]: {
-      bondAddress: "0xC87284Bd5c4981AE33Ef589758326A9919697af1",
-      reserveAddress: "0x3e11b4de3bf6ffc98e6d9fc13cf0a49abdda9571",
+      bondAddress: "0x695e445610c2dad7fb166acae7636a3b29936364",
+      reserveAddress: "0xf86868748f973322e38152f75275777a34d8e3fd",
     },
   },
   lpUrl:

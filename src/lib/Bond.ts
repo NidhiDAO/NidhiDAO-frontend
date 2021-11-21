@@ -157,7 +157,9 @@ export class StableBond extends Bond {
 
   async getTreasuryBalance(networkID: NetworkID, provider: StaticJsonRpcProvider) {
     let token = this.getContractForReserve(networkID, provider);
+    console.log("token", token);
     let tokenAmount = await token.balanceOf(addresses[networkID].TREASURY_ADDRESS);
+    console.log("tokenAmount", tokenAmount);
     return Number(tokenAmount.toString()) / Math.pow(10, 18);
   }
 }

@@ -62,12 +62,14 @@ export const loadAppDetails = createAsyncThunk(
     const stakingTVL = circSupply * marketPrice;
     console.log(`circ`, circ);
     const stakingRebase = Number(stakingReward.toString()) / Number(circ.toString());
+    console.log("stakingRebase", stakingRebase);
     const fiveDayRate = Math.pow(1 + stakingRebase, 5 * 3) - 1;
     const stakingAPY = Math.pow(1 + stakingRebase, 365 * 3) - 1;
     console.log(`stakingAPY ${stakingAPY}`);
 
     const tokenAmountsPromises = allBonds.map(bond => bond.getTreasuryBalance(networkID, provider));
     const tokenAmounts = await Promise.all(tokenAmountsPromises);
+    console.log("tokenAmounts", tokenAmounts);
     const treasuryMarketValue = tokenAmounts.reduce((tokenAmount0, tokenAmount1) => tokenAmount0 + tokenAmount1);
 
     // Current index
