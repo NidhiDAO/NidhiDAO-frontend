@@ -268,7 +268,7 @@ function Stake() {
                       {address && !isAllowanceDataLoading ? (
                         (!hasAllowance("ohm") && view === 0) || (!hasAllowance("sohm") && view === 1) ? (
                           <Box className="help-text">
-                            <Typography variant="body1" className="stake-note" color="textSecondary">
+                            <Typography variant="body1" align="left" className="stake-note" color="textSecondary">
                               {view === 0 ? (
                                 <>
                                   First time staking <b>GURU</b>?
