@@ -48,8 +48,8 @@ function TreasuryDashboard() {
     return state.app.treasuryMarketValue / state.app.circSupply;
   });
 
-  const wsOhmPrice = useSelector(state => {
-    return state.app.marketPrice * state.app.currentIndex;
+  const treasuryMarketValue = useSelector(state => {
+    return state.app.treasuryMarketValue;
   });
 
   // useEffect(() => {
@@ -147,7 +147,7 @@ function TreasuryDashboard() {
                 </Typography>
 
                 <Typography variant="h5">
-                  {wsOhmPrice ? formatCurrency(wsOhmPrice, 2) : <Skeleton type="text" />}
+                  {treasuryMarketValue ? formatCurrency(treasuryMarketValue, 2) : <Skeleton type="text" />}
                 </Typography>
               </Box>
 

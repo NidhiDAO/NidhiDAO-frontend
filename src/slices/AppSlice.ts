@@ -70,7 +70,9 @@ export const loadAppDetails = createAsyncThunk(
     const tokenAmountsPromises = allBonds.map(bond => bond.getTreasuryBalance(networkID, provider));
     const tokenAmounts = await Promise.all(tokenAmountsPromises);
     console.log("tokenAmounts", tokenAmounts);
-    const treasuryMarketValue = tokenAmounts.reduce((tokenAmount0, tokenAmount1) => tokenAmount0 + tokenAmount1);
+    const treasuryMarketValue = tokenAmounts.reduce((curr, prev) => {
+      return curr + prev;
+    }, 0);
 
     // Current index
     const currentIndex = await stakingContract.index();
