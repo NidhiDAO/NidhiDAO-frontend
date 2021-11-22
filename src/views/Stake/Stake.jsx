@@ -182,7 +182,7 @@ function Stake() {
             <Grid item>
               <div className="stake-top-metrics">
                 <Grid container spacing={2} alignItems="flex-end">
-                  <Grid item xs={12} sm={4} md={4} lg={4}>
+                  <Grid item xs={12} sm={12} md={12} lg={12}>
                     <div className="stake-apy">
                       <Typography variant="h6" color="textSecondary">
                         APY
@@ -196,8 +196,14 @@ function Stake() {
                       </Typography>
                     </div>
                   </Grid>
+                </Grid>
+              </div>
+            </Grid>
 
-                  <Grid item xs={12} sm={4} md={4} lg={4}>
+            <Grid item>
+              <div className="stake-top-metrics">
+                <Grid container spacing={2} alignItems="flex-end">
+                  <Grid item xs={12} sm={6} md={6} lg={6}>
                     <div className="stake-tvl">
                       <Typography variant="h6" color="textSecondary">
                         Total Value Deposited
@@ -217,7 +223,7 @@ function Stake() {
                     </div>
                   </Grid>
 
-                  <Grid item xs={12} sm={4} md={4} lg={4}>
+                  <Grid item xs={12} sm={6} md={6} lg={6}>
                     <div className="stake-index">
                       <Typography variant="h6" color="textSecondary">
                         Current Index
