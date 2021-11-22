@@ -2,11 +2,11 @@ import { StableBond, LPBond, NetworkID, CustomBond, BondType } from "src/lib/Bon
 import { addresses } from "src/constants";
 
 import { ReactComponent as DaiImg } from "src/assets/tokens/DAI.svg";
-import { ReactComponent as OhmDaiImg } from "src/assets/tokens/OHM-DAI.svg";
+import { ReactComponent as GuruDaiImg } from "src/assets/tokens/GURU-DAI.svg";
 import { ReactComponent as FraxImg } from "src/assets/tokens/FRAX.svg";
-import { ReactComponent as OhmFraxImg } from "src/assets/tokens/OHM-FRAX.svg";
-import { ReactComponent as OhmLusdImg } from "src/assets/tokens/OHM-LUSD.svg";
-import { ReactComponent as OhmEthImg } from "src/assets/tokens/OHM-WETH.svg";
+import { ReactComponent as GuruFraxImg } from "src/assets/tokens/GURU-FRAX.svg";
+import { ReactComponent as GuruLusdImg } from "src/assets/tokens/GURU-LUSD.svg";
+import { ReactComponent as GuruEthImg } from "src/assets/tokens/GURU-WETH.svg";
 import { ReactComponent as wETHImg } from "src/assets/tokens/wETH.svg";
 import { ReactComponent as LusdImg } from "src/assets/tokens/LUSD.svg";
 
@@ -120,7 +120,7 @@ export const guru_dai = new LPBond({
   displayName: "GURU-DAI LP",
   bondToken: "DAI",
   isAvailable: { [NetworkID.Mumbai]: true },
-  bondIconSvg: OhmDaiImg,
+  bondIconSvg: GuruDaiImg,
   bondContractABI: BondOhmDaiContract,
   reserveContract: ReserveOhmDaiContract,
   networkAddrs: {
@@ -135,7 +135,7 @@ export const guru_dai = new LPBond({
 
 // export const ohm_frax = new LPBond({
 //   name: "ohm_frax_lp",
-//   displayName: "OHM-FRAX LP",
+//   displayName: "GURU-FRAX LP",
 //   bondToken: "FRAX",
 //   isAvailable: { [NetworkID.Mainnet]: true, [NetworkID.Testnet]: true },
 //   bondIconSvg: OhmFraxImg,
@@ -160,7 +160,7 @@ export const guru_dai = new LPBond({
 //   displayName: "OHM-LUSD LP",
 //   bondToken: "LUSD",
 //   isAvailable: { [NetworkID.Mainnet]: false, [NetworkID.Testnet]: true },
-//   bondIconSvg: OhmLusdImg,
+//   bondIconSvg: GuruLusdImg,
 //   bondContractABI: BondOhmLusdContract,
 //   reserveContract: ReserveOhmLusdContract,
 //   networkAddrs: {
@@ -180,10 +180,10 @@ export const guru_dai = new LPBond({
 
 // export const ohm_weth = new CustomBond({
 //   name: "ohm_weth_lp",
-//   displayName: "OHM-WETH LP",
+//   displayName: "Guru-WETH LP",
 //   bondToken: "WETH",
 //   isAvailable: { [NetworkID.Mainnet]: true, [NetworkID.Testnet]: true },
-//   bondIconSvg: OhmEthImg,
+//   bondIconSvg: GuruEthImg,
 //   bondContractABI: BondOhmEthContract,
 //   reserveContract: ReserveOhmEthContract,
 //   networkAddrs: {
