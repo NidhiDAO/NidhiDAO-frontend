@@ -108,7 +108,7 @@ function OhmMenu() {
     //               </Link>
     //
     <Link
-      href={`https://app.sushi.com//#/swap?inputCurrency=${daiAddress}&outputCurrency=${GURU_ADDRESS}`}
+      href={`https://app.sushi.com/swap?inputCurrency=${daiAddress}&outputCurrency=${GURU_ADDRESS}`}
       target="_blank"
       rel="noreferrer"
     >
