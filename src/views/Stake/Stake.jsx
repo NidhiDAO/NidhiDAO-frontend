@@ -260,8 +260,8 @@ function Stake() {
                       onChange={changeView}
                       aria-label="stake tabs"
                     >
-                      <Tab label="Stake" {...a11yProps(0)} />
-                      <Tab label="Unstake" {...a11yProps(1)} />
+                      <Tab label="STAKE" {...a11yProps(0)} />
+                      <Tab label="UNSTAKE" {...a11yProps(1)} />
                     </Tabs>
 
                     <Box className="stake-action-row " display="flex" alignItems="center">

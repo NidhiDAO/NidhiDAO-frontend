@@ -94,7 +94,7 @@ function Bond({ bond }) {
                 aria-label="bond tabs"
               >
                 <Tab label={<span className={classes.customStyleOnTab}>BOND</span>} {...a11yProps(0)} />
-                <Tab label={<span className={classes.customStyleOnTab}>UNSTAKE</span>} {...a11yProps(1)} />
+                <Tab label={<span className={classes.customStyleOnTab}>REDEEM</span>} {...a11yProps(1)} />
               </Tabs>
 
               <TabPanel value={view} index={0}>
