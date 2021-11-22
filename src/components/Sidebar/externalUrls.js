@@ -5,12 +5,12 @@ import { SvgIcon } from "@material-ui/core";
 const externalUrls = [
   {
     title: "Docs",
-    url: "",
+    url: "https://docs.nidhidao.finance/",
     icon: <SvgIcon component={DocsIcon} />,
   },
   {
     title: "Nidhi home",
-    url: "",
+    url: "https://nidhidao.finance",
     icon: <SvgIcon color="primary" component={NidhiHomeIcon} />,
   },
 ];
