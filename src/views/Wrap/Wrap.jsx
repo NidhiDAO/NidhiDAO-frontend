@@ -223,7 +223,7 @@ function Wrap() {
                       {address && !isAllowanceDataLoading ? (
                         !hasAllowance("sohm") && view === 0 ? (
                           <Box className="help-text">
-                            <Typography variant="body1" className="stake-note" color="textSecondary">
+                            <Typography variant="body1" align="left" className="stake-note" color="textSecondary">
                               {view === 0 && (
                                 <>
                                   First time wrapping <b>sGURU</b>?
