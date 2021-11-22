@@ -153,6 +153,9 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
    * throws an error if networkID is not 1 (mainnet) or 4 (rinkeby)
    */
   const _checkNetwork = (otherChainID: number): Boolean => {
+    if (chainID !== 80001 && otherChainID !== 80001) {
+      return false;
+    }
     if (chainID !== otherChainID) {
       console.warn("You are switching networks");
       if (otherChainID === 80001) {
@@ -186,7 +189,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
     const connectedAddress = await connectedProvider.getSigner().getAddress();
     const validNetwork = _checkNetwork(chainId);
     if (!validNetwork) {
-      console.error("Wrong network, please switch to mainnet");
+      console.error("Wrong network, please switch to Polygon");
       return;
     }
     // Save everything after we've validated the right network.

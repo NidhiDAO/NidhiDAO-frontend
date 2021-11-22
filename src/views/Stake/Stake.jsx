@@ -189,7 +189,7 @@ function Stake() {
                       </Typography>
                       <Typography variant="h4">
                         {stakingAPY ? (
-                          <>{new Intl.NumberFormat("en-US").format(trimmedStakingAPY)}%</>
+                          <>{new Intl.NumberFormat("en-US").format(stakingAPY)}%</>
                         ) : (
                           <Skeleton width="150px" />
                         )}
