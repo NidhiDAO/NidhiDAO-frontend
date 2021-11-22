@@ -67,7 +67,7 @@ function OhmMenu() {
   // const OHM_ADDRESS = addresses[networkID].OHM_ADDRESS;
   // const PT_TOKEN_ADDRESS = addresses[networkID].PT_TOKEN_ADDRESS;
 
-  const GURU_ADDRESS = addresses[networkID].GURU_ADDRESS;
+  const GURU_ADDRESS = addresses[networkID]?.GURU_ADDRESS;
 
   // const handleClick = event => {
   //   setAnchorEl(anchorEl ? null : event.currentTarget);

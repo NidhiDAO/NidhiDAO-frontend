@@ -35,18 +35,10 @@ export const dai = new StableBond({
   name: "dai",
   displayName: "DAI",
   bondToken: "DAI",
-  isAvailable: { [NetworkID.Mainnet]: true, [NetworkID.Testnet]: true, [NetworkID.Mumbai]: true },
+  isAvailable: { [NetworkID.Mumbai]: true },
   bondIconSvg: DaiImg,
   bondContractABI: DaiBondContract,
   networkAddrs: {
-    [NetworkID.Mainnet]: {
-      bondAddress: "0x575409F8d77c12B05feD8B455815f0e54797381c",
-      reserveAddress: "0x6b175474e89094c44da98b954eedeac495271d0f",
-    },
-    [NetworkID.Testnet]: {
-      bondAddress: "0xA3D17d30891FAE8e9B2353CAeBd20aAFa9c457a7",
-      reserveAddress: "0xB2180448f8945C8Cc8AE9809E67D6bd27d8B2f2C",
-    },
     [NetworkID.Mumbai]: {
       bondAddress: "0x3c2b484057e7ba8832c2abc7774b30fba691c789",
       reserveAddress: "0x52439209dc5f526375b8ab036ef9ea15bf0ce63b",
@@ -127,19 +119,11 @@ export const guru_dai = new LPBond({
   name: "guru_dai_lp",
   displayName: "GURU-DAI LP",
   bondToken: "DAI",
-  isAvailable: { [NetworkID.Mainnet]: true, [NetworkID.Testnet]: true, [NetworkID.Mumbai]: true },
+  isAvailable: { [NetworkID.Mumbai]: true },
   bondIconSvg: OhmDaiImg,
   bondContractABI: BondOhmDaiContract,
   reserveContract: ReserveOhmDaiContract,
   networkAddrs: {
-    [NetworkID.Mainnet]: {
-      bondAddress: "0x956c43998316b6a2F21f89a1539f73fB5B78c151",
-      reserveAddress: "0x34d7d7Aaf50AD4944B70B320aCB24C95fa2def7c",
-    },
-    [NetworkID.Testnet]: {
-      bondAddress: "0xcF449dA417cC36009a1C6FbA78918c31594B9377",
-      reserveAddress: "0x8D5a22Fb6A1840da602E56D1a260E56770e0bCE2",
-    },
     [NetworkID.Mumbai]: {
       bondAddress: "0x695e445610c2dad7fb166acae7636a3b29936364",
       reserveAddress: "0xf86868748f973322e38152f75275777a34d8e3fd",

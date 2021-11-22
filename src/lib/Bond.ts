@@ -8,8 +8,6 @@ import { addresses } from "src/constants";
 import React from "react";
 
 export enum NetworkID {
-  Mainnet = 1,
-  Testnet = 4,
   Mumbai = 80001,
 }
 
@@ -24,14 +22,10 @@ export interface BondAddresses {
 }
 
 export interface NetworkAddresses {
-  [NetworkID.Mainnet]: BondAddresses;
-  [NetworkID.Testnet]: BondAddresses;
   [NetworkID.Mumbai]: BondAddresses;
 }
 
 export interface Available {
-  [NetworkID.Mainnet]?: boolean;
-  [NetworkID.Testnet]?: boolean;
   [NetworkID.Mumbai]?: boolean;
 }
 
@@ -94,7 +88,7 @@ export abstract class Bond {
   }
 
   getAddressForReserve(networkID: NetworkID) {
-    return this.networkAddrs[networkID].reserveAddress;
+    return this.networkAddrs[networkID]?.reserveAddress;
   }
   getContractForReserve(networkID: NetworkID, provider: StaticJsonRpcProvider | JsonRpcSigner) {
     const bondAddress = this.getAddressForReserve(networkID);

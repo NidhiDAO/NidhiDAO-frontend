@@ -14,6 +14,7 @@ import { IBaseAsyncThunk } from "src/slices/interfaces";
 import { PairContract, RedeemHelper } from "../typechain";
 
 export async function getMarketPrice({ networkID, provider }: IBaseAsyncThunk) {
+  if (networkID !== 80001) return 0;
   const guru_dai_address = guru_dai.getAddressForReserve(networkID);
   const pairContract = new ethers.Contract(guru_dai_address, PairContractABI, provider) as PairContract;
   const reserves = await pairContract.getReserves();
@@ -121,6 +122,7 @@ export function getTokenImage(name: string) {
 // TS-REFACTOR-NOTE - Used for:
 // AccountSlice.ts, AppSlice.ts, LusdSlice.ts
 export function setAll(state: any, properties: any) {
+  if (!properties) return;
   const props = Object.keys(properties);
   props.forEach(key => {
     state[key] = properties[key];
