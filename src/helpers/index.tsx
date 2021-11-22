@@ -14,7 +14,7 @@ import { IBaseAsyncThunk } from "src/slices/interfaces";
 import { PairContract, RedeemHelper } from "../typechain";
 
 export async function getMarketPrice({ networkID, provider }: IBaseAsyncThunk) {
-  if (networkID !== 80001) return 0;
+  if (networkID !== 80001 && networkID !== 137) return 0;
   const guru_dai_address = guru_dai.getAddressForReserve(networkID);
   const pairContract = new ethers.Contract(guru_dai_address, PairContractABI, provider) as PairContract;
   const reserves = await pairContract.getReserves();

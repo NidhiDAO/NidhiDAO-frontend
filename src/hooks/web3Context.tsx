@@ -23,6 +23,14 @@ function getMumbaiTestnetURI() {
 }
 
 /**
+ * kept as function to mimic `getMainnetURI()`
+ * @returns string
+ */
+function getPolygonURI() {
+  return EnvHelper.polygonURI;
+}
+
+/**
  * determine if in IFrame for Ledger Live
  */
 function isIframe() {
@@ -111,6 +119,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
               1: getMainnetURI(),
               4: getTestnetURI(),
               80001: getMumbaiTestnetURI(),
+              137: getPolygonURI(),
             },
           },
         },
@@ -153,16 +162,17 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
    * throws an error if networkID is not 1 (mainnet) or 4 (rinkeby)
    */
   const _checkNetwork = (otherChainID: number): Boolean => {
-    if (chainID !== 80001 && otherChainID !== 80001) {
+    if (chainID !== 80001 && otherChainID !== 137) {
       return false;
     }
     if (chainID !== otherChainID) {
       console.warn("You are switching networks");
-      if (otherChainID === 80001) {
+      if (otherChainID === 80001 || otherChainID === 137) {
         setChainID(otherChainID);
         // if (otherChainID === 1) setUri(getMainnetURI());
         // else if (otherChainID === 4) setUri(getTestnetURI());
         if (otherChainID === 80001) setUri(getMumbaiTestnetURI);
+        else if (otherChainID === 137) setUri(getPolygonURI);
         // else setUri(getTestnetURI());
         return true;
       }
