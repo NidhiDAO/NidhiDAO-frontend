@@ -57,7 +57,8 @@ export function trim(number = 0, precision = 0) {
 }
 
 export function getRebaseBlock(currentBlock: number) {
-  return currentBlock + EPOCH_INTERVAL - (currentBlock % EPOCH_INTERVAL);
+  console.log(currentBlock + EPOCH_INTERVAL - (currentBlock % EPOCH_INTERVAL) - 6524);
+  return currentBlock + EPOCH_INTERVAL - (currentBlock % EPOCH_INTERVAL) - 6524;
 }
 
 export function secondsUntilBlock(startBlock: number, endBlock: number) {
