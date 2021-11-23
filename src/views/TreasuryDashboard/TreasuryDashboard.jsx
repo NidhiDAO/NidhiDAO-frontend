@@ -89,6 +89,7 @@ function TreasuryDashboard() {
         style={{
           paddingLeft: smallerScreen || verySmallScreen ? "0" : "3.3rem",
           paddingRight: smallerScreen || verySmallScreen ? "0" : "3.3rem",
+          paddingBottom: smallerScreen || verySmallScreen ? "3.3rem" : "0",
         }}
       >
         <Box className={`hero-metrics`}>

@@ -280,15 +280,15 @@ export const dark = responsiveFontSizes(
             },
           },
           outlinedPrimary: {
-            color: darkTheme.gold,
-            borderColor: darkTheme.gold,
+            backgroundColor: darkTheme.containedSecondaryButtonBG,
+            border: "0.5px solid rgba(255, 255, 255, 0.2)",
             "&:hover": {
               color: darkTheme.outlinedPrimaryButtonHoverColor,
               backgroundColor: darkTheme.primaryButtonHoverBG,
             },
             "@media (hover:none)": {
-              color: darkTheme.gold,
-              borderColor: darkTheme.gold,
+              backgroundColor: darkTheme.containedSecondaryButtonBG,
+              border: "0.5px solid rgba(255, 255, 255, 0.2)",
               "&:hover": {
                 color: darkTheme.outlinedPrimaryButtonHoverColor,
                 backgroundColor: `${darkTheme.primaryButtonHoverBG} !important`,
