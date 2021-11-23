@@ -213,21 +213,21 @@ function App() {
               <TreasuryDashboard />
             </Route>
 
-            <Route exact path="/claim">
-              <Claim />
-            </Route>
+            {/*<Route exact path="/claim">*/}
+            {/*  <Claim />*/}
+            {/*</Route>*/}
 
             <Route exact path="/">
-              <Redirect to="/stake" />
+              <Redirect to="/dashboard" />
             </Route>
 
-            <Route path="/stake">
-              <Stake />
-            </Route>
+            {/*<Route path="/stake">*/}
+            {/*  <Stake />*/}
+            {/*</Route>*/}
 
-            <Route path="/wrap">
-              <Wrap />
-            </Route>
+            {/*<Route path="/wrap">*/}
+            {/*  <Wrap />*/}
+            {/*</Route>*/}
 
             <Route path="/bonds">
               {bonds.map(bond => {
