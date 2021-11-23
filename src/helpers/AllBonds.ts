@@ -137,8 +137,7 @@ export const guru_dai = new LPBond({
       reserveAddress: "0x7c9B16d845FE163F464d265193cC2B4eE3faC326",
     },
   },
-  lpUrl:
-    "https://app.sushi.com/add/0x383518188c0c6d7730d91b2c03a03c837814a899/0x6b175474e89094c44da98b954eedeac495271d0f",
+  lpUrl: `https://app.sushi.com/add/0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063/0x057E0bd9B797f9Eeeb8307B35DbC8c12E534c41E`,
 });
 
 // export const ohm_frax = new LPBond({
