@@ -109,7 +109,7 @@ function ClaimBonds({ activeBonds }) {
                       {txnButtonTextGeneralPending(pendingTransactions, "redeem_all_bonds", "Claim all")}
                     </Button>
 
-                    <Button
+                    {/* <Button
                       variant="contained"
                       color="primary"
                       id="claim-all-and-stake-btn"
@@ -125,7 +125,7 @@ function ClaimBonds({ activeBonds }) {
                         "redeem_all_bonds_autostake",
                         "Claim all and Stake",
                       )}
-                    </Button>
+                    </Button> */}
                   </>
                 )}
               </Box>
