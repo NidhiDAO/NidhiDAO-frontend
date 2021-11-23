@@ -4,7 +4,7 @@
   button {
     white-space: nowrap !important;
     overflow: hidden !important;
-    margin: 6px !important;
+    //margin: 6px !important;
     min-width: fit-content !important;
     &#hamburger {
       padding: 11px !important;
@@ -16,6 +16,7 @@
 }
 .tablet .dapp-topbar {
   justify-content: space-between;
+  padding: 10px;
 }
 .pending-txn-container {
   display: flex;
