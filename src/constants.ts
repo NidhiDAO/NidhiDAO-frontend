@@ -2,7 +2,7 @@ export const THE_GRAPH_URL = "https://api.thegraph.com/subgraphs/name/drondin/ol
 export const EPOCH_INTERVAL = 11520;
 
 // NOTE could get this from an outside source since it changes slightly over time
-export const BLOCK_RATE_SECONDS = 2.7;
+export const BLOCK_RATE_SECONDS = 2.2;
 
 export const TOKEN_DECIMALS = 9;
 
