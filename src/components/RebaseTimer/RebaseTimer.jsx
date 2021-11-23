@@ -20,8 +20,11 @@ function RebaseTimer() {
     return state.app.currentBlock;
   });
 
+  const rebaseBlock = useSelector(state => {
+    return state.app.rebaseBlock;
+  });
+
   function initializeTimer() {
-    const rebaseBlock = getRebaseBlock(currentBlock);
     const seconds = secondsUntilBlock(currentBlock, rebaseBlock);
     setSecondsToRebase(seconds);
     const prettified = prettifySeconds(seconds);

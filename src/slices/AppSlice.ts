@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import { addresses } from "../constants";
 import { abi as OlympusStakingv2ABI } from "../abi/OlympusStakingv2.json";
+import { abi as DistributorABI } from "../abi/DistributorContract.json";
 import { abi as sOHMv2 } from "../abi/sOhmv2.json";
 import { abi as GuruABI } from "../abi/Guru.json";
 import { setAll, getTokenPrice, getMarketPrice } from "../helpers";
@@ -8,7 +9,7 @@ import allBonds from "../helpers/AllBonds";
 import { createSlice, createSelector, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "src/store";
 import { IBaseAsyncThunk } from "./interfaces";
-import { OlympusStakingv2, SOhmv2 } from "../typechain";
+import { OlympusStakingv2, SOhmv2, DistributorContract } from "../typechain";
 
 const initialState = {
   loading: false,
@@ -33,6 +34,14 @@ export const loadAppDetails = createAsyncThunk(
     }
 
     const currentBlock = await provider.getBlockNumber();
+
+    const distributorContract = new ethers.Contract(
+      addresses[networkID].DISTRIBUTOR_ADDRESS as string,
+      DistributorABI,
+      provider,
+    ) as DistributorContract;
+
+    const rebaseBlock = await distributorContract.nextEpochBlock();
 
     const stakingContract = new ethers.Contract(
       addresses[networkID].STAKING_ADDRESS as string,
@@ -80,6 +89,7 @@ export const loadAppDetails = createAsyncThunk(
     return {
       currentIndex: ethers.utils.formatUnits(currentIndex, "gwei"),
       currentBlock,
+      rebaseBlock: rebaseBlock.toNumber(),
       fiveDayRate,
       stakingAPY,
       stakingTVL,
