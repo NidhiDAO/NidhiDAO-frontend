@@ -141,7 +141,7 @@ function NavContent() {
                           {bond.displayName}
                           <span className="bond-pair-roi">
                             {bond.getAvailability(chainID) && bond.bondDiscount && trim(bond.bondDiscount * 100, 2)
-                              ? trim(bond.bondDiscount * 100, 2)
+                              ? trim(bond.bondDiscount * 100, 2) + "%"
                               : "Sold Out"}
                           </span>
                         </Typography>
