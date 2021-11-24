@@ -58,6 +58,7 @@ export const loadAppDetails = createAsyncThunk(
     const guruMainContract = new ethers.Contract(addresses[networkID].GURU_ADDRESS as string, GuruABI, provider);
 
     // Calculating staking
+    const rebasesPerDay = 24 / 7;
     const epoch = await stakingContract.epoch();
     console.log(`epoch`, epoch);
     const stakingReward = epoch.distribute;
@@ -72,8 +73,8 @@ export const loadAppDetails = createAsyncThunk(
     console.log(`circ`, circ);
     const stakingRebase = Number(stakingReward.toString()) / Number(circ.toString());
     console.log("stakingRebase", stakingRebase);
-    const fiveDayRate = Math.pow(1 + stakingRebase, 5 * 3) - 1;
-    const stakingAPY = (Math.pow(1 + stakingRebase, 365 * 3) - 1) * 100;
+    const fiveDayRate = Math.pow(1 + stakingRebase, 5 * rebasesPerDay) - 1;
+    const stakingAPY = (Math.pow(1 + stakingRebase, 365 * rebasesPerDay) - 1) * 100;
     console.log(`stakingAPY ${stakingAPY}`);
 
     const tokenAmountsPromises = allBonds.map(bond => bond.getTreasuryBalance(networkID, provider));
