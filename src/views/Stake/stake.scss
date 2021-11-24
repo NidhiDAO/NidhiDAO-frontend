@@ -91,7 +91,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-overflow: ellipsis;
     // white-space: nowrap;
     overflow-wrap: anywhere;
   }
@@ -103,6 +102,9 @@
   .stake-index {
     align-items: flex-start;
     max-width: 100%;
+  }
+  h4 {
+    word-break: break-word;
   }
 }
 
