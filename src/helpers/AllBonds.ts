@@ -35,7 +35,7 @@ export const dai = new StableBond({
   name: "dai",
   displayName: "DAI",
   bondToken: "DAI",
-  isAvailable: { [NetworkID.Mumbai]: true, [NetworkID.Polygon]: true },
+  isAvailable: { [NetworkID.Mumbai]: true, [NetworkID.Polygon]: false },
   bondIconSvg: DaiImg,
   bondContractABI: DaiBondContract,
   networkAddrs: {
