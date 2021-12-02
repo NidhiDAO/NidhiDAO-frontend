@@ -1,6 +1,17 @@
 import { trim } from "../../helpers";
 import BondLogo from "../../components/BondLogo";
-import { Box, Button, Link, Paper, Typography, TableRow, TableCell, SvgIcon, Slide } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  Link,
+  Paper,
+  Typography,
+  TableRow,
+  TableCell,
+  SvgIcon,
+  Slide,
+  makeStyles,
+} from "@material-ui/core";
 import { ReactComponent as ArrowUp } from "../../assets/icons/arrow-up.svg";
 import { NavLink } from "react-router-dom";
 import "./choosebond.scss";
@@ -113,24 +124,44 @@ export function BondTableData({ bond }) {
         </div>
       </TableCell>
       <TableCell align="left">
-        <Typography>
-          <>
-            {isBondLoading ? (
-              <Skeleton width="50px" />
-            ) : (
-              new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-                maximumFractionDigits: 2,
-                minimumFractionDigits: 2,
-              }).format(bond.bondPrice)
-            )}
-          </>
-        </Typography>
+        {bond.isAvailable === false ? (
+          <div style={{ width: "80px" }}>
+            <Typography style={{ justifyContent: "flex-end" }}>–</Typography>
+          </div>
+        ) : (
+          <Typography>
+            <>
+              {isBondLoading ? (
+                <Skeleton width="50px" />
+              ) : (
+                new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 2,
+                }).format(bond.bondPrice)
+              )}
+            </>
+          </Typography>
+        )}
       </TableCell>
-      <TableCell align="left">{isBondLoading ? <Skeleton /> : `${trim(bond.bondDiscount * 100, 2)}%`}</TableCell>
+      <TableCell align="left">
+        {bond.isAvailable === false ? (
+          <div style={{ width: "50px" }}>
+            <Typography style={{ justifyContent: "flex-end" }}>–</Typography>
+          </div>
+        ) : isBondLoading ? (
+          <Skeleton />
+        ) : (
+          `${trim(bond.bondDiscount * 100, 2)}%`
+        )}
+      </TableCell>
       <TableCell align="right">
-        {isBondLoading ? (
+        {bond.isAvailable === false ? (
+          <div style={{ width: "40px" }}>
+            <Typography style={{ justifyContent: "flex-end" }}>–</Typography>
+          </div>
+        ) : isBondLoading ? (
           <Skeleton />
         ) : (
           new Intl.NumberFormat("en-US", {
@@ -144,7 +175,11 @@ export function BondTableData({ bond }) {
       <TableCell>
         <Link component={NavLink} to={`/bonds/${bond.name}`}>
           <Button variant="contained" color="secondary" disabled={!bond.isAvailable[chainID]}>
-            <Typography variant="h6">{!bond.isAvailable[chainID] ? "SOLD OUT" : "BOND"}</Typography>
+            {bond.isAvailable === false ? (
+              <Typography variant="h6">COMING SOON</Typography>
+            ) : (
+              <Typography variant="h6">{!bond.isAvailable[chainID] ? "SOLD OUT" : "BOND"}</Typography>
+            )}
           </Button>
         </Link>
       </TableCell>

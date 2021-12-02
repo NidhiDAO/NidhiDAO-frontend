@@ -24,7 +24,7 @@ import _ from "lodash";
 import { allBondsMap } from "src/helpers/AllBonds";
 
 function ChooseBond() {
-  const { bonds } = useBonds();
+  const { bonds, realBonds } = useBonds();
   const isSmallScreen = useMediaQuery("(max-width: 733px)"); // change to breakpoint query
   const isVerySmallScreen = useMediaQuery("(max-width: 420px)");
 
@@ -118,6 +118,12 @@ function ChooseBond() {
                       <BondTableData key={bond.name} bond={bond} />
                     ))}
                   </TableBody>
+                </Table>
+              </TableContainer>
+              <Typography variant="h5">Bond with real world assets</Typography>
+              <TableContainer>
+                <Table aria-label="Bond with real world assets">
+                  <TableBody>{realBonds && realBonds.map(rb => <BondTableData key={rb.name} bond={rb} />)}</TableBody>
                 </Table>
               </TableContainer>
             </Grid>
