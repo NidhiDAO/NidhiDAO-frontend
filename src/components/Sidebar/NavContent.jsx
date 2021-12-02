@@ -18,7 +18,7 @@ import "./sidebar.scss";
 function NavContent() {
   const [isActive] = useState();
   const address = useAddress();
-  const { bonds } = useBonds();
+  const { bonds, realBonds } = useBonds();
   const { chainID } = useWeb3Context();
 
   const checkPage = useCallback((match, location, page) => {
@@ -141,7 +141,29 @@ function NavContent() {
                   ))}
                 </div>
               </div>
-              {/* 
+              <div className="dapp-menu-data discounts">
+                <div className="bond-discounts">
+                  <Typography variant="body2">Bond with real world assets</Typography>
+                  {realBonds &&
+                    realBonds.map((realBond, i) => (
+                      <Link disabled component={NavLink} to={`/bonds/`} key={i} className={"bond"}>
+                        {/*<Link className={"bond"}>*/}
+                        {!realBond.bondDiscount ? (
+                          <Skeleton variant="text" width={"150px"} />
+                        ) : (
+                          <Typography variant="body2">
+                            {realBond.displayName}
+                            <span className="bond-pair-roi">
+                              {realBond.bondDiscount}
+                              {/*  {realBond.bondDiscount && trim(realBond.bondDiscount * 100, 2)}%*/}
+                            </span>
+                          </Typography>
+                        )}
+                      </Link>
+                    ))}
+                </div>
+              </div>
+              {/*
               <Link
                 component={NavLink}
                 id="claim-nav"
