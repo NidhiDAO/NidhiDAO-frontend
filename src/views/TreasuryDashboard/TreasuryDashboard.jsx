@@ -339,8 +339,6 @@ function TreasuryDashboard() {
         {/*</Grid>*/}
         {/*  </Grid>*/}
         {/*</Zoom>*/}
-
-        <Stake />
       </Container>
     </div>
   );

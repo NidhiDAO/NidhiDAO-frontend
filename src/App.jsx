@@ -221,9 +221,9 @@ function App() {
               <Redirect to="/dashboard" />
             </Route>
 
-            {/*<Route path="/stake">*/}
-            {/*  <Stake />*/}
-            {/*</Route>*/}
+            <Route path="/stake">
+              <Stake />
+            </Route>
 
             {/*<Route path="/wrap">*/}
             {/*  <Wrap />*/}
