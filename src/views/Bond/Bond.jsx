@@ -108,8 +108,8 @@ function Bond({ bond, nft }) {
                       COMING SOON
                     </Button>
                     <Typography className="bond-nft-description">
-                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
-                      the the industry's standard dummy text ever since the 1500s.
+                      GURU is the first algorithmic currency backed by real world assets. Enabled by our partnership
+                      with Tangible, the NidhiDAO treasury is filled with gold, fine wine and other tangible assets.
                     </Typography>
                     <Button
                       href="https://medium.com/tangible/introducing-tangible-5f3947276125"
