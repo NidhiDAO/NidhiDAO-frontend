@@ -146,7 +146,7 @@ function NavContent() {
                   <Typography variant="body2">Bond with real world assets</Typography>
                   {realBonds &&
                     realBonds.map((realBond, i) => (
-                      <Link disabled component={NavLink} to={`/bonds/`} key={i} className={"bond"}>
+                      <Link disabled component={NavLink} to={`/bonds/${realBond.name}`} key={i} className={"bond"}>
                         {/*<Link className={"bond"}>*/}
                         {!realBond.bondDiscount ? (
                           <Skeleton variant="text" width={"150px"} />

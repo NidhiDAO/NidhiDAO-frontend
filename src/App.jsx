@@ -93,7 +93,7 @@ function App() {
 
   const isAppLoading = useSelector(state => state.app.loading);
   const isAppLoaded = useSelector(state => typeof state.app.marketPrice != "undefined"); // Hacky way of determining if we were able to load app Details.
-  const { bonds } = useBonds();
+  const { bonds, realBonds } = useBonds();
   async function loadDetails(whichDetails) {
     // NOTE (unbanksy): If you encounter the following error:
     // Unhandled Rejection (Error): call revert exception (method="balanceOf(address)", errorArgs=null, errorName=null, errorSignature=null, reason=null, code=CALL_EXCEPTION, version=abi/5.4.0)
@@ -237,6 +237,14 @@ function App() {
                   </Route>
                 );
               })}
+              {realBonds &&
+                realBonds.map(bond => {
+                  return (
+                    <Route exact key={bond.name} path={`/bonds/${bond.name}`}>
+                      <Bond bond={bond} nft />
+                    </Route>
+                  );
+                })}
               <ChooseBond />
             </Route>
 
