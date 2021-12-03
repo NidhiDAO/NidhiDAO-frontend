@@ -2,8 +2,10 @@ import { useCallback, useState } from "react";
 import { NavLink } from "react-router-dom";
 import Social from "./Social";
 import externalUrls from "./externalUrls";
-// import { ReactComponent as StakeIcon } from "../../assets/icons/stake.svg";
 import { ReactComponent as BondIcon } from "../../assets/icons/bond.svg";
+import { ReactComponent as ActiveBondIcon } from "../../assets/icons/active-bond.svg";
+import { ReactComponent as StakeIcon } from "../../assets/icons/stake.svg";
+import { ReactComponent as ActiveStakeIcon } from "../../assets/icons/active-stake.svg";
 import { ReactComponent as DashboardIcon } from "../../assets/icons/dashboard.svg";
 import { ReactComponent as NidhiIcon } from "../../assets/icons/nidhiHeader.svg";
 import { ReactComponent as WalletIcon } from "../../assets/icons/wallet.svg";
@@ -17,6 +19,7 @@ import "./sidebar.scss";
 
 function NavContent() {
   const [isActive] = useState();
+  const [activeIcon, setActiveIcon] = useState();
   const address = useAddress();
   const { bonds, realBonds } = useBonds();
   const { chainID } = useWeb3Context();
@@ -24,15 +27,19 @@ function NavContent() {
   const checkPage = useCallback((match, location, page) => {
     const currentPath = location.pathname.replace("/", "");
     if (currentPath.indexOf("dashboard") >= 0 && page === "dashboard") {
+      setActiveIcon("dashboard");
       return true;
     }
     if (currentPath.indexOf("stake") >= 0 && page === "stake") {
+      setActiveIcon("stake");
       return true;
     }
     if (currentPath.indexOf("claim") >= 0 && page === "claim") {
+      setActiveIcon("claim");
       return true;
     }
     if ((currentPath.indexOf("bonds") >= 0 || currentPath.indexOf("choose_bond") >= 0) && page === "bonds") {
+      setActiveIcon("bonds");
       return true;
     }
     return false;
@@ -77,20 +84,20 @@ function NavContent() {
                 </Typography>
               </Link>
 
-              {/*<Link*/}
-              {/*  component={NavLink}*/}
-              {/*  id="stake-nav"*/}
-              {/*  to="/"*/}
-              {/*  isActive={(match, location) => {*/}
-              {/*    return checkPage(match, location, "stake");*/}
-              {/*  }}*/}
-              {/*  className={`button-dapp-menu ${isActive ? "active" : ""}`}*/}
-              {/*>*/}
-              {/*  <Typography variant="h6">*/}
-              {/*    <SvgIcon color="primary" component={StakeIcon} />*/}
-              {/*    Stake*/}
-              {/*  </Typography>*/}
-              {/*</Link>*/}
+              <Link
+                component={NavLink}
+                id="stake-nav"
+                to="/stake"
+                isActive={(match, location) => {
+                  return checkPage(match, location, "stake");
+                }}
+                className={`button-dapp-menu ${isActive ? "active" : ""}`}
+              >
+                <Typography variant="h6">
+                  <SvgIcon color="primary" component={activeIcon === "stake" ? ActiveStakeIcon : StakeIcon} />
+                  Stake
+                </Typography>
+              </Link>
 
               {/*<Link*/}
               {/*  component={NavLink}*/}
@@ -117,7 +124,7 @@ function NavContent() {
                 className={`button-dapp-menu ${isActive ? "active" : ""}`}
               >
                 <Typography variant="h6">
-                  <SvgIcon color="primary" component={BondIcon} />
+                  <SvgIcon color="primary" component={activeIcon === "bonds" ? ActiveBondIcon : BondIcon} />
                   Bond
                 </Typography>
               </Link>

@@ -153,15 +153,16 @@ export const dark = responsiveFontSizes(
         MuiLink: {
           root: {
             color: darkTheme.color,
-            "& #bond-icon, & #doc-icon, & #dashboard-icon, & #settings-icon": {
+            "& #non-active-bond-icon, & #non-active-stake-icon, & #doc-icon, & #dashboard-icon, & #settings-icon": {
               fill: "none",
               stroke: darkTheme.color,
             },
             "&:hover": {
-              "&:hover #bond-icon, &:hover #doc-icon, & #dashboard-icon, & #settings-icon": {
-                fill: "none",
-                stroke: darkTheme.textHighlightColor,
-              },
+              "&:hover #non-active-bond-icon, &:hover #non-active-stake-icon, &:hover #doc-icon, & #dashboard-icon, & #settings-icon":
+                {
+                  fill: "none",
+                  stroke: darkTheme.textHighlightColor,
+                },
               color: darkTheme.textHighlightColor,
               textDecoration: "none",
               "&.active": {
@@ -171,9 +172,13 @@ export const dark = responsiveFontSizes(
             "&.active": {
               color: darkTheme.activeLinkColor,
               textDecoration: "none",
-              "& #dashboard-icon, & #bond-icon": {
+              "& #dashboard-icon": {
                 fill: darkTheme.textHighlightColor,
                 stroke: darkTheme.textHighlightColor,
+              },
+              " & #stake-icon, & #bond-icon": {
+                fill: darkTheme.textHighlightColor,
+                stroke: "none",
               },
             },
           },
@@ -262,6 +267,11 @@ export const dark = responsiveFontSizes(
           containedSecondary: {
             border: "0.5px solid rgba(255, 255, 255, 0.2)",
             backgroundColor: darkTheme.containedSecondaryButtonBG,
+            "&:disabled": {
+              backgroundColor: darkTheme.containedSecondaryButtonBG,
+              opacity: 0.5,
+              color: darkTheme.color,
+            },
             "&:hover": {
               backgroundColor: `${darkTheme.containedSecondaryButtonHoverBG} !important`,
             },
