@@ -13,6 +13,7 @@ import {
   makeStyles,
   Button,
   SvgIcon,
+  Link,
 } from "@material-ui/core";
 import TabPanel from "../../components/TabPanel";
 import BondHeader from "./BondHeader";
@@ -102,7 +103,7 @@ function Bond({ bond, nft }) {
                       id="bond-coming-soon-btn"
                       className="nft-coming-soon-button nft-coming-soon-button-text "
                       disabled={true}
-                      onClick={() => console.log("A")}
+                      onClick={() => {}}
                     >
                       COMING SOON
                     </Button>
@@ -111,12 +112,13 @@ function Bond({ bond, nft }) {
                       the the industry's standard dummy text ever since the 1500s.
                     </Typography>
                     <Button
+                      href="https://medium.com/tangible/introducing-tangible-5f3947276125"
+                      target="_blank"
                       variant="contained"
                       color="primary"
                       id="bond-approve-btn"
                       className="transaction-button nft-coming-soon-button"
                       disabled={false}
-                      onClick={() => console.log("A")}
                       endIcon={<SvgIcon component={LinkIcon} className="nft-learn-more-button" />}
                     >
                       Learn More
