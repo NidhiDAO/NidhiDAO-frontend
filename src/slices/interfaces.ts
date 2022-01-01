@@ -1,4 +1,5 @@
 import { JsonRpcProvider, StaticJsonRpcProvider } from "@ethersproject/providers";
+import { BigNumber, BigNumberish } from "ethers";
 import { Bond, NetworkID } from "src/lib/Bond";
 
 export interface IJsonRPCError {
@@ -54,6 +55,7 @@ export interface ICalcBondDetailsAsyncThunk extends IBaseBondAsyncThunk {
 
 export interface IBondAssetAsyncThunk extends IBaseBondAsyncThunk, IValueAsyncThunk {
   readonly slippage: number;
+  readonly tnftId: string;
 }
 
 export interface IRedeemBondAsyncThunk extends IBaseBondAsyncThunk {
@@ -65,4 +67,11 @@ export interface IRedeemAllBondsAsyncThunk extends IBaseAsyncThunk {
   readonly bonds: Bond[];
   readonly address: string;
   readonly autostake: boolean;
+}
+
+export interface ITNFT {
+  tokenId: BigNumberish;
+  uri: string;
+  brand: string;
+  storageEndTimeInSeconds: BigNumberish;
 }

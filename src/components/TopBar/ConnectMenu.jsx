@@ -105,7 +105,7 @@ function ConnectMenu({ theme }) {
         </Button>
       )}
 
-      <Popper id={id} open={open} onClose={handleClose} anchorEl={anchorEl} placement="button" transition>
+      <Popper id={id} open={open} onClose={handleClose} anchorEl={anchorEl} transition>
         {({ TransitionProps }) => {
           return (
             <Fade {...TransitionProps} timeout={100}>

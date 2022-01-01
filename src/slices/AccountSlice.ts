@@ -2,15 +2,16 @@ import { BigNumber, BigNumberish, ethers } from "ethers";
 import { addresses } from "../constants";
 import { abi as ierc20Abi } from "../abi/IERC20.json";
 import { abi as sOHMv2 } from "../abi/sOhmv2.json";
-import { abi as fuseProxy } from "../abi/FuseProxy.json";
 import { abi as wsOHM } from "../abi/wsOHM.json";
+import { BondType } from "../lib/Bond";
 
 import { setAll } from "../helpers";
 
 import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "src/store";
-import { IBaseAddressAsyncThunk, ICalcUserBondDetailsAsyncThunk } from "./interfaces";
-import { FuseProxy, IERC20, SOhmv2, WsOHM } from "src/typechain";
+import { IBaseAddressAsyncThunk, ICalcUserBondDetailsAsyncThunk, ITNFT } from "./interfaces";
+import { IERC20, PairContract, SOhmv2, WsOHM } from "src/typechain";
+import { TangibleNFT } from "src/typechain/Tangible";
 
 export const getBalances = createAsyncThunk(
   "account/getBalances",
@@ -231,6 +232,7 @@ export interface IUserBondDetails {
   interestDue: number;
   bondMaturationBlock: number;
   pendingPayout: string; //Payout formatted in gwei.
+  tangibleNFTs: ITNFT[];
 }
 export const calculateUserBondDetails = createAsyncThunk(
   "account/calculateUserBondDetails",
@@ -246,13 +248,13 @@ export const calculateUserBondDetails = createAsyncThunk(
         interestDue: 0,
         bondMaturationBlock: 0,
         pendingPayout: "",
+        tangibleNFTs: [],
       };
     }
     // dispatch(fetchBondInProgress());
 
     // Calculate bond details.
     const bondContract = bond.getContractForBond(networkID, provider);
-    const reserveContract = bond.getContractForReserve(networkID, provider);
 
     let pendingPayout, bondMaturationBlock;
 
@@ -262,22 +264,59 @@ export const calculateUserBondDetails = createAsyncThunk(
     pendingPayout = await bondContract.pendingPayoutFor(address);
 
     let allowance,
-      balance = BigNumber.from(0);
-    allowance = await reserveContract.allowance(address, bond.getAddressForBond(networkID));
-    balance = await reserveContract.balanceOf(address);
-    // formatEthers takes BigNumber => String
-    const balanceVal = ethers.utils.formatEther(balance);
+      balance = BigNumber.from(0),
+      balanceVal = ethers.utils.formatEther(balance),
+      reserveContract: PairContract | TangibleNFT,
+      tangibleNFTs: ITNFT[] = [];
+
+    if (bond.type === BondType.Gold) {
+      try {
+        reserveContract = bond.getContractForReserve(networkID, provider) as TangibleNFT;
+        console.log("reserveContract", reserveContract);
+        allowance = BigNumber.from(10000000);
+        balance = await reserveContract.balanceOf(address);
+        console.log("user balance", balance);
+        balanceVal = balance.toString();
+        for (let i = 0; i < Number(balanceVal); i++) {
+          const tokenId = await reserveContract.tokenOfOwnerByIndex(address, i);
+          const uri = await reserveContract.tokenURI(tokenId);
+          const brand = await reserveContract.tokenBrand(tokenId);
+          const storageEndTimeInSeconds = await reserveContract.storageEndTime(tokenId);
+          const tnft = {
+            tokenId,
+            uri,
+            brand,
+            storageEndTimeInSeconds,
+          } as ITNFT;
+          tangibleNFTs.push(tnft);
+        }
+      } catch (error) {
+        console.error(`Error getting allowance and/or balance for bond type ${bond.type}`);
+        console.error(error);
+      }
+    } else {
+      try {
+        reserveContract = bond.getContractForReserve(networkID, provider) as PairContract;
+        allowance = await reserveContract.allowance(address, bond.getAddressForBond(networkID));
+        balance = await reserveContract.balanceOf(address);
+        balanceVal = ethers.utils.formatEther(balance);
+      } catch (error) {
+        console.error(`Error getting allowance and/or balance for bond type ${bond.type}`);
+      }
+    }
+
     // balanceVal should NOT be converted to a number. it loses decimal precision
     return {
       bond: bond.name,
       displayName: bond.displayName,
       bondIconSvg: bond.bondIconSvg,
       isLP: bond.isLP,
-      allowance: Number(allowance.toString()),
+      allowance: Number(allowance && allowance.toString()),
       balance: balanceVal,
       interestDue,
       bondMaturationBlock,
       pendingPayout: ethers.utils.formatUnits(pendingPayout, "gwei"),
+      tangibleNFTs,
     };
   },
 );

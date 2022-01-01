@@ -67,7 +67,7 @@ function Bond({ bond, nft }) {
     setView(newView);
   };
 
-  if (nft) {
+  if (bond.bondType === -1) {
     return (
       <Fade in={true} mountOnEnter unmountOnExit>
         <Grid container id="bond-view">
@@ -124,6 +124,65 @@ function Bond({ bond, nft }) {
                       Learn More
                     </Button>
                   </Box>
+                </TabPanel>
+              </Paper>
+            </Fade>
+          </Backdrop>
+        </Grid>
+      </Fade>
+    );
+  } else if (bond.bondType === 2) {
+    return (
+      <Fade in={true} mountOnEnter unmountOnExit>
+        <Grid container id="bond-view">
+          <Backdrop open={true}>
+            <Fade in={true}>
+              <Paper className="ohm-card ohm-modal">
+                <BondHeader
+                  bond={bond}
+                  slippage={slippage}
+                  recipientAddress={recipientAddress}
+                  onSlippageChange={onSlippageChange}
+                  onRecipientAddressChange={onRecipientAddressChange}
+                />
+
+                <Box direction="row" className="bond-price-data-row">
+                  <div className="bond-price-data">
+                    <Typography variant="h5" color="textSecondary">
+                      Bond Price
+                    </Typography>
+                    <Typography variant="h3" className="price" color="primary">
+                      {isBondLoading ? <Skeleton /> : formatCurrency(bond.bondPrice, 2)}
+                    </Typography>
+                  </div>
+                  <div className="bond-price-data">
+                    <Typography variant="h5" color="textSecondary">
+                      Market Price
+                    </Typography>
+                    <Typography variant="h3" color="primary" className="price">
+                      {isBondLoading ? <Skeleton /> : formatCurrency(bond.marketPrice, 2)}
+                    </Typography>
+                  </div>
+                </Box>
+
+                <Tabs
+                  centered
+                  value={view}
+                  textColor="primary"
+                  indicatorColor="primary"
+                  onChange={changeView}
+                  aria-label="bond tabs"
+                >
+                  <Tab label={<span className={classes.customStyleOnTab}>BOND</span>} {...a11yProps(0)} />
+                  <Tab label={<span className={classes.customStyleOnTab}>REDEEM</span>} {...a11yProps(1)} />
+                </Tabs>
+
+                <TabPanel value={view} index={0}>
+                  <BondPurchase bond={bond} slippage={slippage} recipientAddress={recipientAddress} />
+                </TabPanel>
+
+                <TabPanel value={view} index={1}>
+                  <BondRedeem bond={bond} />
                 </TabPanel>
               </Paper>
             </Fade>

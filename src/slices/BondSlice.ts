@@ -16,6 +16,10 @@ import {
   IRedeemBondAsyncThunk,
 } from "./interfaces";
 import { segmentUA } from "../helpers/userAnalyticHelpers";
+import { BondType } from "src/lib/Bond";
+import { TangibleNFT } from "src/typechain/Tangible";
+import { EthContract, PairContract } from "src/typechain";
+import { GoldBarBond } from "src/typechain/TNFTBonds";
 
 export const changeApproval = createAsyncThunk(
   "bonding/changeApproval",
@@ -26,11 +30,19 @@ export const changeApproval = createAsyncThunk(
     }
 
     const signer = provider.getSigner();
-    const reserveContract = bond.getContractForReserve(networkID, signer);
     const bondAddr = bond.getAddressForBond(networkID);
 
     let approveTx;
-    let bondAllowance = await reserveContract.allowance(address, bondAddr);
+    let bondAllowance = BigNumber.from(0);
+
+    let reserveContract: PairContract | TangibleNFT;
+    if (bond.type === BondType.Gold) {
+      reserveContract = bond.getContractForReserve(networkID, signer) as TangibleNFT;
+      bondAllowance = BigNumber.from(1);
+    } else {
+      reserveContract = bond.getContractForReserve(networkID, signer) as PairContract;
+      bondAllowance = await reserveContract.allowance(address, bondAddr);
+    }
 
     // return early if approval already exists
     if (bondAllowance.gt(BigNumber.from("0"))) {
@@ -71,6 +83,7 @@ export interface IBondDetails {
   bondPrice: number;
   marketPrice: number;
 }
+
 export const calcBondDetails = createAsyncThunk(
   "bonding/calcBondDetails",
   async ({ bond, value, provider, networkID }: ICalcBondDetailsAsyncThunk, { dispatch }): Promise<IBondDetails> => {
@@ -79,7 +92,6 @@ export const calcBondDetails = createAsyncThunk(
     }
     const amountInWei = ethers.utils.parseEther(value);
 
-    // const vestingTerm = VESTING_TERM; // hardcoded for now
     let bondPrice = BigNumber.from(0),
       bondDiscount = 0,
       valuation = 0,
@@ -149,9 +161,15 @@ export const calcBondDetails = createAsyncThunk(
     }
 
     // Calculate bonds purchased
-    let purchased = await bond.getTreasuryBalance(networkID, provider);
+    let purchased = 0;
+    try {
+      purchased = await bond.getTreasuryBalance(networkID, provider);
+    } catch (error) {
+      console.error("Error getting treasury balance");
+      console.error(error);
+    }
 
-    return {
+    const bondDetails = {
       bond: bond.name,
       bondDiscount,
       debtRatio: Number(debtRatio.toString()),
@@ -162,12 +180,14 @@ export const calcBondDetails = createAsyncThunk(
       bondPrice: Number(bondPrice.toString()) / Math.pow(10, 18),
       marketPrice: marketPrice,
     };
+
+    return bondDetails;
   },
 );
 
 export const bondAsset = createAsyncThunk(
   "bonding/bondAsset",
-  async ({ value, address, bond, networkID, provider, slippage }: IBondAssetAsyncThunk, { dispatch }) => {
+  async ({ value, address, bond, networkID, provider, slippage, tnftId }: IBondAssetAsyncThunk, { dispatch }) => {
     const depositorAddress = address;
     const acceptedSlippage = slippage / 100 || 0.005; // 0.5% as default
     // parseUnits takes String => BigNumber
@@ -178,7 +198,8 @@ export const bondAsset = createAsyncThunk(
     // Calculate maxPremium based on premium and slippage.
     // const calculatePremium = await bonding.calculatePremium();
     const signer = provider.getSigner();
-    const bondContract = bond.getContractForBond(networkID, signer);
+    let bondContract = bond.getContractForBond(networkID, signer);
+
     const calculatePremium = await bondContract.bondPrice();
     const maxPremium = Math.round(Number(calculatePremium.toString()) * (1 + acceptedSlippage));
     console.log("maxPremium", maxPremium);
@@ -195,7 +216,30 @@ export const bondAsset = createAsyncThunk(
       txHash: "",
     };
     try {
-      bondTx = await bondContract.deposit(valueInWei, maxPremium, depositorAddress);
+      if (bond.type === BondType.Gold) {
+        bondContract = bondContract as GoldBarBond;
+        console.log("bondContract.address", bondContract.address);
+        const reserveContract = bond.getContractForReserve(networkID, signer) as TangibleNFT;
+        const isApproved = await reserveContract.getApproved(tnftId);
+        console.log("isApproved", isApproved);
+        console.log("reserveContract", reserveContract.address);
+        if (isApproved !== bondContract.address) {
+          const approveTx = await reserveContract.approve(bondContract.address, tnftId);
+          dispatch(
+            fetchPendingTxns({
+              txnHash: approveTx.hash,
+              text: "Approving " + bond.displayName,
+              type: "approve_" + bond.name,
+            }),
+          );
+          await approveTx.wait();
+        }
+
+        bondTx = await bondContract.deposit(reserveContract.address, tnftId, maxPremium.toString(), depositorAddress);
+      } else {
+        bondContract = bondContract as EthContract;
+        bondTx = await bondContract.deposit(valueInWei, maxPremium, depositorAddress);
+      }
       dispatch(
         fetchPendingTxns({ txnHash: bondTx.hash, text: "Bonding " + bond.displayName, type: "bond_" + bond.name }),
       );

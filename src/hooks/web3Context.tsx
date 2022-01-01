@@ -10,14 +10,6 @@ import { NodeHelper } from "src/helpers/NodeHelper";
  * kept as function to mimic `getMainnetURI()`
  * @returns string
  */
-function getTestnetURI() {
-  return EnvHelper.alchemyTestnetURI;
-}
-
-/**
- * kept as function to mimic `getMainnetURI()`
- * @returns string
- */
 function getMumbaiTestnetURI() {
   return EnvHelper.mumbaiTestnetURI;
 }
@@ -45,6 +37,7 @@ const ALL_URIs = NodeHelper.getNodesUris();
  */
 function getMainnetURI(): string {
   // Shuffles the URIs for "intelligent" loadbalancing
+  console.log("ALL_URIs: ", ALL_URIs);
   const allURIs = ALL_URIs.sort(() => Math.random() - 0.5);
 
   // There is no lightweight way to test each URL. so just return a random one.
@@ -96,7 +89,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
   const [chainID, setChainID] = useState(1);
   const [address, setAddress] = useState("");
 
-  const [uri, setUri] = useState(getMainnetURI());
+  const [uri, setUri] = useState(getPolygonURI());
 
   const [provider, setProvider] = useState<JsonRpcProvider>(new StaticJsonRpcProvider(uri));
 
@@ -116,8 +109,6 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
           package: WalletConnectProvider,
           options: {
             rpc: {
-              1: getMainnetURI(),
-              4: getTestnetURI(),
               80001: getMumbaiTestnetURI(),
               137: getPolygonURI(),
             },
@@ -162,7 +153,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
    * throws an error if networkID is not 1 (mainnet) or 4 (rinkeby)
    */
   const _checkNetwork = (otherChainID: number): Boolean => {
-    if (chainID !== 80001 && otherChainID !== 137) {
+    if (otherChainID !== 80001 && otherChainID !== 137) {
       return false;
     }
     if (chainID !== otherChainID) {

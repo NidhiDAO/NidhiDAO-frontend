@@ -1,4 +1,4 @@
-import { StableBond, LPBond, NetworkID, CustomBond, BondType } from "src/lib/Bond";
+import { StableBond, LPBond, NetworkID, CustomBond, BondType, GoldBond } from "src/lib/Bond";
 import { addresses } from "src/constants";
 
 import { ReactComponent as DaiImg } from "src/assets/tokens/DAI.svg";
@@ -9,17 +9,20 @@ import { ReactComponent as GuruLusdImg } from "src/assets/tokens/GURU-LUSD.svg";
 import { ReactComponent as GuruEthImg } from "src/assets/tokens/GURU-WETH.svg";
 import { ReactComponent as wETHImg } from "src/assets/tokens/wETH.svg";
 import { ReactComponent as LusdImg } from "src/assets/tokens/LUSD.svg";
+import { ReactComponent as GoldImg } from "src/assets/tokens/GOLD.svg";
 
 import { abi as FraxOhmBondContract } from "src/abi/bonds/OhmFraxContract.json";
 import { abi as BondOhmDaiContract } from "src/abi/bonds/OhmDaiContract.json";
 import { abi as BondOhmLusdContract } from "src/abi/bonds/OhmLusdContract.json";
 import { abi as BondOhmEthContract } from "src/abi/bonds/OhmEthContract.json";
+import { abi as BondTangibleNFT } from "src/abi/bonds/TangibleNFT.json";
 
 import { abi as DaiBondContract } from "src/abi/bonds/DaiContract.json";
 import { abi as ReserveOhmLusdContract } from "src/abi/reserves/OhmLusd.json";
 import { abi as ReserveOhmDaiContract } from "src/abi/reserves/OhmDai.json";
 import { abi as ReserveOhmFraxContract } from "src/abi/reserves/OhmFrax.json";
 import { abi as ReserveOhmEthContract } from "src/abi/reserves/OhmEth.json";
+import { abi as ReserveTangibleNFT } from "src/abi/reserves/TangibleNFT.json";
 
 import { abi as FraxBondContract } from "src/abi/bonds/FraxContract.json";
 import { abi as LusdBondContract } from "src/abi/bonds/LusdContract.json";
@@ -236,11 +239,112 @@ export const guru_dai = new LPBond({
 //   },
 // });
 
+export const gold100g = new GoldBond({
+  name: "gold100g",
+  displayName: "100g",
+  bondToken: "gold100g",
+  isAvailable: { [NetworkID.Polygon]: false, [NetworkID.Mumbai]: true },
+  bondIconSvg: GoldImg,
+  bondContractABI: BondTangibleNFT,
+  reserveContract: ReserveTangibleNFT,
+  networkAddrs: {
+    [NetworkID.Polygon]: {
+      bondAddress: "0xFb16DFc9dB02db00933ACf6226927BF736F406f9",
+      reserveAddress: "0xD2b00B41Fcd4f37D570D13eA0CDF6b63669A2E2A",
+    },
+    [NetworkID.Mumbai]: {
+      bondAddress: "0xFb16DFc9dB02db00933ACf6226927BF736F406f9",
+      reserveAddress: "0xD2b00B41Fcd4f37D570D13eA0CDF6b63669A2E2A",
+    },
+  },
+  bondCalcAddrs: {
+    [NetworkID.Polygon]: "0x53a92A2075623461f3E8Cc642685a1e9C650bBC9",
+    [NetworkID.Mumbai]: "0x53a92A2075623461f3E8Cc642685a1e9C650bBC9",
+  },
+  bondType: BondType.Gold,
+});
+
+export const gold250g = new GoldBond({
+  name: "gold250g",
+  displayName: "250g",
+  bondToken: "gold250g",
+  isAvailable: { [NetworkID.Polygon]: false, [NetworkID.Mumbai]: true },
+  bondIconSvg: GoldImg,
+  bondContractABI: BondTangibleNFT,
+  reserveContract: ReserveTangibleNFT,
+  networkAddrs: {
+    [NetworkID.Polygon]: {
+      bondAddress: "0xbEEF798af82cf9525A2021796EeA2Ac209b38DEe",
+      reserveAddress: "0xb06F0A62f157d10d20a9bfC67B72a6BD71dC3E15",
+    },
+    [NetworkID.Mumbai]: {
+      bondAddress: "0xbEEF798af82cf9525A2021796EeA2Ac209b38DEe",
+      reserveAddress: "0xb06F0A62f157d10d20a9bfC67B72a6BD71dC3E15",
+    },
+  },
+  bondCalcAddrs: {
+    [NetworkID.Polygon]: "0x0413da7E411a81E3188Fb89fCBf72895715690aD",
+    [NetworkID.Mumbai]: "0x0413da7E411a81E3188Fb89fCBf72895715690aD",
+  },
+  bondType: BondType.Gold,
+});
+
+export const gold500g = new GoldBond({
+  name: "gold500g",
+  displayName: "500g",
+  bondToken: "gold500g",
+  isAvailable: { [NetworkID.Polygon]: false, [NetworkID.Mumbai]: true },
+  bondIconSvg: GoldImg,
+  bondContractABI: BondTangibleNFT,
+  reserveContract: ReserveTangibleNFT,
+  networkAddrs: {
+    [NetworkID.Polygon]: {
+      bondAddress: "0xbEEF798af82cf9525A2021796EeA2Ac209b38DEe",
+      reserveAddress: "0xcD5aBa6397F3ccb2A11789Af7Fe4eA1D800E0030",
+    },
+    [NetworkID.Mumbai]: {
+      bondAddress: "0xe12177482b4e5a28278c544238e072B29132cFF2",
+      reserveAddress: "0xcD5aBa6397F3ccb2A11789Af7Fe4eA1D800E0030",
+    },
+  },
+  bondCalcAddrs: {
+    [NetworkID.Polygon]: "0x35bf0b7Bb3E4A432ac1C1E24C11010834e0BA3AB",
+    [NetworkID.Mumbai]: "0x35bf0b7Bb3E4A432ac1C1E24C11010834e0BA3AB",
+  },
+  bondType: BondType.Gold,
+});
+
+export const gold1000g = new GoldBond({
+  name: "gold1000g",
+  displayName: "1000g",
+  bondToken: "gold1000g",
+  isAvailable: { [NetworkID.Polygon]: false, [NetworkID.Mumbai]: true },
+  bondIconSvg: GoldImg,
+  bondContractABI: BondTangibleNFT,
+  reserveContract: ReserveTangibleNFT,
+  networkAddrs: {
+    [NetworkID.Polygon]: {
+      bondAddress: "0x420908Ac5a58f202bAa44723213ebd2dd729783f",
+      reserveAddress: "0x19fE602B8f78b9A3B0162dEf0c3A89Fe57D67Ed8",
+    },
+    [NetworkID.Mumbai]: {
+      bondAddress: "0x420908Ac5a58f202bAa44723213ebd2dd729783f",
+      reserveAddress: "0x19fE602B8f78b9A3B0162dEf0c3A89Fe57D67Ed8",
+    },
+  },
+  bondCalcAddrs: {
+    [NetworkID.Polygon]: "0xa1F429924aF08A9EA157CAF7fbD8B05c7fD173EC",
+    [NetworkID.Mumbai]: "0xa1F429924aF08A9EA157CAF7fbD8B05c7fD173EC",
+  },
+  bondType: BondType.Gold,
+});
+
 // HOW TO ADD A NEW BOND:
 // Is it a stableCoin bond? use `new StableBond`
 // Is it an LP Bond? use `new LPBond`
 // Add new bonds to this array!!
 export const allBonds = [dai, guru_dai];
+export const allRealBonds = [gold100g, gold250g, gold500g, gold1000g];
 export const allBondsMap = allBonds.reduce((prevVal, bond) => {
   return { ...prevVal, [bond.name]: bond };
 }, {});

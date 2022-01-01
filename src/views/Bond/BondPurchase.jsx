@@ -9,6 +9,8 @@ import {
   OutlinedInput,
   Slide,
   Typography,
+  FormControlLabel,
+  Radio,
 } from "@material-ui/core";
 import { prettifySeconds, secondsUntilBlock, shorten, trim } from "../../helpers";
 import { bondAsset, calcBondDetails, changeApproval } from "../../slices/BondSlice";
@@ -19,6 +21,7 @@ import useDebounce from "../../hooks/Debounce";
 import { error } from "../../slices/MessagesSlice";
 import { DisplayBondDiscount } from "./Bond";
 import ConnectButton from "../../components/ConnectButton";
+import { BondType } from "../../lib/Bond";
 
 function BondPurchase({ bond, slippage, recipientAddress }) {
   const SECONDS_TO_REFRESH = 60;
@@ -26,6 +29,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
   const { provider, address, chainID } = useWeb3Context();
 
   const [quantity, setQuantity] = useState("");
+  const [tnftId, setTNFTId] = useState("");
   const [secondsToRefresh, setSecondsToRefresh] = useState(SECONDS_TO_REFRESH);
 
   const currentBlock = useSelector(state => {
@@ -49,6 +53,8 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
       dispatch(error("Please enter a value!"));
     } else if (isNaN(quantity)) {
       dispatch(error("Please enter a valid value!"));
+    } else if (bond.type === BondType.Gold && tnftId === "") {
+      dispatch(error("Please select a TNFT to bond!"));
     } else if (bond.interestDue > 0 || bond.pendingPayout > 0) {
       const shouldProceed = window.confirm(
         "You have an existing bond. Bonding will reset your vesting period and forfeit rewards. We recommend claiming rewards first or using a fresh wallet. Do you still want to proceed?",
@@ -62,6 +68,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
             networkID: chainID,
             provider,
             address: recipientAddress || address,
+            tnftId,
           }),
         );
       }
@@ -74,6 +81,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
           networkID: chainID,
           provider,
           address: recipientAddress || address,
+          tnftId,
         }),
       );
       clearInput();
@@ -82,6 +90,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
 
   const clearInput = () => {
     setQuantity(0);
+    setTNFTId("");
   };
 
   const hasAllowance = useCallback(() => {
@@ -102,7 +111,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
   const bondDetailsDebounce = useDebounce(quantity, 1000);
 
   useEffect(() => {
-    dispatch(calcBondDetails({ bond, value: quantity, provider, networkID: chainID }));
+    dispatch(calcBondDetails({ bond, value: quantity, provider, networkID: chainID, tnftId }));
   }, [bondDetailsDebounce]);
 
   useEffect(() => {
@@ -117,7 +126,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
       setSecondsToRefresh(SECONDS_TO_REFRESH);
     }
     return () => clearInterval(interval);
-  }, [secondsToRefresh, quantity]);
+  }, [secondsToRefresh, quantity, tnftId]);
 
   const onSeekApproval = async () => {
     dispatch(changeApproval({ address, bond, provider, networkID: chainID }));
@@ -126,6 +135,138 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
   const displayUnits = bond.displayUnits;
 
   const isAllowanceDataLoading = bond.allowance == null;
+
+  if (bond.type === BondType.Gold) {
+    return (
+      <Box display="flex" flexDirection="column">
+        <Box className="wallet-menu" display="flex" justifyContent="space-around" flexWrap="wrap">
+          {!address ? (
+            <ConnectButton />
+          ) : (
+            <>
+              {isAllowanceDataLoading ? (
+                <Skeleton width="200px" />
+              ) : (
+                <>
+                  <FormControl
+                    className="ohm-input"
+                    variant="outlined"
+                    color="primary"
+                    fullWidth
+                    onChange={e => {
+                      setTNFTId(e.target.value);
+                      setQuantity("1");
+                    }}
+                  >
+                    <Typography variant="body1" align="left" color="textSecondary">
+                      If you have not bonded this <b>{bond.displayName} TNFT</b> before. <br /> You will have to approve
+                      two transactions (One Approve and One Bond).
+                    </Typography>
+                    {bond.tangibleNFTs.map(tnft => (
+                      <FormControlLabel
+                        key={tnft.tokenId.toString()}
+                        control={<Radio size="small" />}
+                        labelPlacement="bottom"
+                        label={
+                          <>
+                            <p>TokenID: {tnft.tokenId.toString()}</p>
+                            <p>Uri: {tnft.uri}</p>
+                            <p>Brand: {tnft.brand}</p>
+                            <p>Storage End Time in Seconds: {tnft.storageEndTimeInSeconds.toString()}</p>
+                          </>
+                        }
+                        value={tnft.tokenId}
+                      />
+                    ))}
+                  </FormControl>
+
+                  {!bond.isAvailable[chainID] ? (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      id="bond-btn"
+                      className="transaction-button"
+                      disabled={true}
+                    >
+                      Sold Out
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      id="bond-btn"
+                      className="transaction-button"
+                      disabled={isPendingTxn(pendingTransactions, "bond_" + bond.name)}
+                      onClick={onBond}
+                    >
+                      {txnButtonText(pendingTransactions, "bond_" + bond.name, "Bond")}
+                    </Button>
+                  )}
+                </>
+              )}{" "}
+            </>
+          )}
+        </Box>
+
+        <Slide direction="left" in={true} mountOnEnter unmountOnExit {...{ timeout: 533 }}>
+          <Box className="bond-data">
+            <div className="data-row">
+              <Typography>Your Balance</Typography>
+              <Typography>
+                {isBondLoading ? (
+                  <Skeleton width="100px" />
+                ) : (
+                  <>
+                    {trim(bond.balance, 4)} {displayUnits}
+                  </>
+                )}
+              </Typography>
+            </div>
+
+            <div className={`data-row`}>
+              <Typography>You Will Get</Typography>
+              <Typography id="bond-value-id" className="price-data">
+                {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.bondQuote, 4) || "0"} GURU`}
+              </Typography>
+            </div>
+
+            <div className={`data-row`}>
+              <Typography>Max You Can Buy</Typography>
+              <Typography id="bond-value-id" className="price-data">
+                {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.maxBondPrice, 4) || "0"} GURU`}
+              </Typography>
+            </div>
+
+            <div className="data-row">
+              <Typography>ROI</Typography>
+              <Typography>
+                {isBondLoading ? <Skeleton width="100px" /> : <DisplayBondDiscount key={bond.name} bond={bond} />}
+              </Typography>
+            </div>
+
+            <div className="data-row">
+              <Typography>Debt Ratio</Typography>
+              <Typography>
+                {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.debtRatio / 10000000, 2)}%`}
+              </Typography>
+            </div>
+
+            <div className="data-row">
+              <Typography>Vesting Term</Typography>
+              <Typography>{isBondLoading ? <Skeleton width="100px" /> : vestingPeriod()}</Typography>
+            </div>
+
+            {recipientAddress !== address && (
+              <div className="data-row">
+                <Typography>Recipient</Typography>
+                <Typography>{isBondLoading ? <Skeleton width="100px" /> : shorten(recipientAddress)}</Typography>
+              </div>
+            )}
+          </Box>
+        </Slide>
+      </Box>
+    );
+  }
 
   return (
     <Box display="flex" flexDirection="column">

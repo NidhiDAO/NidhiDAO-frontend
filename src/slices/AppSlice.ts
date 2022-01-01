@@ -5,7 +5,7 @@ import { abi as DistributorABI } from "../abi/DistributorContract.json";
 import { abi as sOHMv2 } from "../abi/sOhmv2.json";
 import { abi as GuruABI } from "../abi/Guru.json";
 import { setAll, getTokenPrice, getMarketPrice } from "../helpers";
-import allBonds from "../helpers/AllBonds";
+import allBonds, { allRealBonds } from "../helpers/AllBonds";
 import { createSlice, createSelector, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "src/store";
 import { IBaseAsyncThunk } from "./interfaces";
@@ -60,26 +60,22 @@ export const loadAppDetails = createAsyncThunk(
     // Calculating staking
     const rebasesPerDay = 24 / 7;
     const epoch = await stakingContract.epoch();
-    console.log(`epoch`, epoch);
     const stakingReward = epoch.distribute;
     const ts = await sohmMainContract.totalSupply();
-    console.log(`ts`, ts);
     const totalSupply = (await guruMainContract.totalSupply()) / Math.pow(10, 9);
     const marketCap = totalSupply * marketPrice;
     const circ = await sohmMainContract.circulatingSupply();
     const circAny = circ as any;
     const circSupply = circAny / Math.pow(10, 9);
     const stakingTVL = circSupply * marketPrice;
-    console.log(`circ`, circ);
     const stakingRebase = Number(stakingReward.toString()) / Number(circ.toString());
-    console.log("stakingRebase", stakingRebase);
     const fiveDayRate = Math.pow(1 + stakingRebase, 5 * rebasesPerDay) - 1;
     const stakingAPY = (Math.pow(1 + stakingRebase, 365 * rebasesPerDay) - 1) * 100;
-    console.log(`stakingAPY ${stakingAPY}`);
 
     const tokenAmountsPromises = allBonds.map(bond => bond.getTreasuryBalance(networkID, provider));
-    const tokenAmounts = await Promise.all(tokenAmountsPromises);
-    console.log("tokenAmounts", tokenAmounts);
+    const realTokenAmountsPromises = allRealBonds.map(bond => bond.getTreasuryBalance(networkID, provider));
+    const tokenAmounts = await Promise.all([...tokenAmountsPromises, ...realTokenAmountsPromises]);
+    console.log("tokenAmounts: ", tokenAmounts);
     const treasuryMarketValue = tokenAmounts.reduce((curr, prev) => {
       return curr + prev;
     }, 0);

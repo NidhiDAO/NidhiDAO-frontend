@@ -30,6 +30,7 @@ import { light as lightTheme } from "./themes/light.js";
 import { girth as gTheme } from "./themes/girth.js";
 import { v4 as uuidv4 } from "uuid";
 import "./style.scss";
+import { BondType } from "./lib/Bond";
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
@@ -119,6 +120,11 @@ function App() {
       bonds.map(bond => {
         dispatch(calcBondDetails({ bond, value: null, provider: loadProvider, networkID: chainID }));
       });
+      realBonds
+        .filter(bond => bond.type === BondType.Gold)
+        .map(bond => {
+          dispatch(calcBondDetails({ bond, value: null, provider: loadProvider, networkID: chainID }));
+        });
     },
     [connected],
   );
@@ -129,6 +135,11 @@ function App() {
       bonds.map(bond => {
         dispatch(calculateUserBondDetails({ address, bond, provider, networkID: chainID }));
       });
+      realBonds
+        .filter(bond => bond.type === BondType.Gold)
+        .map(bond => {
+          dispatch(calculateUserBondDetails({ address, bond, provider, networkID: chainID }));
+        });
     },
     [connected],
   );

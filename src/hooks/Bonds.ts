@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import allBonds from "src/helpers/AllBonds";
+import allBonds, { allRealBonds } from "src/helpers/AllBonds";
 import { IUserBondDetails } from "src/slices/AccountSlice";
 import { Bond } from "src/lib/Bond";
 import { IBondDetails } from "src/slices/BondSlice";
@@ -40,22 +40,6 @@ function useBonds(chainID: number) {
   const realBondsMock = [
     {
       bondContractABI: [],
-      bondIconSvg: GoldImg,
-      bondToken: "GOLD",
-      displayName: "GOLD",
-      displayUnits: "LP",
-      isAvailable: false,
-      isLP: false,
-      lpUrl: "",
-      name: "gold",
-      networkAddrs: {},
-      reserveContract: [],
-      bondDiscount: "Coming soon",
-      type: 1,
-      price: "-",
-    },
-    {
-      bondContractABI: [],
       bondIconSvg: FineWineImg,
       bondToken: "FINE WINE",
       displayName: "FINE WINE",
@@ -67,7 +51,7 @@ function useBonds(chainID: number) {
       networkAddrs: {},
       reserveContract: [],
       bondDiscount: "Coming soon",
-      type: 1,
+      bondType: -1,
       price: "-",
     },
     {
@@ -83,7 +67,7 @@ function useBonds(chainID: number) {
       networkAddrs: {},
       reserveContract: [],
       bondDiscount: "Coming soon",
-      type: 1,
+      typebondType: -1,
       price: "-",
     },
     {
@@ -99,7 +83,7 @@ function useBonds(chainID: number) {
       networkAddrs: {},
       reserveContract: [],
       bondDiscount: "Coming soon",
-      type: 1,
+      bondType: -1,
       price: "-",
     },
   ];
@@ -125,9 +109,29 @@ function useBonds(chainID: number) {
       return a["bondDiscount"] > b["bondDiscount"] ? -1 : b["bondDiscount"] > a["bondDiscount"] ? 1 : 0;
     });
 
+    let realBondDetails: IAllBondData[];
+    realBondDetails = allRealBonds
+      .flatMap(bond => {
+        if (bondState[bond.name] && bondState[bond.name].bondDiscount) {
+          return Object.assign(bond, bondState[bond.name]); // Keeps the object type
+        }
+        return bond;
+      })
+      .flatMap(bond => {
+        if (accountBondsState[bond.name]) {
+          return Object.assign(bond, accountBondsState[bond.name]);
+        }
+        return bond;
+      });
+
+    const mostProfitableRealBonds = realBondDetails.concat().sort((a, b) => {
+      if (a.getAvailability(chainID) === false) return 1;
+      return a["bondDiscount"] > b["bondDiscount"] ? -1 : b["bondDiscount"] > a["bondDiscount"] ? 1 : 0;
+    });
+
     setBonds(mostProfitableBonds);
     // @ts-ignore
-    setRealBonds(realBondsMock);
+    setRealBonds([...mostProfitableRealBonds, ...realBondsMock]);
   }, [bondState, accountBondsState, bondLoading]);
 
   // Debug Log:
