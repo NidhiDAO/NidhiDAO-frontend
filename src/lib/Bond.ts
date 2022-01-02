@@ -221,11 +221,17 @@ export class GoldBond extends Bond {
     const bondAddress = this.getAddressForReserve(networkID);
     return new ethers.Contract(bondAddress, this.reserveContract, provider) as TangibleNFT;
   }
+  getContractForCalculator(networkID: NetworkID, provider: StaticJsonRpcProvider | JsonRpcSigner) {
+    const calcAddress = this.bondCalcAddrs[networkID];
+    return new ethers.Contract(calcAddress, GoldBondCalcABI, provider) as GoldBarCalc;
+  }
   async getTreasuryBalance(networkID: NetworkID, provider: StaticJsonRpcProvider) {
     try {
       const token = this.getContractForReserve(networkID, provider);
       const bondContract = this.getContractForBond(networkID, provider);
+      console.debug("bondContract:", bondContract);
       const assetPrice = await bondContract.assetPrice();
+      console.debug("assetPrice:", assetPrice.toString());
       const tokenAmount = await token.balanceOf(addresses[networkID].TREASURY_ADDRESS);
 
       let tokenUSD = (Number(assetPrice.toString()) * Number(tokenAmount.toString())) / Math.pow(10, 8);

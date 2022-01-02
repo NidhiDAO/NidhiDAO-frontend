@@ -253,13 +253,13 @@ export const gold100g = new GoldBond({
       reserveAddress: "0xD2b00B41Fcd4f37D570D13eA0CDF6b63669A2E2A",
     },
     [NetworkID.Mumbai]: {
-      bondAddress: "0xFb16DFc9dB02db00933ACf6226927BF736F406f9",
-      reserveAddress: "0xD2b00B41Fcd4f37D570D13eA0CDF6b63669A2E2A",
+      bondAddress: "0x5B74b86f1252d408a24e0b602b23167D2BeE9c86",
+      reserveAddress: "0x1aF63214a3598F18eBf353C34A963529637Bb46F",
     },
   },
   bondCalcAddrs: {
     [NetworkID.Polygon]: "0x53a92A2075623461f3E8Cc642685a1e9C650bBC9",
-    [NetworkID.Mumbai]: "0x53a92A2075623461f3E8Cc642685a1e9C650bBC9",
+    [NetworkID.Mumbai]: "0xbC3A254a3107D6279374E86f1387d06e53C1aA16",
   },
   bondType: BondType.Gold,
 });
@@ -328,13 +328,13 @@ export const gold1000g = new GoldBond({
       reserveAddress: "0x19fE602B8f78b9A3B0162dEf0c3A89Fe57D67Ed8",
     },
     [NetworkID.Mumbai]: {
-      bondAddress: "0x420908Ac5a58f202bAa44723213ebd2dd729783f",
-      reserveAddress: "0x19fE602B8f78b9A3B0162dEf0c3A89Fe57D67Ed8",
+      bondAddress: "0x5B74b86f1252d408a24e0b602b23167D2BeE9c86",
+      reserveAddress: "0x1aF63214a3598F18eBf353C34A963529637Bb46F",
     },
   },
   bondCalcAddrs: {
     [NetworkID.Polygon]: "0xa1F429924aF08A9EA157CAF7fbD8B05c7fD173EC",
-    [NetworkID.Mumbai]: "0xa1F429924aF08A9EA157CAF7fbD8B05c7fD173EC",
+    [NetworkID.Mumbai]: "0xFEeB8ba2785e36C5E06e07C342611E191B4B0747",
   },
   bondType: BondType.Gold,
 });
@@ -344,7 +344,7 @@ export const gold1000g = new GoldBond({
 // Is it an LP Bond? use `new LPBond`
 // Add new bonds to this array!!
 export const allBonds = [dai, guru_dai];
-export const allRealBonds = [gold100g, gold250g, gold500g, gold1000g];
+export const allRealBonds = [gold100g];
 export const allBondsMap = allBonds.reduce((prevVal, bond) => {
   return { ...prevVal, [bond.name]: bond };
 }, {});

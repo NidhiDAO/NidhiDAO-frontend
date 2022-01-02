@@ -34,6 +34,7 @@ export const loadAppDetails = createAsyncThunk(
     }
 
     const currentBlock = await provider.getBlockNumber();
+    console.log("networkID", networkID);
 
     const distributorContract = new ethers.Contract(
       addresses[networkID].DISTRIBUTOR_ADDRESS as string,

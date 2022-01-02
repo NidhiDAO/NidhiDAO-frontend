@@ -1,6 +1,6 @@
 import { JsonRpcProvider, StaticJsonRpcProvider } from "@ethersproject/providers";
 import { BigNumber, BigNumberish } from "ethers";
-import { Bond, NetworkID } from "src/lib/Bond";
+import { Bond, GoldBond, NetworkID } from "src/lib/Bond";
 
 export interface IJsonRPCError {
   readonly message: string;
@@ -42,7 +42,7 @@ export interface ICalcUserBondDetailsAsyncThunk extends IBaseAddressAsyncThunk, 
 // Bond Slice
 
 export interface IBaseBondAsyncThunk extends IBaseAsyncThunk {
-  readonly bond: Bond;
+  readonly bond: Bond | GoldBond;
 }
 
 export interface IApproveBondAsyncThunk extends IBaseBondAsyncThunk {

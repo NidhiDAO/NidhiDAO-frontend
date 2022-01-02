@@ -37,7 +37,6 @@ const ALL_URIs = NodeHelper.getNodesUris();
  */
 function getMainnetURI(): string {
   // Shuffles the URIs for "intelligent" loadbalancing
-  console.log("ALL_URIs: ", ALL_URIs);
   const allURIs = ALL_URIs.sort(() => Math.random() - 0.5);
 
   // There is no lightweight way to test each URL. so just return a random one.
@@ -86,7 +85,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
   const [connected, setConnected] = useState(false);
   // NOTE (appleseed): if you are testing on rinkeby you need to set chainId === 4 as the default for non-connected wallet testing...
   // ... you also need to set getTestnetURI() as the default uri state below
-  const [chainID, setChainID] = useState(1);
+  const [chainID, setChainID] = useState(137);
   const [address, setAddress] = useState("");
 
   const [uri, setUri] = useState(getPolygonURI());
@@ -129,19 +128,23 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
   // ... polling to the backend providers for network changes
   const _initListeners = useCallback(
     rawProvider => {
+      console.log("rawProvider", rawProvider);
       if (!rawProvider.on) {
         return;
       }
       rawProvider.on("accountsChanged", async (accounts: string[]) => {
+        console.log("account changed");
         setTimeout(() => window.location.reload(), 1);
       });
 
       rawProvider.on("chainChanged", async (chain: number) => {
+        console.log("chain changed");
         _checkNetwork(chain);
         setTimeout(() => window.location.reload(), 1);
       });
 
       rawProvider.on("network", (_newNetwork: any, oldNetwork: any) => {
+        console.log("network changed");
         if (!oldNetwork) return;
         window.location.reload();
       });
@@ -150,9 +153,11 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
   );
 
   /**
-   * throws an error if networkID is not 1 (mainnet) or 4 (rinkeby)
+   * throws an error if networkID is not 80001 (mumbai) or 137 (polygon)
    */
   const _checkNetwork = (otherChainID: number): Boolean => {
+    console.log("chainID", chainID);
+    console.log("otherChainID", otherChainID);
     if (otherChainID !== 80001 && otherChainID !== 137) {
       return false;
     }
@@ -187,6 +192,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
     _initListeners(rawProvider);
     const connectedProvider = new Web3Provider(rawProvider, "any");
     const chainId = await connectedProvider.getNetwork().then(network => network.chainId);
+    console.log("chainId2", chainId);
     const connectedAddress = await connectedProvider.getSigner().getAddress();
     const validNetwork = _checkNetwork(chainId);
     if (!validNetwork) {
@@ -202,7 +208,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
     setConnected(true);
 
     return connectedProvider;
-  }, [provider, web3Modal, connected]);
+  }, [provider, web3Modal, connected, chainID]);
 
   const disconnect = useCallback(async () => {
     console.log("disconnecting");

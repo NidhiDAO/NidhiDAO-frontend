@@ -33,7 +33,7 @@ function useBonds(chainID: number) {
   const bondState = useSelector((state: IBondingStateView) => state.bonding);
   const accountBondsState = useSelector((state: IBondingStateView) => state.account.bonds);
   const [bonds, setBonds] = useState<Bond[] | IAllBondData[]>(initialBondArray);
-  const [realBonds, setRealBonds] = useState();
+  const [realBonds, setRealBonds] = useState([]);
 
   // TODO set Bond with real  world assets instead of mock:
 

@@ -16,7 +16,7 @@ import {
   IRedeemBondAsyncThunk,
 } from "./interfaces";
 import { segmentUA } from "../helpers/userAnalyticHelpers";
-import { BondType } from "src/lib/Bond";
+import { BondType, GoldBond } from "src/lib/Bond";
 import { TangibleNFT } from "src/typechain/Tangible";
 import { EthContract, PairContract } from "src/typechain";
 import { GoldBarBond } from "src/typechain/TNFTBonds";
@@ -117,6 +117,7 @@ export const calcBondDetails = createAsyncThunk(
 
     try {
       bondPrice = await bondContract.bondPriceInUSD();
+      console.debug("bondPrice:", bondPrice.toString());
       // bondDiscount = (marketPrice * Math.pow(10, 9) - bondPrice) / bondPrice; // 1 - bondPrice / (bondPrice * Math.pow(10, 9));
       bondDiscount = (marketPrice * Math.pow(10, 18) - Number(bondPrice.toString())) / Number(bondPrice.toString()); // 1 - bondPrice / (bondPrice * Math.pow(10, 9));
     } catch (e) {
@@ -126,6 +127,19 @@ export const calcBondDetails = createAsyncThunk(
     if (Number(value) === 0) {
       // if inputValue is 0 avoid the bondQuote calls
       bondQuote = BigNumber.from(0);
+    } else if (bond.type === BondType.Gold) {
+      const goldBond = bond as GoldBond;
+      const goldCalc = goldBond.getContractForCalculator(networkID, provider);
+      valuation = Number((await goldCalc.valuation()).toString());
+      console.log("valuation", valuation);
+      bondQuote = await bondContract.payoutFor(valuation);
+      if (!amountInWei.isZero() && Number(bondQuote.toString()) < 100000) {
+        bondQuote = BigNumber.from(0);
+        const errorString = "Amount is too small!";
+        dispatch(error(errorString));
+      } else {
+        bondQuote = Number(bondQuote.toString()) / Math.pow(10, 9);
+      }
     } else if (bond.isLP) {
       valuation = Number(
         (await bondCalcContract.valuation(bond.getAddressForReserve(networkID), amountInWei)).toString(),
