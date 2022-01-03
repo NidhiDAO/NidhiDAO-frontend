@@ -253,13 +253,13 @@ export const gold100g = new GoldBond({
       reserveAddress: "0xD2b00B41Fcd4f37D570D13eA0CDF6b63669A2E2A",
     },
     [NetworkID.Mumbai]: {
-      bondAddress: "0xa1A3C57b47674E894c538129D16C13fdA5684a74",
-      reserveAddress: "0x1aF63214a3598F18eBf353C34A963529637Bb46F",
+      bondAddress: "0xe4F7bE3F0498137c00F96A2E61E6F060AA81e3e0",
+      reserveAddress: "0xCa6673bfA54A155Ce8aff75303a4a5A4A005A466",
     },
   },
   bondCalcAddrs: {
     [NetworkID.Polygon]: "0x53a92A2075623461f3E8Cc642685a1e9C650bBC9",
-    [NetworkID.Mumbai]: "0x017d400D5D58902838E1bb14F3Cd52e22EB67Ecd",
+    [NetworkID.Mumbai]: "0x75853287bdD1F1CF32e6C0ae72c1B1d056d9eAb8",
   },
   bondType: BondType.Gold,
 });
@@ -278,13 +278,13 @@ export const gold250g = new GoldBond({
       reserveAddress: "0xb06F0A62f157d10d20a9bfC67B72a6BD71dC3E15",
     },
     [NetworkID.Mumbai]: {
-      bondAddress: "0xbEEF798af82cf9525A2021796EeA2Ac209b38DEe",
-      reserveAddress: "0xb06F0A62f157d10d20a9bfC67B72a6BD71dC3E15",
+      bondAddress: "0xC2CC160591e78C42Bc198776B12AFfbFF4DaeAf7",
+      reserveAddress: "0x6C43F23FE49D6a4c636EFD41B32757C35039bd20",
     },
   },
   bondCalcAddrs: {
     [NetworkID.Polygon]: "0x0413da7E411a81E3188Fb89fCBf72895715690aD",
-    [NetworkID.Mumbai]: "0x0413da7E411a81E3188Fb89fCBf72895715690aD",
+    [NetworkID.Mumbai]: "0xe00BEE9850aE6859b6C02eC06a7ee84438E38c12",
   },
   bondType: BondType.Gold,
 });
@@ -303,13 +303,13 @@ export const gold500g = new GoldBond({
       reserveAddress: "0xcD5aBa6397F3ccb2A11789Af7Fe4eA1D800E0030",
     },
     [NetworkID.Mumbai]: {
-      bondAddress: "0xe12177482b4e5a28278c544238e072B29132cFF2",
-      reserveAddress: "0xcD5aBa6397F3ccb2A11789Af7Fe4eA1D800E0030",
+      bondAddress: "0x2dD51cF5b4E4649dDc7572E4B772cfb6Fcd50b5E",
+      reserveAddress: "0xe0Fc6FC070A165F827A3A4bd5b43b6a283108Eb8",
     },
   },
   bondCalcAddrs: {
     [NetworkID.Polygon]: "0x35bf0b7Bb3E4A432ac1C1E24C11010834e0BA3AB",
-    [NetworkID.Mumbai]: "0x35bf0b7Bb3E4A432ac1C1E24C11010834e0BA3AB",
+    [NetworkID.Mumbai]: "0x3E772ad3051204F686A14220749Df6B91a52057e",
   },
   bondType: BondType.Gold,
 });
@@ -328,13 +328,13 @@ export const gold1000g = new GoldBond({
       reserveAddress: "0x19fE602B8f78b9A3B0162dEf0c3A89Fe57D67Ed8",
     },
     [NetworkID.Mumbai]: {
-      bondAddress: "0x5B74b86f1252d408a24e0b602b23167D2BeE9c86",
-      reserveAddress: "0x1aF63214a3598F18eBf353C34A963529637Bb46F",
+      bondAddress: "0x1b713D61dC4D827F9D7c50Dd5cC38361986aEBc3",
+      reserveAddress: "0x9F4e04e447b693f0bAc1C88F960a547F7b944845",
     },
   },
   bondCalcAddrs: {
     [NetworkID.Polygon]: "0xa1F429924aF08A9EA157CAF7fbD8B05c7fD173EC",
-    [NetworkID.Mumbai]: "0xFEeB8ba2785e36C5E06e07C342611E191B4B0747",
+    [NetworkID.Mumbai]: "0x24423E1dd8EBE3b364265F4Db8213F536F1b7D3E",
   },
   bondType: BondType.Gold,
 });
@@ -344,7 +344,7 @@ export const gold1000g = new GoldBond({
 // Is it an LP Bond? use `new LPBond`
 // Add new bonds to this array!!
 export const allBonds = [dai, guru_dai];
-export const allRealBonds = [gold100g];
+export const allRealBonds = [gold100g, gold250g, gold500g, gold1000g];
 export const allBondsMap = allBonds.reduce((prevVal, bond) => {
   return { ...prevVal, [bond.name]: bond };
 }, {});
