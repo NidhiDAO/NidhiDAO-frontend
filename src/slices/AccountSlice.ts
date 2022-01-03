@@ -259,6 +259,7 @@ export const calculateUserBondDetails = createAsyncThunk(
     let pendingPayout, bondMaturationBlock;
 
     const bondDetails = await bondContract.bondInfo(address);
+    console.log("bondDetails.payout.toString()", bondDetails.payout.toString());
     let interestDue: BigNumberish = Number(bondDetails.payout.toString()) / Math.pow(10, 9);
     bondMaturationBlock = +bondDetails.vesting + +bondDetails.lastBlock;
     pendingPayout = await bondContract.pendingPayoutFor(address);

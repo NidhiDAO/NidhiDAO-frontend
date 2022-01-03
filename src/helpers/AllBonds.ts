@@ -253,13 +253,13 @@ export const gold100g = new GoldBond({
       reserveAddress: "0xD2b00B41Fcd4f37D570D13eA0CDF6b63669A2E2A",
     },
     [NetworkID.Mumbai]: {
-      bondAddress: "0x5B74b86f1252d408a24e0b602b23167D2BeE9c86",
+      bondAddress: "0xa1A3C57b47674E894c538129D16C13fdA5684a74",
       reserveAddress: "0x1aF63214a3598F18eBf353C34A963529637Bb46F",
     },
   },
   bondCalcAddrs: {
     [NetworkID.Polygon]: "0x53a92A2075623461f3E8Cc642685a1e9C650bBC9",
-    [NetworkID.Mumbai]: "0xbC3A254a3107D6279374E86f1387d06e53C1aA16",
+    [NetworkID.Mumbai]: "0x017d400D5D58902838E1bb14F3Cd52e22EB67Ecd",
   },
   bondType: BondType.Gold,
 });

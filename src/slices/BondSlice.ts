@@ -130,9 +130,12 @@ export const calcBondDetails = createAsyncThunk(
     } else if (bond.type === BondType.Gold) {
       const goldBond = bond as GoldBond;
       const goldCalc = goldBond.getContractForCalculator(networkID, provider);
-      valuation = Number((await goldCalc.valuation()).toString());
-      console.log("valuation", valuation);
-      bondQuote = await bondContract.payoutFor(valuation);
+      console.debug(goldCalc.address);
+      console.debug("blah", (await goldCalc.valuation()).toString());
+      const goldValuation = await goldCalc.valuation();
+      console.debug("goldValuation", goldValuation.toString());
+      bondQuote = await bondContract.payoutFor(goldValuation);
+      console.debug("bondQuote", bondQuote.toString());
       if (!amountInWei.isZero() && Number(bondQuote.toString()) < 100000) {
         bondQuote = BigNumber.from(0);
         const errorString = "Amount is too small!";
@@ -144,6 +147,7 @@ export const calcBondDetails = createAsyncThunk(
       valuation = Number(
         (await bondCalcContract.valuation(bond.getAddressForReserve(networkID), amountInWei)).toString(),
       );
+      console.debug("valutionLP:", valuation);
       bondQuote = await bondContract.payoutFor(valuation);
       if (!amountInWei.isZero() && Number(bondQuote.toString()) < 100000) {
         bondQuote = BigNumber.from(0);
