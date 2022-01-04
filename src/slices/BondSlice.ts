@@ -131,7 +131,6 @@ export const calcBondDetails = createAsyncThunk(
       const goldBond = bond as GoldBond;
       const goldCalc = goldBond.getContractForCalculator(networkID, provider);
       console.debug(goldCalc.address);
-      console.debug("blah", (await goldCalc.valuation()).toString());
       const goldValuation = await goldCalc.valuation();
       console.debug("goldValuation", goldValuation.toString());
       bondQuote = await bondContract.payoutFor(goldValuation);
