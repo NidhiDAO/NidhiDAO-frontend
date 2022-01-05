@@ -148,19 +148,19 @@ function Bond({ bond, nft }) {
 
                 <Box direction="row" className="bond-price-data-row">
                   <div className="bond-price-data">
-                    <Typography variant="h5" color="textSecondary">
+                    <Typography variant="subtitle1" color="textSecondary">
                       Bond Price
                     </Typography>
-                    <Typography variant="h3" className="price" color="primary">
-                      {isBondLoading ? <Skeleton /> : formatCurrency(bond.bondPrice, 2)}
+                    <Typography variant="h5" className="price" color="primary">
+                      {isBondLoading ? <Skeleton /> : formatCurrency(bond.bondPrice ?? 0, 2)}
                     </Typography>
                   </div>
                   <div className="bond-price-data">
-                    <Typography variant="h5" color="textSecondary">
+                    <Typography variant="subtitle1" color="textSecondary">
                       Market Price
                     </Typography>
-                    <Typography variant="h3" color="primary" className="price">
-                      {isBondLoading ? <Skeleton /> : formatCurrency(bond.marketPrice, 2)}
+                    <Typography variant="h5" color="primary" className="price">
+                      {isBondLoading ? <Skeleton /> : formatCurrency(bond.marketPrice ?? 0, 2)}
                     </Typography>
                   </div>
                 </Box>
@@ -208,19 +208,19 @@ function Bond({ bond, nft }) {
 
               <Box direction="row" className="bond-price-data-row">
                 <div className="bond-price-data">
-                  <Typography variant="h5" color="textSecondary">
+                  <Typography variant="subtitle1" color="textSecondary">
                     Bond Price
                   </Typography>
-                  <Typography variant="h3" className="price" color="primary">
-                    {isBondLoading ? <Skeleton /> : formatCurrency(bond.bondPrice, 2)}
+                  <Typography variant="h5" className="price" color="primary">
+                    {isBondLoading ? <Skeleton /> : formatCurrency(bond.bondPrice ?? 0, 2)}
                   </Typography>
                 </div>
                 <div className="bond-price-data">
-                  <Typography variant="h5" color="textSecondary">
+                  <Typography variant="subtitle1" color="textSecondary">
                     Market Price
                   </Typography>
-                  <Typography variant="h3" color="primary" className="price">
-                    {isBondLoading ? <Skeleton /> : formatCurrency(bond.marketPrice, 2)}
+                  <Typography variant="h5" color="primary" className="price">
+                    {isBondLoading ? <Skeleton /> : formatCurrency(bond.marketPrice ?? 0, 2)}
                   </Typography>
                 </div>
               </Box>
@@ -272,7 +272,7 @@ function Bond({ bond, nft }) {
 
 export function DisplayBondDiscount({ bond }) {
   const { chainID } = useWeb3Context();
-  return <>{!bond.isAvailable[chainID] ? <>--</> : `${bond.bondDiscount && trim(bond.bondDiscount * 100, 2)}%`}</>;
+  return <>{!bond.isAvailable[chainID] || !bond.bondDiscount ? <>--</> : `${trim(bond.bondDiscount * 100, 2)}%`}</>;
 }
 
 export default Bond;
