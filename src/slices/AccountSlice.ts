@@ -278,19 +278,37 @@ export const calculateUserBondDetails = createAsyncThunk(
         balance = await reserveContract.balanceOf(address);
         console.log("user balance", balance);
         balanceVal = balance.toString();
+
+        const nftPromises: Array<Promise<void>> = [];
         for (let i = 0; i < Number(balanceVal); i++) {
-          const tokenId = await reserveContract.tokenOfOwnerByIndex(address, i);
-          const uri = await reserveContract.tokenURI(tokenId);
-          const brand = await reserveContract.tokenBrand(tokenId);
-          const storageEndTimeInSeconds = await reserveContract.storageEndTime(tokenId);
-          const tnft = {
-            tokenId,
-            uri,
-            brand,
-            storageEndTimeInSeconds,
-          } as ITNFT;
-          tangibleNFTs.push(tnft);
+          const nftPromise = new Promise<void>(async resolve => {
+            try {
+              const tokenId = await (reserveContract as TangibleNFT).tokenOfOwnerByIndex(address, i);
+              const [uri, brand, storageEndTimeInSeconds] = await Promise.all([
+                (reserveContract as TangibleNFT).tokenURI(tokenId),
+                (reserveContract as TangibleNFT).tokenBrand(tokenId),
+                (reserveContract as TangibleNFT).storageEndTime(tokenId),
+              ]);
+
+              const tnft = {
+                tokenId,
+                uri,
+                brand,
+                storageEndTimeInSeconds,
+              } as ITNFT;
+              tangibleNFTs.push(tnft);
+            } catch (error) {
+              console.log("Error in fetching NFTs");
+              console.log(error);
+            } finally {
+              resolve();
+            }
+          });
+
+          nftPromises.push(nftPromise);
         }
+
+        await Promise.all(nftPromises);
       } catch (error) {
         console.error(`Error getting allowance and/or balance for bond type ${bond.type}`);
         console.error(error);

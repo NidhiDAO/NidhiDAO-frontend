@@ -241,7 +241,7 @@ export const guru_dai = new LPBond({
 
 export const gold100g = new GoldBond({
   name: "gold100g",
-  displayName: "100g",
+  displayName: "Gold Bar TNFT 100g",
   bondToken: "gold100g",
   isAvailable: { [NetworkID.Polygon]: false, [NetworkID.Mumbai]: true },
   bondIconSvg: GoldImg,
@@ -266,7 +266,7 @@ export const gold100g = new GoldBond({
 
 export const gold250g = new GoldBond({
   name: "gold250g",
-  displayName: "250g",
+  displayName: "Gold Bar TNFT 250g",
   bondToken: "gold250g",
   isAvailable: { [NetworkID.Polygon]: false, [NetworkID.Mumbai]: true },
   bondIconSvg: GoldImg,
@@ -291,7 +291,7 @@ export const gold250g = new GoldBond({
 
 export const gold500g = new GoldBond({
   name: "gold500g",
-  displayName: "500g",
+  displayName: "Gold Bar TNFT 500g",
   bondToken: "gold500g",
   isAvailable: { [NetworkID.Polygon]: false, [NetworkID.Mumbai]: true },
   bondIconSvg: GoldImg,
@@ -316,7 +316,7 @@ export const gold500g = new GoldBond({
 
 export const gold1000g = new GoldBond({
   name: "gold1000g",
-  displayName: "1000g",
+  displayName: "Gold Bar TNFT 1000g",
   bondToken: "gold1000g",
   isAvailable: { [NetworkID.Polygon]: false, [NetworkID.Mumbai]: true },
   bondIconSvg: GoldImg,
