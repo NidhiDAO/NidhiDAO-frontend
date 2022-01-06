@@ -43,7 +43,7 @@ export const dai = new StableBond({
   bondContractABI: DaiBondContract,
   networkAddrs: {
     [NetworkID.Mumbai]: {
-      bondAddress: "0x3c2b484057e7ba8832c2abc7774b30fba691c789",
+      bondAddress: "0x3e3d07B91246D9BE667035557990dA0611F6aE83",
       reserveAddress: "0x52439209dc5f526375b8ab036ef9ea15bf0ce63b",
     },
     [NetworkID.Polygon]: {
@@ -132,7 +132,7 @@ export const guru_dai = new LPBond({
   reserveContract: ReserveOhmDaiContract,
   networkAddrs: {
     [NetworkID.Mumbai]: {
-      bondAddress: "0x695e445610c2dad7fb166acae7636a3b29936364",
+      bondAddress: "0xfCD621d3Dda30568ebAAe3c89B73119A708fd55D",
       reserveAddress: "0xf86868748f973322e38152f75275777a34d8e3fd",
     },
     [NetworkID.Polygon]: {
@@ -253,13 +253,13 @@ export const gold100g = new GoldBond({
       reserveAddress: "0xD2b00B41Fcd4f37D570D13eA0CDF6b63669A2E2A",
     },
     [NetworkID.Mumbai]: {
-      bondAddress: "0xfB29c4B83c3e16d333d893a561ad53125Ba4dC5C",
+      bondAddress: "0x20b99C2F9e419E96A1Cdb220B293095E53e1f1A7",
       reserveAddress: "0xCa6673bfA54A155Ce8aff75303a4a5A4A005A466",
     },
   },
   bondCalcAddrs: {
     [NetworkID.Polygon]: "0x53a92A2075623461f3E8Cc642685a1e9C650bBC9",
-    [NetworkID.Mumbai]: "0x79b3864B2b7C74Fc02E4ab403CDc7ceF9172829F",
+    [NetworkID.Mumbai]: "0x2eb38215baEc737715435760bD4212Fa7B013d25",
   },
   bondType: BondType.Gold,
 });
@@ -278,13 +278,13 @@ export const gold250g = new GoldBond({
       reserveAddress: "0xb06F0A62f157d10d20a9bfC67B72a6BD71dC3E15",
     },
     [NetworkID.Mumbai]: {
-      bondAddress: "0x160317B67A0F042eD536A4C6a4cb8F719001000f",
+      bondAddress: "0x050E820077827a47E1f1Fdfd521941B244736277",
       reserveAddress: "0x6C43F23FE49D6a4c636EFD41B32757C35039bd20",
     },
   },
   bondCalcAddrs: {
     [NetworkID.Polygon]: "0x0413da7E411a81E3188Fb89fCBf72895715690aD",
-    [NetworkID.Mumbai]: "0x1E7d4609AEb5a71811bB53AB87dbFff61c9da696",
+    [NetworkID.Mumbai]: "0x91ec4Fd6AC3fd3EA08f6d4ecFA99e6a89Fa42727",
   },
   bondType: BondType.Gold,
 });
@@ -303,13 +303,13 @@ export const gold500g = new GoldBond({
       reserveAddress: "0xcD5aBa6397F3ccb2A11789Af7Fe4eA1D800E0030",
     },
     [NetworkID.Mumbai]: {
-      bondAddress: "0x1c0a4C9FE37F3083F03547283f3EB29d7b9B463B",
+      bondAddress: "0x79dA5D6624d3361A2cf76DFC6769bD1fc772714F",
       reserveAddress: "0xe0Fc6FC070A165F827A3A4bd5b43b6a283108Eb8",
     },
   },
   bondCalcAddrs: {
     [NetworkID.Polygon]: "0x35bf0b7Bb3E4A432ac1C1E24C11010834e0BA3AB",
-    [NetworkID.Mumbai]: "0x8AB55E3c46D0188025E84F9F6c3C7183e71d35f6",
+    [NetworkID.Mumbai]: "0xC0294e9752aDEcafc358CF43191C49FF324fBCA7",
   },
   bondType: BondType.Gold,
 });
@@ -328,13 +328,13 @@ export const gold1000g = new GoldBond({
       reserveAddress: "0x19fE602B8f78b9A3B0162dEf0c3A89Fe57D67Ed8",
     },
     [NetworkID.Mumbai]: {
-      bondAddress: "0xD5013545a50A87fb150b177403bAD6eC0127326e",
+      bondAddress: "0xCac797FAABAe8956c47541882cEC16D6C6CA43E7",
       reserveAddress: "0x9F4e04e447b693f0bAc1C88F960a547F7b944845",
     },
   },
   bondCalcAddrs: {
     [NetworkID.Polygon]: "0xa1F429924aF08A9EA157CAF7fbD8B05c7fD173EC",
-    [NetworkID.Mumbai]: "0x2C7b92F0b1F8CC18bD0B1E6443C3c6A6F48dA667",
+    [NetworkID.Mumbai]: "0x83cAbA95ba1C002b22868A052D34e17E6E2A4f5d",
   },
   bondType: BondType.Gold,
 });
