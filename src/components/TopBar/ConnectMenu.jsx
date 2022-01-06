@@ -7,6 +7,8 @@ import { ReactComponent as WalletIcon } from "../../assets/icons/wallet.svg";
 import { ReactComponent as GreenEllipsisIcon } from "../../assets/icons/greenEllipse.svg";
 import { useAddress, useWeb3Context } from "src/hooks/web3Context";
 import { shorten } from "../../helpers";
+import { useENS } from "src/hooks/useENS";
+import Davatar from "@davatar/react";
 
 function ConnectMenu({ theme }) {
   const { connect, disconnect, connected, web3, chainID } = useWeb3Context();
@@ -14,6 +16,7 @@ function ConnectMenu({ theme }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isConnected, setConnected] = useState(connected);
   const [isHovering, setIsHovering] = useState(false);
+  const { ensName } = useENS(address);
 
   const pendingTransactions = useSelector(state => {
     return state.pendingTransactions;
@@ -35,7 +38,7 @@ function ConnectMenu({ theme }) {
   }
 
   if (isConnected) {
-    buttonText = shorten(address);
+    buttonText = ensName || shorten(address);
     clickFunc = disconnect;
   }
 
