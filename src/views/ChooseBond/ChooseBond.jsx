@@ -134,7 +134,7 @@ function ChooseBond() {
       {isSmallScreen && (
         <Box className="guru-card-container">
           <Grid container item spacing={2}>
-            {bonds.map(bond => (
+            {[...bonds, ...realBonds.filter(bond => bond.type === 2)].map(bond => (
               <Grid item xs={12} key={bond.name}>
                 <BondDataCard key={bond.name} bond={bond} />
               </Grid>
