@@ -339,7 +339,7 @@ export const gold500g = new GoldBond({
   reserveContract: ReserveTangibleNFT,
   networkAddrs: {
     [NetworkID.Polygon]: {
-      bondAddress: "0x0483d79fD914A4Ee54Fa425FB5CD180087D68f4c",
+      bondAddress: "0x2466c63418432b14C0D45fC803fCEB795783EC36",
       reserveAddress: "0xcf52035528D521bD44C7777eFd20E6d44d1A8dfd",
     },
     [NetworkID.Mumbai]: {
@@ -348,7 +348,7 @@ export const gold500g = new GoldBond({
     },
   },
   bondCalcAddrs: {
-    [NetworkID.Polygon]: "0x0527A911E6Ea73CcE4B444A97b73b5A1b917d41E",
+    [NetworkID.Polygon]: "0x4CcB0f4729FF5bDbc4A5e1f4cE02EFFe229CDc8b",
     [NetworkID.Mumbai]: "0x0527A911E6Ea73CcE4B444A97b73b5A1b917d41E",
   },
   bondType: BondType.Gold,
