@@ -73,7 +73,9 @@ export const loadAppDetails = createAsyncThunk(
     const fiveDayRate = Math.pow(1 + stakingRebase, 5 * rebasesPerDay) - 1;
     const stakingAPY = (Math.pow(1 + stakingRebase, 365 * rebasesPerDay) - 1) * 100;
 
-    const tokenAmountsPromises = allBonds.map(bond => bond.getTreasuryBalance(networkID, provider));
+    const filteredBonds = allBonds.filter(bond => bond.name.indexOf("v2") >= 0);
+    console.log("filteredBonds", filteredBonds);
+    const tokenAmountsPromises = filteredBonds.map(bond => bond.getTreasuryBalance(networkID, provider));
     const realTokenAmountsPromises = allRealBonds.map(bond => bond.getTreasuryBalance(networkID, provider));
     const tokenAmounts = await Promise.all([...tokenAmountsPromises, ...realTokenAmountsPromises]);
     console.log("tokenAmounts: ", tokenAmounts);
