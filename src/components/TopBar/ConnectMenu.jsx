@@ -8,6 +8,7 @@ import { ReactComponent as GreenEllipsisIcon } from "../../assets/icons/greenEll
 import { useAddress, useWeb3Context } from "src/hooks/web3Context";
 import { shorten } from "../../helpers";
 import { useENS } from "src/hooks/useENS";
+import Davatar from "@davatar/react";
 
 function ConnectMenu({ theme }) {
   const { connect, disconnect, connected, web3, chainID } = useWeb3Context();
@@ -85,7 +86,10 @@ function ConnectMenu({ theme }) {
           key={1}
         >
           <SvgIcon className="green-ellipse-icon" viewBox="0 0 8 8" component={GreenEllipsisIcon} />
-          {buttonText}
+          <div className="account">
+            <Davatar size={20} address={address} />
+            <span>{buttonText}</span>
+          </div>
           {/*{pendingTransactions.length > 0 && (*/}
           {/*  <Slide direction="left" in={isHovering} {...{ timeout: 333 }}>*/}
           {/*    <SvgIcon className="caret-down" component={CaretDownIcon} htmlColor={primaryColor} />*/}
