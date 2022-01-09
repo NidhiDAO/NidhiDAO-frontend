@@ -8,7 +8,6 @@ import { ReactComponent as GreenEllipsisIcon } from "../../assets/icons/greenEll
 import { useAddress, useWeb3Context } from "src/hooks/web3Context";
 import { shorten } from "../../helpers";
 import { useENS } from "src/hooks/useENS";
-import Davatar from "@davatar/react";
 
 function ConnectMenu({ theme }) {
   const { connect, disconnect, connected, web3, chainID } = useWeb3Context();
