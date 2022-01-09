@@ -6,12 +6,14 @@ import {
   FormControl,
   InputAdornment,
   InputLabel,
+  ListItemText,
+  MenuItem,
   OutlinedInput,
+  Select,
   Slide,
   Typography,
-  FormControlLabel,
-  Radio,
 } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import { prettifySeconds, secondsUntilBlock, shorten, trim } from "../../helpers";
 import { bondAsset, calcBondDetails, changeApproval } from "../../slices/BondSlice";
 import { useWeb3Context } from "src/hooks/web3Context";
@@ -23,7 +25,25 @@ import { DisplayBondDiscount } from "./Bond";
 import ConnectButton from "../../components/ConnectButton";
 import { BondType } from "../../lib/Bond";
 
+const useStyles = makeStyles({
+  menuList: {
+    padding: 0,
+  },
+  menuItem: {
+    py: "12px",
+    px: "20px",
+    minHeight: 61,
+    cursor: "pointer",
+    backgroundColor: "#232E33!important",
+    "&:hover": {
+      backgroundColor: "#344750!important",
+    },
+  },
+});
+
 function BondPurchase({ bond, slippage, recipientAddress }) {
+  const classes = useStyles();
+
   const SECONDS_TO_REFRESH = 60;
   const dispatch = useDispatch();
   const { provider, address, chainID } = useWeb3Context();
@@ -43,9 +63,9 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
   });
 
   const vestingPeriod = () => {
-    const vestingBlock = parseInt(currentBlock) + parseInt(bond.vestingTerm);
+    const vestingBlock = parseInt(currentBlock) + parseInt(bond?.vestingTerm);
     const seconds = secondsUntilBlock(currentBlock, vestingBlock);
-    return prettifySeconds(seconds, "day");
+    return prettifySeconds(seconds ?? 0, "day");
   };
 
   async function onBond() {
@@ -148,37 +168,58 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
                 <Skeleton width="200px" />
               ) : (
                 <>
-                  <FormControl
+                  <Box
                     className="ohm-input"
-                    variant="outlined"
-                    color="primary"
-                    fullWidth
-                    onChange={e => {
-                      setTNFTId(e.target.value);
-                      setQuantity("1");
-                    }}
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    sx={{ gap: "16px" }}
                   >
                     <Typography variant="body1" align="left" color="textSecondary">
                       If you have not bonded this <b>{bond.displayName} TNFT</b> before. <br /> You will have to approve
                       two transactions (One Approve and One Bond).
                     </Typography>
-                    {bond.tangibleNFTs.map(tnft => (
-                      <FormControlLabel
-                        key={tnft.tokenId.toString()}
-                        control={<Radio size="small" />}
-                        labelPlacement="bottom"
-                        label={
-                          <>
-                            <p>TokenID: {tnft.tokenId.toString()}</p>
-                            <p>Uri: {tnft.uri}</p>
-                            <p>Brand: {tnft.brand}</p>
-                            <p>Storage End Time in Seconds: {tnft.storageEndTimeInSeconds.toString()}</p>
-                          </>
-                        }
-                        value={tnft.tokenId}
-                      />
-                    ))}
-                  </FormControl>
+                    <FormControl variant="outlined" color="primary" fullWidth>
+                      <InputLabel id="tnft-select-label">TNFT</InputLabel>
+                      <Select
+                        labelId="tnft-select-label"
+                        id="tnft-select"
+                        value={tnftId}
+                        label="TNFT"
+                        onChange={e => {
+                          setTNFTId(e.target.value);
+                          setQuantity("1");
+                        }}
+                        MenuProps={{ classes: { list: classes.menuList } }}
+                      >
+                        {bond.tangibleNFTs.map(tnft => (
+                          <MenuItem
+                            key={tnft.tokenId.toString()}
+                            value={tnft.tokenId.toString()}
+                            className={classes.menuItem}
+                          >
+                            <ListItemText
+                              primary={`${tnft.brand} ${bond.displayName}`}
+                              primaryTypographyProps={{
+                                style: {
+                                  lineHeight: "18px",
+                                },
+                              }}
+                              secondary={`Token ID: ${shorten(tnft.tokenId.toString())}`}
+                              secondaryTypographyProps={{
+                                style: {
+                                  lineHeight: "15px",
+                                  color: "white",
+                                  opacity: 0.5,
+                                },
+                              }}
+                            />
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Box>
 
                   {!bond.isAvailable[chainID] ? (
                     <Button
@@ -199,11 +240,11 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
                       disabled={isPendingTxn(pendingTransactions, "bond_" + bond.name)}
                       onClick={onBond}
                     >
-                      {txnButtonText(pendingTransactions, "bond_" + bond.name, "Bond")}
+                      {txnButtonText(pendingTransactions, "bond_" + bond.name, "Bond GURU")}
                     </Button>
                   )}
                 </>
-              )}{" "}
+              )}
             </>
           )}
         </Box>
@@ -226,14 +267,14 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
             <div className={`data-row`}>
               <Typography>You Will Get</Typography>
               <Typography id="bond-value-id" className="price-data">
-                {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.bondQuote, 4) || "0"} GURU`}
+                {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.bondQuote ?? 0, 4) || "0"} GURU`}
               </Typography>
             </div>
 
             <div className={`data-row`}>
               <Typography>Max You Can Buy</Typography>
               <Typography id="bond-value-id" className="price-data">
-                {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.maxBondPrice, 4) || "0"} GURU`}
+                {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.maxBondPrice ?? 0, 4) || "0"} GURU`}
               </Typography>
             </div>
 
@@ -247,7 +288,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
             <div className="data-row">
               <Typography>Debt Ratio</Typography>
               <Typography>
-                {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.debtRatio / 10000000, 2)}%`}
+                {isBondLoading ? <Skeleton width="100px" /> : `${trim((bond.debtRatio ?? 0) / 10000000, 2)}%`}
               </Typography>
             </div>
 
@@ -328,7 +369,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
                     disabled={isPendingTxn(pendingTransactions, "bond_" + bond.name)}
                     onClick={onBond}
                   >
-                    {txnButtonText(pendingTransactions, "bond_" + bond.name, "Bond")}
+                    {txnButtonText(pendingTransactions, "bond_" + bond.name, "Bond GURU")}
                   </Button>
                 ) : (
                   <Button
@@ -343,7 +384,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
                   </Button>
                 )}
               </>
-            )}{" "}
+            )}
           </>
         )}
       </Box>
@@ -366,14 +407,14 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
           <div className={`data-row`}>
             <Typography>You Will Get</Typography>
             <Typography id="bond-value-id" className="price-data">
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.bondQuote, 4) || "0"} GURU`}
+              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.bondQuote ?? 0, 4) || "0"} GURU`}
             </Typography>
           </div>
 
           <div className={`data-row`}>
             <Typography>Max You Can Buy</Typography>
             <Typography id="bond-value-id" className="price-data">
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.maxBondPrice, 4) || "0"} GURU`}
+              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.maxBondPrice ?? 0, 4) || "0"} GURU`}
             </Typography>
           </div>
 
@@ -385,9 +426,9 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
           </div>
 
           <div className="data-row">
-            <Typography>Debt Ratio</Typography>
+            <Typography sx={{ fontWeight: "400" }}>Debt Ratio</Typography>
             <Typography>
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.debtRatio / 10000000, 2)}%`}
+              {isBondLoading ? <Skeleton width="100px" /> : `${trim((bond.debtRatio ?? 0) / 10000000, 2)}%`}
             </Typography>
           </div>
 

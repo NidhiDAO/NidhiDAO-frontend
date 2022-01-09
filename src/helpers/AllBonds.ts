@@ -38,16 +38,35 @@ export const dai = new StableBond({
   name: "dai",
   displayName: "DAI",
   bondToken: "DAI",
+  isAvailable: { [NetworkID.Mumbai]: false, [NetworkID.Polygon]: false },
+  bondIconSvg: DaiImg,
+  bondContractABI: DaiBondContract,
+  networkAddrs: {
+    [NetworkID.Mumbai]: {
+      bondAddress: "0x3e3d07B91246D9BE667035557990dA0611F6aE83",
+      reserveAddress: "0x52439209dc5f526375b8ab036ef9ea15bf0ce63b",
+    },
+    [NetworkID.Polygon]: {
+      bondAddress: "0xFDAACD04f8ad605e928F4A44864FF825dCd4796d",
+      reserveAddress: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+    },
+  },
+});
+
+export const dai_v2 = new StableBond({
+  name: "dai_v2",
+  displayName: "DAI-V2",
+  bondToken: "DAI-V2",
   isAvailable: { [NetworkID.Mumbai]: true, [NetworkID.Polygon]: true },
   bondIconSvg: DaiImg,
   bondContractABI: DaiBondContract,
   networkAddrs: {
     [NetworkID.Mumbai]: {
-      bondAddress: "0x3c2b484057e7ba8832c2abc7774b30fba691c789",
+      bondAddress: "0x3e3d07B91246D9BE667035557990dA0611F6aE83",
       reserveAddress: "0x52439209dc5f526375b8ab036ef9ea15bf0ce63b",
     },
     [NetworkID.Polygon]: {
-      bondAddress: "0xFDAACD04f8ad605e928F4A44864FF825dCd4796d",
+      bondAddress: "0xa9f53EdaEB43e83ED0d2f17555A5546bAE9E7097",
       reserveAddress: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
     },
   },
@@ -126,17 +145,38 @@ export const guru_dai = new LPBond({
   name: "guru_dai_lp",
   displayName: "GURU-DAI LP",
   bondToken: "DAI",
+  isAvailable: { [NetworkID.Mumbai]: false, [NetworkID.Polygon]: false },
+  bondIconSvg: GuruDaiImg,
+  bondContractABI: BondOhmDaiContract,
+  reserveContract: ReserveOhmDaiContract,
+  networkAddrs: {
+    [NetworkID.Mumbai]: {
+      bondAddress: "0xfCD621d3Dda30568ebAAe3c89B73119A708fd55D",
+      reserveAddress: "0xf86868748f973322e38152f75275777a34d8e3fd",
+    },
+    [NetworkID.Polygon]: {
+      bondAddress: "0xbbA07bd5B20B63249398b831082ace6415afB7E0",
+      reserveAddress: "0x7c9B16d845FE163F464d265193cC2B4eE3faC326",
+    },
+  },
+  lpUrl: `https://app.sushi.com/add/0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063/0x057E0bd9B797f9Eeeb8307B35DbC8c12E534c41E`,
+});
+
+export const guru_dai_v2 = new LPBond({
+  name: "guru_dai_lp_v2",
+  displayName: "GURU-DAI LP V2",
+  bondToken: "GURU-DAI LP V2",
   isAvailable: { [NetworkID.Mumbai]: true, [NetworkID.Polygon]: true },
   bondIconSvg: GuruDaiImg,
   bondContractABI: BondOhmDaiContract,
   reserveContract: ReserveOhmDaiContract,
   networkAddrs: {
     [NetworkID.Mumbai]: {
-      bondAddress: "0x695e445610c2dad7fb166acae7636a3b29936364",
+      bondAddress: "0xfCD621d3Dda30568ebAAe3c89B73119A708fd55D",
       reserveAddress: "0xf86868748f973322e38152f75275777a34d8e3fd",
     },
     [NetworkID.Polygon]: {
-      bondAddress: "0xbbA07bd5B20B63249398b831082ace6415afB7E0",
+      bondAddress: "0x4Ff07D77E77075fefaDEBa36C53C2c759aFF8f60",
       reserveAddress: "0x7c9B16d845FE163F464d265193cC2B4eE3faC326",
     },
   },
@@ -241,100 +281,100 @@ export const guru_dai = new LPBond({
 
 export const gold100g = new GoldBond({
   name: "gold100g",
-  displayName: "100g",
+  displayName: "Gold Bar TNFT 100g",
   bondToken: "gold100g",
-  isAvailable: { [NetworkID.Polygon]: false, [NetworkID.Mumbai]: true },
+  isAvailable: { [NetworkID.Polygon]: true, [NetworkID.Mumbai]: true },
   bondIconSvg: GoldImg,
   bondContractABI: BondTangibleNFT,
   reserveContract: ReserveTangibleNFT,
   networkAddrs: {
     [NetworkID.Polygon]: {
-      bondAddress: "0xFb16DFc9dB02db00933ACf6226927BF736F406f9",
-      reserveAddress: "0xD2b00B41Fcd4f37D570D13eA0CDF6b63669A2E2A",
+      bondAddress: "0xB40063bfA84c33565CB59c127fBACAFBcc117b70",
+      reserveAddress: "0x03332e2EB6458a9b6C481e71a27cD5Cac60A787F",
     },
     [NetworkID.Mumbai]: {
-      bondAddress: "0xfB29c4B83c3e16d333d893a561ad53125Ba4dC5C",
+      bondAddress: "0xe520f3031F034950d977CaBd7a135BBd881fB74b",
       reserveAddress: "0xCa6673bfA54A155Ce8aff75303a4a5A4A005A466",
     },
   },
   bondCalcAddrs: {
     [NetworkID.Polygon]: "0x53a92A2075623461f3E8Cc642685a1e9C650bBC9",
-    [NetworkID.Mumbai]: "0x79b3864B2b7C74Fc02E4ab403CDc7ceF9172829F",
+    [NetworkID.Mumbai]: "0xA8Fb6e78c7958ADC2F99F989587DEdF7e02723bE",
   },
   bondType: BondType.Gold,
 });
 
 export const gold250g = new GoldBond({
   name: "gold250g",
-  displayName: "250g",
+  displayName: "Gold Bar TNFT 250g",
   bondToken: "gold250g",
-  isAvailable: { [NetworkID.Polygon]: false, [NetworkID.Mumbai]: true },
+  isAvailable: { [NetworkID.Polygon]: true, [NetworkID.Mumbai]: true },
   bondIconSvg: GoldImg,
   bondContractABI: BondTangibleNFT,
   reserveContract: ReserveTangibleNFT,
   networkAddrs: {
     [NetworkID.Polygon]: {
-      bondAddress: "0xbEEF798af82cf9525A2021796EeA2Ac209b38DEe",
-      reserveAddress: "0xb06F0A62f157d10d20a9bfC67B72a6BD71dC3E15",
+      bondAddress: "0x72d293b29FF5E493219239839613f62341A36113",
+      reserveAddress: "0xFc8F9B80D6290FC22DD2ECdC6065fC10eC39e1E7",
     },
     [NetworkID.Mumbai]: {
-      bondAddress: "0x160317B67A0F042eD536A4C6a4cb8F719001000f",
+      bondAddress: "0x4aF173C0F80AfC015d20078AD605df0076a1c0c5",
       reserveAddress: "0x6C43F23FE49D6a4c636EFD41B32757C35039bd20",
     },
   },
   bondCalcAddrs: {
-    [NetworkID.Polygon]: "0x0413da7E411a81E3188Fb89fCBf72895715690aD",
-    [NetworkID.Mumbai]: "0x1E7d4609AEb5a71811bB53AB87dbFff61c9da696",
+    [NetworkID.Polygon]: "0xA3f38a252a7Cbf475c908C59571D048F8b2FDfe3",
+    [NetworkID.Mumbai]: "0xD6F7324D6A155E7EF685A2C3E7463F30D496d93F",
   },
   bondType: BondType.Gold,
 });
 
 export const gold500g = new GoldBond({
   name: "gold500g",
-  displayName: "500g",
+  displayName: "Gold Bar TNFT 500g",
   bondToken: "gold500g",
-  isAvailable: { [NetworkID.Polygon]: false, [NetworkID.Mumbai]: true },
+  isAvailable: { [NetworkID.Polygon]: true, [NetworkID.Mumbai]: true },
   bondIconSvg: GoldImg,
   bondContractABI: BondTangibleNFT,
   reserveContract: ReserveTangibleNFT,
   networkAddrs: {
     [NetworkID.Polygon]: {
-      bondAddress: "0xbEEF798af82cf9525A2021796EeA2Ac209b38DEe",
-      reserveAddress: "0xcD5aBa6397F3ccb2A11789Af7Fe4eA1D800E0030",
+      bondAddress: "0x2466c63418432b14C0D45fC803fCEB795783EC36",
+      reserveAddress: "0xcf52035528D521bD44C7777eFd20E6d44d1A8dfd",
     },
     [NetworkID.Mumbai]: {
-      bondAddress: "0x1c0a4C9FE37F3083F03547283f3EB29d7b9B463B",
+      bondAddress: "0x0483d79fD914A4Ee54Fa425FB5CD180087D68f4c",
       reserveAddress: "0xe0Fc6FC070A165F827A3A4bd5b43b6a283108Eb8",
     },
   },
   bondCalcAddrs: {
-    [NetworkID.Polygon]: "0x35bf0b7Bb3E4A432ac1C1E24C11010834e0BA3AB",
-    [NetworkID.Mumbai]: "0x8AB55E3c46D0188025E84F9F6c3C7183e71d35f6",
+    [NetworkID.Polygon]: "0x4CcB0f4729FF5bDbc4A5e1f4cE02EFFe229CDc8b",
+    [NetworkID.Mumbai]: "0x0527A911E6Ea73CcE4B444A97b73b5A1b917d41E",
   },
   bondType: BondType.Gold,
 });
 
 export const gold1000g = new GoldBond({
   name: "gold1000g",
-  displayName: "1000g",
+  displayName: "Gold Bar TNFT 1000g",
   bondToken: "gold1000g",
-  isAvailable: { [NetworkID.Polygon]: false, [NetworkID.Mumbai]: true },
+  isAvailable: { [NetworkID.Polygon]: true, [NetworkID.Mumbai]: true },
   bondIconSvg: GoldImg,
   bondContractABI: BondTangibleNFT,
   reserveContract: ReserveTangibleNFT,
   networkAddrs: {
     [NetworkID.Polygon]: {
-      bondAddress: "0x420908Ac5a58f202bAa44723213ebd2dd729783f",
-      reserveAddress: "0x19fE602B8f78b9A3B0162dEf0c3A89Fe57D67Ed8",
+      bondAddress: "0x95b59BD77fCe9E90B959D6425138ABc865c1852d",
+      reserveAddress: "0x3f09529320f8128787c9c4157A971D0c0D421367",
     },
     [NetworkID.Mumbai]: {
-      bondAddress: "0xD5013545a50A87fb150b177403bAD6eC0127326e",
+      bondAddress: "0x9199Bc45c1C4C3A7aFf8eDD77160350eDc3bcAce",
       reserveAddress: "0x9F4e04e447b693f0bAc1C88F960a547F7b944845",
     },
   },
   bondCalcAddrs: {
-    [NetworkID.Polygon]: "0xa1F429924aF08A9EA157CAF7fbD8B05c7fD173EC",
-    [NetworkID.Mumbai]: "0x2C7b92F0b1F8CC18bD0B1E6443C3c6A6F48dA667",
+    [NetworkID.Polygon]: "0x70d14a888AB512530Fb21b065f60d0F48D4Cc0bc",
+    [NetworkID.Mumbai]: "0xcC718D5Dd4b878De7C4e9fb2DfA3dFAc1a61ba65",
   },
   bondType: BondType.Gold,
 });
@@ -343,7 +383,7 @@ export const gold1000g = new GoldBond({
 // Is it a stableCoin bond? use `new StableBond`
 // Is it an LP Bond? use `new LPBond`
 // Add new bonds to this array!!
-export const allBonds = [dai, guru_dai];
+export const allBonds = [dai_v2, guru_dai_v2, dai, guru_dai];
 export const allRealBonds = [gold100g, gold250g, gold500g, gold1000g];
 export const allBondsMap = allBonds.reduce((prevVal, bond) => {
   return { ...prevVal, [bond.name]: bond };

@@ -38,9 +38,9 @@ function BondRedeem({ bond }) {
   };
 
   const vestingPeriod = () => {
-    const vestingBlock = parseInt(currentBlock) + parseInt(bondingState.vestingTerm);
+    const vestingBlock = parseInt(currentBlock) + parseInt(bondingState?.vestingTerm);
     const seconds = secondsUntilBlock(currentBlock, vestingBlock);
-    return prettifySeconds(seconds, "day");
+    return prettifySeconds(seconds ?? 0, "day");
   };
 
   useEffect(() => {
@@ -93,13 +93,13 @@ function BondRedeem({ bond }) {
           <div className="data-row">
             <Typography>Pending Rewards</Typography>
             <Typography className="price-data">
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.interestDue, 4)} GURU`}
+              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.interestDue ?? 0, 4)} GURU`}
             </Typography>
           </div>
           <div className="data-row">
             <Typography>Claimable Rewards</Typography>
             <Typography className="price-data">
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.pendingPayout, 4)} GURU`}
+              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.pendingPayout ?? 0, 4)} GURU`}
             </Typography>
           </div>
           <div className="data-row">
@@ -117,7 +117,7 @@ function BondRedeem({ bond }) {
           <div className="data-row">
             <Typography>Debt Ratio</Typography>
             <Typography>
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.debtRatio / 10000000, 2)}%`}
+              {isBondLoading ? <Skeleton width="100px" /> : `${trim((bond.debtRatio ?? 0) / 10000000, 2)}%`}
             </Typography>
           </div>
 

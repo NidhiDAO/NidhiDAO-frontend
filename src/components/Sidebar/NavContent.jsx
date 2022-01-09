@@ -140,8 +140,10 @@ function NavContent() {
                         <Typography variant="body2">
                           {bond.displayName}
                           <span className="bond-pair-roi">
-                            {bond.getAvailability(chainID) && bond.bondDiscount && trim(bond.bondDiscount * 100, 2)
-                              ? trim(bond.bondDiscount * 100, 2) + "%"
+                            {bond.getAvailability(chainID)
+                              ? bond.bondDiscount
+                                ? `${trim(Number(bond.bondDiscount ?? 0) * 100, 2)}%`
+                                : ""
                               : "Sold Out"}
                           </span>
                         </Typography>
@@ -163,8 +165,11 @@ function NavContent() {
                           <Typography variant="body2">
                             {realBond.displayName}
                             <span className="bond-pair-roi">
-                              {realBond.bondDiscount}
-                              {/*  {realBond.bondDiscount && trim(realBond.bondDiscount * 100, 2)}%*/}
+                              {realBond.isAvailable[chainID] &&
+                              realBond.bondDiscount &&
+                              trim(realBond.bondDiscount * 100, 2)
+                                ? trim(realBond.bondDiscount * 100, 2) + "%"
+                                : "Sold Out"}
                             </span>
                           </Typography>
                         )}

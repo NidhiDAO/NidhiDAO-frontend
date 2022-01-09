@@ -131,16 +131,16 @@ export const calcBondDetails = createAsyncThunk(
       const goldBond = bond as GoldBond;
       const goldCalc = goldBond.getContractForCalculator(networkID, provider);
       console.debug(goldCalc.address);
-      const goldValuation = await goldCalc.valuation();
+      const goldValuation = (await goldCalc.valuation()).mul(BigNumber.from(10).pow(9));
       console.debug("goldValuation", goldValuation.toString());
       bondQuote = await bondContract.payoutFor(goldValuation);
-      console.debug("bondQuote", bondQuote.toString());
+      console.debug("bondQuoteGold", bondQuote.toString());
       if (!amountInWei.isZero() && Number(bondQuote.toString()) < 100000) {
         bondQuote = BigNumber.from(0);
         const errorString = "Amount is too small!";
         dispatch(error(errorString));
       } else {
-        bondQuote = Number(bondQuote.toString()) / Math.pow(10, 9);
+        bondQuote = Number(bondQuote.toString()) / Math.pow(10, 18);
       }
     } else if (bond.isLP) {
       valuation = Number(
@@ -157,7 +157,9 @@ export const calcBondDetails = createAsyncThunk(
       }
     } else {
       // RFV = DAI
+      console.log("amountInWeiDAI", amountInWei.toString());
       bondQuote = await bondContract.payoutFor(amountInWei);
+      console.debug("bondQuoteDAI", bondQuote.toString());
 
       if (!amountInWei.isZero() && Number(bondQuote.toString()) < 100000000000000) {
         bondQuote = BigNumber.from(0);
