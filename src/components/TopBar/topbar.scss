@@ -50,6 +50,16 @@
   margin-right: 0.625rem;
 }
 
+.account {
+  display: flex;
+  align-items: center;
+
+  img,
+  div {
+    margin-right: 8px;
+  }
+}
+
 .logout-button {
   font-size: 16px !important;
 }
