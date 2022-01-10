@@ -21,7 +21,7 @@ import "./choosebond.scss";
 import { Skeleton } from "@material-ui/lab";
 import ClaimBonds from "./ClaimBonds";
 import _ from "lodash";
-import { allBondsMap } from "src/helpers/AllBonds";
+import { allBondsMap, allRealBondsMap } from "src/helpers/AllBonds";
 
 function ChooseBond() {
   const { bonds, realBonds } = useBonds();
@@ -53,6 +53,13 @@ function ChooseBond() {
           tokenBalances += state.bonding[bond].purchased;
         }
       }
+
+      for (const bond in allRealBondsMap) {
+        if (state.bonding[bond]) {
+          tokenBalances += state.bonding[bond].purchased;
+        }
+      }
+
       return tokenBalances;
     }
   });

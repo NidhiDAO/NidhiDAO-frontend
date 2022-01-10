@@ -385,9 +385,14 @@ export const gold1000g = new GoldBond({
 // Add new bonds to this array!!
 export const allBonds = [dai_v2, guru_dai_v2, dai, guru_dai];
 export const allRealBonds = [gold100g, gold250g, gold500g, gold1000g];
-export const allBondsMap = allBonds.reduce((prevVal, bond) => {
+export const allRealBondsMap = allRealBonds.reduce((prevVal, bond) => {
   return { ...prevVal, [bond.name]: bond };
 }, {});
+export const allBondsMap = allBonds
+  .filter(bond => bond.name.indexOf("v2") >= 0)
+  .reduce((prevVal, bond) => {
+    return { ...prevVal, [bond.name]: bond };
+  }, {});
 
 // Debug Log
 // console.log(allBondsMap);
