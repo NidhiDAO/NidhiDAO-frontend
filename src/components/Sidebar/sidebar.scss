@@ -120,6 +120,23 @@
   }
 }
 
+.swap-menu {
+  text-align: left;
+  color: #999999;
+  padding-left: 33px;
+  margin-top: 0px;
+
+  > p {
+    margin-left: 33px;
+  }
+  .swap {
+    display: block;
+    padding: unset;
+    margin-bottom: 1px;
+    text-decoration: none !important;
+  }
+}
+
 .social-row {
   display: flex;
   flex-flow: row;
