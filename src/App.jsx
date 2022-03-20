@@ -31,6 +31,8 @@ import { girth as gTheme } from "./themes/girth.js";
 import { v4 as uuidv4 } from "uuid";
 import "./style.scss";
 import { BondType } from "./lib/Bond";
+import SwapGuru from "./views/Swap/SwapGuru";
+import SwapNFT from "./views/Swap/SwapNFT";
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
@@ -258,6 +260,16 @@ function App() {
                 })}
               <ChooseBond />
             </Route>
+
+            {/* <Route path="/swap"> */}
+            <Route exact path="/swap/guru-to-tgbl">
+              <SwapGuru />
+            </Route>
+            <Route exact path={`/swap/nft-to-33nft`}>
+              <SwapNFT />
+            </Route>
+            {/* <ChooseBond /> */}
+            {/* </Route> */}
 
             <Route component={NotFound} />
           </Switch>

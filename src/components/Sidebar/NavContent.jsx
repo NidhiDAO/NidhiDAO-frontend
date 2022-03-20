@@ -8,6 +8,7 @@ import { ReactComponent as StakeIcon } from "../../assets/icons/stake.svg";
 import { ReactComponent as ActiveStakeIcon } from "../../assets/icons/active-stake.svg";
 import { ReactComponent as DashboardIcon } from "../../assets/icons/dashboard.svg";
 import { ReactComponent as NidhiIcon } from "../../assets/icons/nidhiHeader.svg";
+import { ReactComponent as SwapIcon } from "../../assets/icons/swap.svg";
 import { ReactComponent as WalletIcon } from "../../assets/icons/wallet.svg";
 // import { ReactComponent as PoolTogetherIcon } from "../../assets/icons/33-together.svg";
 import { trim, shorten } from "../../helpers";
@@ -175,6 +176,32 @@ function NavContent() {
                         )}
                       </Link>
                     ))}
+                </div>
+              </div>
+              <Link
+                component={NavLink}
+                id="bond-nav"
+                to="/swap"
+                isActive={(match, location) => {
+                  return checkPage(match, location, "swap");
+                }}
+                className={`button-dapp-menu ${isActive ? "active" : ""}`}
+              >
+                <Typography variant="h6">
+                  <SvgIcon color="primary" component={SwapIcon} />
+                  Swap
+                </Typography>
+              </Link>
+
+              <div className="dapp-menu-data discounts">
+                <div className="bond-discounts">
+                  {/* <Typography variant="body2">Swap</Typography> */}
+                  <Link component={NavLink} to={`/swap/guru-to-tgbl`} className={"bond"}>
+                    <Typography variant="body2">GURU to TNGBL</Typography>
+                  </Link>
+                  <Link component={NavLink} to={`/swap/nft-to-33nft`} className={"bond"}>
+                    <Typography variant="body2">NFT to 3,3+ NFT</Typography>
+                  </Link>
                 </div>
               </div>
               {/*
