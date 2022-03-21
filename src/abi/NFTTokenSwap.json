@@ -1,0 +1,90 @@
+[
+  {
+    "inputs": [
+      { "internalType": "address", "name": "nidhiNFT_", "type": "address" },
+      { "internalType": "address", "name": "nidhiLegacyNFT_", "type": "address" },
+      { "internalType": "address", "name": "tangibleNFT", "type": "address" },
+      { "internalType": "address", "name": "tokenSwapContractAddress", "type": "address" },
+      { "internalType": "address", "name": "stakingContractAddress", "type": "address" },
+      { "internalType": "address", "name": "stakingTokenContractAddress", "type": "address" }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "internalType": "address", "name": "previousOwner", "type": "address" },
+      { "indexed": true, "internalType": "address", "name": "newOwner", "type": "address" }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "nidhiLegacyNFT",
+    "outputs": [{ "internalType": "contract NidhiLegacyNFT", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nidhiNFT",
+    "outputs": [{ "internalType": "contract NidhiNFT", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "passiveIncomeNFT",
+    "outputs": [{ "internalType": "contract PassiveIncomeNFT", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  { "inputs": [], "name": "renounceOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
+  {
+    "inputs": [],
+    "name": "staking",
+    "outputs": [{ "internalType": "contract Staking", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "stakingToken",
+    "outputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "tokenId", "type": "uint256" },
+      { "internalType": "uint8", "name": "lockDurationInMonths", "type": "uint8" }
+    ],
+    "name": "swap",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "tokenSwap",
+    "outputs": [{ "internalType": "contract TangibleTokenSwap", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
