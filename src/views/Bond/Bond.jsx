@@ -43,6 +43,8 @@ function Bond({ bond, nft }) {
   const dispatch = useDispatch();
   const { provider, address, chainID } = useWeb3Context();
 
+  console.log("chainID", chainID);
+
   const [slippage, setSlippage] = useState(0.5);
   const [recipientAddress, setRecipientAddress] = useState(address);
 

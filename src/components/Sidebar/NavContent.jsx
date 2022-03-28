@@ -178,25 +178,17 @@ function NavContent() {
                     ))}
                 </div>
               </div>
-              <Link
-                component={NavLink}
-                id="swap-nav"
-                to="/swap"
-                isActive={(match, location) => {
-                  return checkPage(match, location, "swap");
-                }}
-                className={`button-dapp-menu ${isActive ? "active" : ""}`}
-              >
+              <div className="dapp-menu-data swap-title">
                 <Typography variant="h6">
                   <SvgIcon color="primary" component={SwapIcon} />
                   Swap
                 </Typography>
-              </Link>
+              </div>
 
-              <div className="dapp-menu-data discounts">
+              <div className="dapp-menu-data swap">
                 <div className="swap-menu">
                   <Link component={NavLink} to={`/swap/guru-to-tgbl`} className="swap">
-                    <Typography variant="body2">GURU to TNGBL</Typography>
+                    <Typography variant="body2">GURU to 3,3+NFT</Typography>
                   </Link>
                   <Link component={NavLink} to={`/swap/nft-to-33nft`} className="swap">
                     <Typography variant="body2">NFT to 3,3+ NFT</Typography>

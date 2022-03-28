@@ -22,6 +22,7 @@ export const getBalances = createAsyncThunk(
     let wsohmAsSohm = BigNumber.from(0);
     let poolBalance = BigNumber.from(0);
     let aguruBalance = BigNumber.from(0);
+
     if (addresses[networkID].GURU_ADDRESS) {
       const ohmContract = new ethers.Contract(
         addresses[networkID].GURU_ADDRESS as string,
@@ -197,6 +198,7 @@ export const loadAccountDetails = createAsyncThunk(
 
     return {
       balances: {
+        bebo: ohmBalance,
         dai: ethers.utils.formatEther(daiBalance),
         ohm: ethers.utils.formatUnits(ohmBalance, "gwei"),
         sohm: ethers.utils.formatUnits(sohmBalance, "gwei"),

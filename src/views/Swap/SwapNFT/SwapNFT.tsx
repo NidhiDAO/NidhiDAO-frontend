@@ -14,22 +14,27 @@ import {
   Select,
   ListItemText,
 } from "@material-ui/core";
-import { useWeb3Context } from "src/hooks/web3Context";
-import SwapHeader from "./SwapHeader";
-import { ReactComponent as ArrowDown } from "../../assets/icons/arrow-down.svg";
-import { ReactComponent as TNGBL } from "../../assets/icons/tngbl.svg";
-import { ReactComponent as ArrowBack } from "../../assets/icons/arrow-back.svg";
-import TangibleTokenSwap from "../../abi/TangibleTokenSwap.json";
 import { ethers } from "ethers";
-import SwapInput from "./SwapInput";
-import NFTOption from "./NFTOption";
+import { useDispatch, useSelector } from "react-redux";
+import { useWeb3Context } from "src/hooks/web3Context";
+import SwapHeader from "../SwapHeader";
+import SwapInput from "../SwapInput";
+import NFTOption from "../NFTOption";
+import { addresses } from "src/constants";
+import PassiveIncomeNFTSwap from "src/abi/PassiveIncomeNFTSwap.json";
+import { clearPendingTxn, fetchPendingTxns, isPendingTxn, txnButtonText } from "src/slices/PendingTxnsSlice";
+import { error } from "src/slices/MessagesSlice";
+import PassiveIncomeNFT from "src/abi/PassiveIncomeNFT.json";
+import getUserNfts, { NFT } from "src/helpers/getUserNfts";
+import { ReactComponent as ArrowDown } from "src/assets/icons/arrow-down.svg";
+import { ReactComponent as TNGBL } from "src/assets/icons/tngbl.svg";
+import { ReactComponent as CaretDownIcon } from "src/assets/icons/caret-down.svg";
+import { ReactComponent as ArrowBack } from "src/assets/icons/arrow-back.svg";
 
 const useStyles = makeStyles(theme => ({
   swapModal: {
-    padding: "30px",
-    // maxWidth: "498px",
+    padding: "35px 28px",
     width: "498px",
-    // width: "100%",
     height: "580px",
     background: "#182328",
     boxShadow: "0px 16.8774px 16.8774px rgba(0, 0, 0, 0.05)",
@@ -82,6 +87,9 @@ const useStyles = makeStyles(theme => ({
     ":active": {
       backgroundColor: "transparent",
     },
+    "& fieldset": {
+      border: "none",
+    },
   },
   primaryLabelWrapper: {
     marginTop: "5px",
@@ -90,7 +98,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center",
     "& span": {
       fontSize: "20px",
-      fontWeight: 700,
+      fontWeight: 400,
       lineHeight: "26px",
     },
   },
@@ -127,9 +135,9 @@ const useStyles = makeStyles(theme => ({
     px: "20px",
     minHeight: 61,
     cursor: "pointer",
-    backgroundColor: "#232E33!important",
+    backgroundColor: "#232E33 !important",
     "&:hover": {
-      backgroundColor: "#344750!important",
+      backgroundColor: "#344750 !important",
     },
   },
   info: {
@@ -185,53 +193,123 @@ const useStyles = makeStyles(theme => ({
     overflowY: "scroll",
     height: "100%",
   },
+  notchedOutline: {
+    border: "none",
+  },
 }));
 
 function SwapNFT() {
+  const [lockDuration, setLockDuration] = React.useState("12");
   const [quantity, setQuantity] = React.useState("0.0");
-  const [selectedNft, setSelectedNft] = React.useState<string>("");
+  const [isSwapPhase, setIsSwapPhase] = React.useState(false);
+  const [onlyLock, setOnlyLock] = React.useState(false);
+  const [selectedNft, setSelectedNft] = React.useState<NFT>();
   const [currentView, setCurrentView] = React.useState(0);
-  const { provider } = useWeb3Context();
   const classes = useStyles();
+  const { provider, chainID } = useWeb3Context();
 
-  const setMax = () => {
-    setQuantity("10");
-  };
+  const dispatch = useDispatch();
+
+  const pendingTransactions = useSelector((state: any) => {
+    return state.pendingTransactions;
+  });
+
+  const userNFTs = getUserNfts();
 
   const swapGuru = async () => {
     let swapTx;
+    let isError;
     try {
       const signer = provider.getSigner();
 
-      const swapContract = new ethers.Contract(TangibleTokenSwap.address, TangibleTokenSwap.abi, signer);
-      const swapAmount = ethers.utils.parseUnits("2", "gwei");
+      const passiveIncomeNFTSwapAddress = addresses[chainID].PASSIVE_INCOME_NFT_SWAP;
+      const swapContract = new ethers.Contract(passiveIncomeNFTSwapAddress, PassiveIncomeNFTSwap, signer);
+      swapTx = await swapContract.swap(selectedNft, lockDuration, onlyLock);
 
-      console.log("swapContract", swapContract);
-      console.log("swapAmount", swapAmount);
-
-      swapTx = await swapContract.swap(swapAmount);
-
-      console.log("swapTx", swapTx);
-
-      //   dispatch(
-      //     fetchPendingTxns({
-      //       txnHash: swapTx.hash,
-      //       type: "swap_guru",
-      //     }),
-      //   );
+      dispatch(
+        fetchPendingTxns({
+          txnHash: swapTx.hash,
+          text: "Swaping NFTs",
+          type: "nft_swap",
+        }),
+      );
 
       await swapTx.wait();
     } catch ({ message }) {
-      // @ts-ignore
-      //   setError({ message });
+      isError = true;
+      setOnlyLock(true);
+      dispatch(error("The multiplier not being available for the amount of tokens"));
       console.log("message", message);
     } finally {
+      if (swapTx) {
+        dispatch(clearPendingTxn(swapTx.hash));
+      }
+
+      if (!isError) {
+        setIsSwapPhase(false);
+        setOnlyLock(false);
+      }
     }
   };
 
-  const setNft = (nft: string) => {
+  const onApproval = async () => {
+    let approveTx = null;
+    let isError = false;
+    try {
+      const signer = provider.getSigner();
+      const guru_address = addresses[chainID].GURU_ADDRESS;
+      const guruContract = new ethers.Contract(guru_address, PassiveIncomeNFT, signer);
+
+      approveTx = await guruContract.approve(guru_address, ethers.constants.MaxUint256);
+
+      dispatch(
+        fetchPendingTxns({
+          txnHash: approveTx.hash,
+          text: "Approving GURU Swap",
+          type: "nft_swap",
+        }),
+      );
+
+      await approveTx?.wait();
+    } catch (err) {
+      isError = true;
+      dispatch(error("There was an error approving the transaction, please try again"));
+      console.log("error", err);
+    } finally {
+      if (!isError) {
+        setIsSwapPhase(true);
+      }
+      if (approveTx) {
+        dispatch(clearPendingTxn(approveTx.hash));
+      }
+    }
+  };
+
+  const onSubmit = async () => {
+    if (!selectedNft) {
+      return;
+    }
+    if (isSwapPhase) {
+      await swapGuru();
+      return;
+    }
+
+    await onApproval();
+  };
+
+  const setNft = (nft: NFT) => {
     setSelectedNft(nft);
     setCurrentView(0);
+
+    handleSelectedNFT(nft);
+  };
+
+  const handleSelectedNFT = async (nft: NFT) => {
+    const signer = provider.getSigner();
+    const passiveIncomeNFTAddress = addresses[chainID].PASSIVE_INCOME_NFT;
+
+    const guruContract = new ethers.Contract(passiveIncomeNFTAddress, PassiveIncomeNFT, signer);
+    // const claimableIncome = await guruContract.claimableIncome(nft.tokenId.toString());
   };
 
   return (
@@ -246,19 +324,19 @@ function SwapNFT() {
                   <>
                     <Box className={classes.titleWrapper}>
                       <Typography variant="h5" color="textPrimary" className={classes.title}>
-                        Swap GURU for 3,3+ NFT
+                        Swap NFTs
                       </Typography>
                     </Box>
                     <div className={classes.nftPicker} onClick={() => setCurrentView(1)}>
                       <div className={classes.nftPickerLabels}>
                         <span className={classes.inputSecondaryLabel}>From</span>
-                        <span className={classes.inputSecondaryLabel}>$0.0</span>
+                        <span className={classes.inputSecondaryLabel}>${selectedNft?.price.toString()}</span>
                       </div>
                       <div className={classes.nftPickerValue}>
                         <div className={classes.primaryLabelWrapper}>
-                          <span>{selectedNft || "Select Passive income NFT"}</span>
+                          <span>{selectedNft?.name || "Select Passive income NFT"}</span>
                         </div>
-                        <SvgIcon component={ArrowDown} htmlColor="#A3A3A3" />
+                        <SvgIcon component={CaretDownIcon} htmlColor="transparent" />
                       </div>
                     </div>
                     <Box>
@@ -266,13 +344,13 @@ function SwapNFT() {
                     </Box>
                     <SwapInput
                       name="receive"
-                      value={"0.0"}
-                      onChange={(name, value) => {
-                        console.log(name, value);
-                      }}
-                      leftLabel={<span>3,3+ NFT</span>}
+                      value={quantity}
+                      disabled
+                      leftLabel={<span>3,3+ NFT + Image NFT</span>}
                       leftSecondaryLabel={<span className={classes.inputSecondaryLabel}>Receive</span>}
-                      rightSecondaryLabel={<span className={classes.inputSecondaryLabel}>${quantity}</span>}
+                      rightSecondaryLabel={
+                        <span className={classes.inputSecondaryLabel}>${selectedNft?.price.toString()}</span>
+                      }
                       rightLabel={
                         <div className={classes.rightAdornmentIcon}>
                           <div className={classes.primaryLabelWrapper} style={{ marginTop: 0 }}>
@@ -283,7 +361,7 @@ function SwapNFT() {
                     />
                     <FormControl variant="outlined" color="primary" fullWidth>
                       <div className={classes.inputLabelsWrapper}>
-                        <span className={classes.inputSecondaryLabel}>Lock period</span>
+                        <span className={classes.inputSecondaryLabel}>Select multiplier</span>
                       </div>
                       <Select
                         labelId="tnft-select-label"
@@ -291,10 +369,15 @@ function SwapNFT() {
                         value={24}
                         MenuProps={{ classes: { list: classes.menuList } }}
                         className={`${classes.swapInput} ${classes.swampSelect}`}
+                        inputProps={{ disableUnderline: true }}
+                        onChange={({ target }) => {
+                          setLockDuration(target.value as string);
+                        }}
+                        IconComponent={() => <SvgIcon component={CaretDownIcon} htmlColor="transparent" />}
                       >
-                        <MenuItem value={24} className={classes.menuItem}>
+                        <MenuItem value={"24"} className={classes.menuItem}>
                           <ListItemText
-                            primary="24 months"
+                            primary="24x (24 months)"
                             primaryTypographyProps={{
                               style: {
                                 fontSize: "20px",
@@ -304,9 +387,21 @@ function SwapNFT() {
                             }}
                           />
                         </MenuItem>
-                        <MenuItem value={48} className={classes.menuItem}>
+                        <MenuItem value={"12"} className={classes.menuItem}>
                           <ListItemText
-                            primary="48 months"
+                            primary="12x (12 months)"
+                            primaryTypographyProps={{
+                              style: {
+                                fontSize: "20px",
+                                lineHeight: "25px",
+                                fontWeight: 400,
+                              },
+                            }}
+                          />
+                        </MenuItem>
+                        <MenuItem value={"48"} className={classes.menuItem}>
+                          <ListItemText
+                            primary="48x (48 months)"
                             primaryTypographyProps={{
                               style: {
                                 fontSize: "20px",
@@ -324,13 +419,14 @@ function SwapNFT() {
                       </span>
                     </Box>
                     <Button
-                      onClick={swapGuru}
+                      onClick={onSubmit}
                       variant="contained"
                       color="primary"
                       id="bond-btn"
                       className={classes.buttonSwap}
+                      disabled={isPendingTxn(pendingTransactions, "nft_swap")}
                     >
-                      Swap
+                      {txnButtonText(pendingTransactions, "nft_swap", isSwapPhase ? "Swap" : "Approve")}
                     </Button>
                   </>
                 ) : (
@@ -345,21 +441,9 @@ function SwapNFT() {
                       <span className={classes.nftOptionsTitle}>Passive income NFT</span>
                     </div>
                     <div className={classes.nftOptionsContent}>
-                      <NFTOption name="Lord Kubera" onClick={setNft} selectedNft={selectedNft} />
-                      <NFTOption name="Yama" onClick={setNft} selectedNft={selectedNft} />
-                      <NFTOption name="Yama" onClick={setNft} selectedNft={selectedNft} />
-                      <NFTOption name="Yama" onClick={setNft} selectedNft={selectedNft} />
-                      <NFTOption name="Yama" onClick={setNft} selectedNft={selectedNft} />
-                      <NFTOption name="Yama" onClick={setNft} selectedNft={selectedNft} />
-                      <NFTOption name="Yama" onClick={setNft} selectedNft={selectedNft} />
-                      <NFTOption name="Yama" onClick={setNft} selectedNft={selectedNft} />
-                      <NFTOption name="Yama" onClick={setNft} selectedNft={selectedNft} />
-                      <NFTOption name="Yama" onClick={setNft} selectedNft={selectedNft} />
-                      <NFTOption name="Yama" onClick={setNft} selectedNft={selectedNft} />
-                      <NFTOption name="Yama" onClick={setNft} selectedNft={selectedNft} />
-                      <NFTOption name="Yama" onClick={setNft} selectedNft={selectedNft} />
-                      <NFTOption name="Yama" onClick={setNft} selectedNft={selectedNft} />
-                      <NFTOption name="Meow" onClick={setNft} selectedNft={selectedNft} />
+                      {userNFTs.map(nft => {
+                        return <NFTOption nft={nft} onClick={setNft} active={selectedNft?.tokenId === nft.tokenId} />;
+                      })}
                     </div>
                   </>
                 )}

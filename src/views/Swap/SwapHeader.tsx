@@ -8,10 +8,6 @@ import useEscape from "../../hooks/useEscape";
 function SwapHeader({ displayName }: { displayName?: string }) {
   const [open, setOpen] = useState(false);
 
-  // const handleOpen = () => {
-  //   setOpen(true);
-  // };
-
   const handleClose = () => {
     setOpen(false);
   };

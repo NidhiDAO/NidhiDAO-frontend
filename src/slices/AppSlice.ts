@@ -66,6 +66,7 @@ export const loadAppDetails = createAsyncThunk(
     const totalSupply = (await guruMainContract.totalSupply()) / Math.pow(10, 9);
     const marketCap = totalSupply * marketPrice;
     const circ = await sohmMainContract.circulatingSupply();
+
     const circAny = circ as any;
     const circSupply = circAny / Math.pow(10, 9);
     const stakingTVL = circSupply * marketPrice;
@@ -76,7 +77,6 @@ export const loadAppDetails = createAsyncThunk(
     const tokenAmountsPromises = allBonds.map(bond => bond.getTreasuryBalance(networkID, provider));
     const realTokenAmountsPromises = allRealBonds.map(bond => bond.getTreasuryBalance(networkID, provider));
     const tokenAmounts = await Promise.all([...tokenAmountsPromises, ...realTokenAmountsPromises]);
-    console.log("tokenAmounts: ", tokenAmounts);
     const treasuryMarketValue = tokenAmounts.reduce((curr, prev) => {
       return curr + prev;
     }, 0);

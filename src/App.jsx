@@ -31,8 +31,8 @@ import { girth as gTheme } from "./themes/girth.js";
 import { v4 as uuidv4 } from "uuid";
 import "./style.scss";
 import { BondType } from "./lib/Bond";
-import SwapGuru from "./views/Swap/SwapGuru";
-import SwapNFT from "./views/Swap/SwapNFT";
+import SwapGuru from "./views/Swap/SwapGuru/SwapGuru";
+import SwapNFT from "./views/Swap/SwapNFT/SwapNFT";
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
