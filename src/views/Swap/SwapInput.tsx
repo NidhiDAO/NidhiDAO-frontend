@@ -1,4 +1,4 @@
-import { FormControl, InputAdornment, makeStyles, OutlinedInput, SvgIcon } from "@material-ui/core";
+import { FormControl, InputAdornment, makeStyles, OutlinedInput } from "@material-ui/core";
 import React from "react";
 
 type ISwapInput = {
@@ -10,6 +10,8 @@ type ISwapInput = {
   leftLabel?: React.ReactNode | string;
   leftSecondaryLabel?: React.ReactNode | string;
   rightSecondaryLabel?: React.ReactNode | string;
+  type?: string;
+  inputClassName?: string;
 };
 
 const useStyles = makeStyles(theme => ({
@@ -32,24 +34,24 @@ const useStyles = makeStyles(theme => ({
     "& input": {
       paddingBottom: "0px",
       fontSize: "20px",
-      fontWeight: 700,
+      fontWeight: 400,
       textAlign: "right",
       paddingRight: "0px",
       paddingLeft: "0px",
       padding: "0px",
+      color: "#FFF",
     },
     "& .MuiSelect-select:focus": {
       backgroundColor: "transparent",
     },
   },
   primaryLabelWrapper: {
-    marginTop: "5px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    color: "white",
     "& span": {
       fontSize: "20px",
-      fontWeight: 700,
       lineHeight: "26px",
     },
   },
@@ -60,6 +62,7 @@ const useStyles = makeStyles(theme => ({
     position: "absolute",
     top: 5,
     width: "100%",
+    zIndex: 2,
   },
   rightAdornmentIcon: {
     display: "flex",
@@ -71,16 +74,22 @@ const useStyles = makeStyles(theme => ({
   colorYellow: {
     color: "#ffbc45",
   },
+  notchedOutline: {
+    border: "none",
+  },
 }));
 
 function SwapInput({
   name,
+  type,
   value,
   onChange,
-  rightLabel,
+  disabled,
   leftLabel,
+  rightLabel,
   rightSecondaryLabel,
   leftSecondaryLabel,
+  inputClassName = "",
 }: ISwapInput) {
   const classes = useStyles();
 
@@ -92,9 +101,11 @@ function SwapInput({
       </div>
       <OutlinedInput
         name={name}
-        type="number"
+        type={type}
+        disabled={disabled}
         placeholder="Enter an amount"
-        className={classes.swapInput}
+        className={`${classes.swapInput} ${inputClassName}`}
+        classes={{ notchedOutline: classes.notchedOutline }}
         value={value}
         onChange={e => {
           if (onChange) {

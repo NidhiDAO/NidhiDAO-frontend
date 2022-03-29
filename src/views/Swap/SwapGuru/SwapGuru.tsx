@@ -14,18 +14,24 @@ import {
   Select,
   ListItemText,
 } from "@material-ui/core";
-import { useWeb3Context } from "src/hooks/web3Context";
-import SwapHeader from "./SwapHeader";
-import { ReactComponent as GURU } from "../../assets/icons/guru.svg";
-import { ReactComponent as ArrowDown } from "../../assets/icons/arrow-down.svg";
-import { ReactComponent as TNGBL } from "../../assets/icons/tngbl.svg";
-import TangibleTokenSwap from "../../abi/TangibleTokenSwap.json";
 import { ethers } from "ethers";
-import SwapInput from "./SwapInput";
+import { useDispatch, useSelector } from "react-redux";
+import SwapHeader from "../SwapHeader";
+import SwapInput from "../SwapInput";
+import { useWeb3Context } from "src/hooks/web3Context";
+import { clearPendingTxn, fetchPendingTxns, isPendingTxn, txnButtonText } from "src/slices/PendingTxnsSlice";
+import { error } from "src/slices/MessagesSlice";
+import { addresses } from "src/constants";
+import PassiveIncomeNFT from "src/abi/PassiveIncomeNFT.json";
+import PassiveIncomeNFTSwap from "src/abi/PassiveIncomeNFTSwap.json";
+import { ReactComponent as GURU } from "src/assets/icons/guru.svg";
+import { ReactComponent as ArrowDown } from "src/assets/icons/arrow-down.svg";
+import { ReactComponent as TNGBL } from "src/assets/icons/tngbl.svg";
+import { ReactComponent as CaretDownIcon } from "src/assets/icons/caret-down.svg";
 
 const useStyles = makeStyles(theme => ({
   swapModal: {
-    padding: "30px",
+    padding: "35px 28px",
     maxWidth: "498px",
     height: "580px",
     background: "#182328",
@@ -44,9 +50,6 @@ const useStyles = makeStyles(theme => ({
     gap: "15px",
     alignItems: "center",
     margin: "auto",
-  },
-  swapInputWrapper: {
-    width: "100%",
   },
   swapInput: {
     width: "441px",
@@ -77,6 +80,9 @@ const useStyles = makeStyles(theme => ({
   swampSelect: {
     ":active": {
       backgroundColor: "transparent",
+    },
+    "& fieldset": {
+      border: "none",
     },
   },
   primaryLabelWrapper: {
@@ -151,49 +157,131 @@ const useStyles = makeStyles(theme => ({
     width: "100%",
     marginBottom: "15px",
   },
+  receiveInputLeftLabel: {
+    fontSize: "20px",
+    fontWeight: 400,
+    lineHeight: "26px",
+  },
+  payInputLeftLabel: {
+    fontWeight: 700,
+  },
+  inputClassName: {
+    "& input": {
+      fontWeight: 700,
+    },
+  },
 }));
 
 function SwapGuru() {
   const [model, setModel] = React.useState({
-    pay: "0",
-    receive: "0",
+    pay: "",
+    receive: "",
+    lockPeriod: "12",
   });
-  const { provider } = useWeb3Context();
+  const [isSwapPhase, setIsSwapPhase] = React.useState(false);
+  const [onlyLock, setOnlyLock] = React.useState(false);
+  const { provider, chainID } = useWeb3Context();
   const classes = useStyles();
+  const dispatch = useDispatch();
+
+  const ohmBalance = useSelector((state: any) => {
+    return state.account.balances && state.account.balances.ohm;
+  });
+
+  const pendingTransactions = useSelector((state: any) => {
+    return state.pendingTransactions;
+  });
 
   const setMax = () => {
-    setModel({ pay: "10", receive: "10" });
+    setModel(currentState => ({ ...currentState, pay: ohmBalance, receive: ohmBalance }));
   };
 
   const swapGuru = async () => {
     let swapTx;
+    let isError;
     try {
       const signer = provider.getSigner();
 
-      const swapContract = new ethers.Contract(TangibleTokenSwap.address, TangibleTokenSwap.abi, signer);
-      const swapAmount = ethers.utils.parseUnits("2", "gwei");
+      const swapContract = new ethers.Contract(
+        addresses[chainID].PASSIVE_INCOME_NFT_SWAP,
+        PassiveIncomeNFTSwap,
+        signer,
+      );
 
-      console.log("swapContract", swapContract);
-      console.log("swapAmount", swapAmount);
+      const swapAmount = ethers.utils.parseUnits(model.pay, "gwei");
+      swapTx = await swapContract.swapGURU(swapAmount, model.lockPeriod, onlyLock);
 
-      swapTx = await swapContract.swap(swapAmount);
-
-      console.log("swapTx", swapTx);
-
-      //   dispatch(
-      //     fetchPendingTxns({
-      //       txnHash: swapTx.hash,
-      //       type: "swap_guru",
-      //     }),
-      //   );
+      dispatch(
+        fetchPendingTxns({
+          txnHash: swapTx.hash,
+          text: "Swaping GURU to NFTs",
+          type: "guru_swap",
+        }),
+      );
 
       await swapTx.wait();
     } catch ({ message }) {
-      // @ts-ignore
-      //   setError({ message });
+      isError = true;
+      setOnlyLock(true);
+      dispatch(error("The multiplier not being available for the amount of tokens"));
       console.log("message", message);
     } finally {
+      if (swapTx) {
+        dispatch(clearPendingTxn(swapTx.hash));
+      }
+
+      if (!isError) {
+        setIsSwapPhase(false);
+        setOnlyLock(false);
+      }
     }
+  };
+
+  const onApproval = async () => {
+    let approveTx = null;
+    let isError = false;
+    try {
+      const signer = provider.getSigner();
+      const guru_address = addresses[chainID].GURU_ADDRESS;
+      const guruContract = new ethers.Contract(guru_address, PassiveIncomeNFT, signer);
+
+      approveTx = await guruContract.approve(guru_address, ethers.constants.MaxUint256);
+
+      dispatch(
+        fetchPendingTxns({
+          txnHash: approveTx.hash,
+          text: "Approving GURU Swap",
+          type: "guru_swap",
+        }),
+      );
+
+      await approveTx?.wait();
+    } catch (err) {
+      isError = true;
+      dispatch(error("There was an error approving the transaction, please try again"));
+      console.log("error", err);
+    } finally {
+      if (!isError) {
+        setIsSwapPhase(true);
+      }
+      if (approveTx) {
+        dispatch(clearPendingTxn(approveTx.hash));
+      }
+    }
+  };
+
+  const onSubmit = async () => {
+    const pay = Number(model.pay);
+    if (isNaN(pay) || pay === 0) {
+      dispatch(error("Please enter a value!"));
+      return;
+    }
+    if (isSwapPhase) {
+      await swapGuru();
+      return;
+    }
+
+    await onApproval();
   };
 
   return (
@@ -210,15 +298,16 @@ function SwapGuru() {
                   </Typography>
                 </Box>
                 <SwapInput
-                  value={model.pay}
                   name="pay"
+                  value={model.pay}
+                  type="number"
                   onChange={(name, value) => {
                     setModel(currentState => ({ ...currentState, [name]: value }));
                   }}
                   leftLabel={
                     <>
                       <SvgIcon component={GURU} htmlColor="#A3A3A3" style={{ marginRight: 5 }} />
-                      <span>GURU</span>
+                      <span className={classes.payInputLeftLabel}>GURU</span>
                     </>
                   }
                   leftSecondaryLabel={<span className={classes.inputSecondaryLabel}>Pay</span>}
@@ -227,24 +316,22 @@ function SwapGuru() {
                       <span className={classes.inputSecondaryLabelGold}>MAX</span>
                     </Button>
                   }
+                  inputClassName={classes.inputClassName}
                 />
                 <Box>
                   <SvgIcon component={ArrowDown} htmlColor="#A3A3A3" />
                 </Box>
                 <SwapInput
                   name="receive"
-                  value={model.receive}
+                  value={model.pay || "0"}
+                  type="text"
                   disabled
                   onChange={(name, value) => {
                     setModel(currentState => ({ ...currentState, [name]: value }));
                   }}
-                  leftLabel={
-                    <div className={classes.primaryLabelWrapper}>
-                      <span>3,3+ NFT</span>
-                    </div>
-                  }
+                  leftLabel={<span className={classes.receiveInputLeftLabel}>3,3+ NFT</span>}
                   leftSecondaryLabel={<span className={classes.inputSecondaryLabel}>Receive</span>}
-                  rightSecondaryLabel={<span className={classes.inputSecondaryLabel}>${model.pay}</span>}
+                  rightSecondaryLabel={<span className={classes.inputSecondaryLabel}>${model.receive || "0.0"}</span>}
                   rightLabel={
                     <div className={classes.rightAdornmentIcon}>
                       <div className={classes.primaryLabelWrapper} style={{ marginTop: 0 }}>
@@ -258,13 +345,19 @@ function SwapGuru() {
                     <span className={classes.inputSecondaryLabel}>Lock period</span>
                   </div>
                   <Select
+                    name="lockPeriod"
                     labelId="tnft-select-label"
                     id="tnft-select"
-                    value={24}
+                    value={model.lockPeriod}
                     MenuProps={{ classes: { list: classes.menuList } }}
                     className={`${classes.swapInput} ${classes.swampSelect}`}
+                    inputProps={{ disableUnderline: true }}
+                    onChange={({ target }) => {
+                      setModel(currentState => ({ ...currentState, lockPeriod: target.value as string }));
+                    }}
+                    IconComponent={() => <SvgIcon component={CaretDownIcon} htmlColor="transparent" />}
                   >
-                    <MenuItem value={24} className={classes.menuItem}>
+                    <MenuItem value={"24"} className={classes.menuItem}>
                       <ListItemText
                         primary="24 months"
                         primaryTypographyProps={{
@@ -276,7 +369,19 @@ function SwapGuru() {
                         }}
                       />
                     </MenuItem>
-                    <MenuItem value={48} className={classes.menuItem}>
+                    <MenuItem value={"12"} className={classes.menuItem}>
+                      <ListItemText
+                        primary="12 months"
+                        primaryTypographyProps={{
+                          style: {
+                            fontSize: "20px",
+                            lineHeight: "25px",
+                            fontWeight: 400,
+                          },
+                        }}
+                      />
+                    </MenuItem>
+                    <MenuItem value={"48"} className={classes.menuItem}>
                       <ListItemText
                         primary="48 months"
                         primaryTypographyProps={{
@@ -296,13 +401,14 @@ function SwapGuru() {
                   </span>
                 </Box>
                 <Button
-                  onClick={swapGuru}
+                  onClick={onSubmit}
                   variant="contained"
                   color="primary"
                   id="bond-btn"
                   className={classes.buttonSwap}
+                  disabled={isPendingTxn(pendingTransactions, "guru_swap")}
                 >
-                  Swap
+                  {txnButtonText(pendingTransactions, "guru_swap", isSwapPhase ? "Swap" : "Approve")}
                 </Button>
               </Box>
             </Paper>
@@ -312,11 +418,5 @@ function SwapGuru() {
     </Fade>
   );
 }
-
-// const useStyles = makeStyles({
-//   secondaryLabel: {
-//       color:
-//   },
-// });
 
 export default SwapGuru;
