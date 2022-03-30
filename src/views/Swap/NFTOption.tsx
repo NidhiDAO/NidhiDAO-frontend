@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/styles";
-import { NFT } from "src/helpers/getUserNfts";
+import { NFT } from "src/helpers/useUserNfts";
 
 type Props = {
   onClick: (nft: NFT) => void;
