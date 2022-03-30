@@ -25,7 +25,7 @@ import PassiveIncomeNFTSwap from "src/abi/PassiveIncomeNFTSwap.json";
 import { clearPendingTxn, fetchPendingTxns, isPendingTxn, txnButtonText } from "src/slices/PendingTxnsSlice";
 import { error } from "src/slices/MessagesSlice";
 import PassiveIncomeNFT from "src/abi/PassiveIncomeNFT.json";
-import getUserNfts, { NFT } from "src/helpers/getUserNfts";
+import useUserNFTs, { NFT } from "src/helpers/useUserNfts";
 import { ReactComponent as ArrowDown } from "src/assets/icons/arrow-down.svg";
 import { ReactComponent as TNGBL } from "src/assets/icons/tngbl.svg";
 import { ReactComponent as CaretDownIcon } from "src/assets/icons/caret-down.svg";
@@ -214,7 +214,7 @@ function SwapNFT() {
     return state.pendingTransactions;
   });
 
-  const userNFTs = getUserNfts();
+  const userNFTs = useUserNFTs();
 
   const swapGuru = async () => {
     let swapTx;
@@ -270,7 +270,7 @@ function SwapNFT() {
         }),
       );
 
-      await approveTx?.wait();
+      await approveTx.wait();
     } catch (err) {
       isError = true;
       dispatch(error("There was an error approving the transaction, please try again"));

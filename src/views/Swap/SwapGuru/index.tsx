@@ -184,13 +184,9 @@ function SwapGuru() {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const ohmBalance = useSelector((state: any) => {
-    return state.account.balances && state.account.balances.ohm;
-  });
+  const ohmBalance = useSelector((state: any) => state.account.balances && state.account.balances.ohm);
 
-  const pendingTransactions = useSelector((state: any) => {
-    return state.pendingTransactions;
-  });
+  const pendingTransactions = useSelector((state: any) => state.pendingTransactions);
 
   const setMax = () => {
     setModel(currentState => ({ ...currentState, pay: ohmBalance, receive: ohmBalance }));
@@ -255,7 +251,7 @@ function SwapGuru() {
         }),
       );
 
-      await approveTx?.wait();
+      await approveTx.wait();
     } catch (err) {
       isError = true;
       dispatch(error("There was an error approving the transaction, please try again"));
