@@ -239,9 +239,10 @@ function SwapGuru() {
     try {
       const signer = provider.getSigner();
       const guru_address = addresses[chainID].GURU_ADDRESS;
+      const passiveIncomeNFTAddress = addresses[chainID].PASSIVE_INCOME_NFT_SWAP;
       const guruContract = new ethers.Contract(guru_address, PassiveIncomeNFT, signer);
 
-      approveTx = await guruContract.approve(guru_address, ethers.constants.MaxUint256);
+      approveTx = await guruContract.approve(passiveIncomeNFTAddress, ethers.constants.MaxUint256);
 
       dispatch(
         fetchPendingTxns({
