@@ -30,6 +30,7 @@ import { ReactComponent as ArrowDown } from "src/assets/icons/arrow-down.svg";
 import { ReactComponent as TNGBL } from "src/assets/icons/tngbl.svg";
 import { ReactComponent as CaretDownIcon } from "src/assets/icons/caret-down.svg";
 import { ReactComponent as ArrowBack } from "src/assets/icons/arrow-back.svg";
+import useLockOptions, { MIN_LOCK_DURATION } from "../useLockOptions";
 
 const useStyles = makeStyles(theme => ({
   swapModal: {
@@ -196,10 +197,15 @@ const useStyles = makeStyles(theme => ({
   notchedOutline: {
     border: "none",
   },
+  primaryTypographyProps: {
+    fontSize: "20px",
+    lineHeight: "25px",
+    fontWeight: 400,
+  },
 }));
 
 function SwapNFT() {
-  const [lockDuration, setLockDuration] = React.useState("12");
+  const [lockDuration, setLockDuration] = React.useState(MIN_LOCK_DURATION);
   const [quantity, setQuantity] = React.useState("0.0");
   const [isSwapPhase, setIsSwapPhase] = React.useState(false);
   const [onlyLock, setOnlyLock] = React.useState(false);
@@ -207,6 +213,7 @@ function SwapNFT() {
   const [currentView, setCurrentView] = React.useState(0);
   const classes = useStyles();
   const { provider, chainID } = useWeb3Context();
+  const lockOptions = useLockOptions();
 
   const dispatch = useDispatch();
 
@@ -375,42 +382,16 @@ function SwapNFT() {
                         }}
                         IconComponent={() => <SvgIcon component={CaretDownIcon} htmlColor="transparent" />}
                       >
-                        <MenuItem value={"24"} className={classes.menuItem}>
-                          <ListItemText
-                            primary="24x (24 months)"
-                            primaryTypographyProps={{
-                              style: {
-                                fontSize: "20px",
-                                lineHeight: "25px",
-                                fontWeight: 400,
-                              },
-                            }}
-                          />
-                        </MenuItem>
-                        <MenuItem value={"12"} className={classes.menuItem}>
-                          <ListItemText
-                            primary="12x (12 months)"
-                            primaryTypographyProps={{
-                              style: {
-                                fontSize: "20px",
-                                lineHeight: "25px",
-                                fontWeight: 400,
-                              },
-                            }}
-                          />
-                        </MenuItem>
-                        <MenuItem value={"48"} className={classes.menuItem}>
-                          <ListItemText
-                            primary="48x (48 months)"
-                            primaryTypographyProps={{
-                              style: {
-                                fontSize: "20px",
-                                lineHeight: "25px",
-                                fontWeight: 400,
-                              },
-                            }}
-                          />
-                        </MenuItem>
+                        {lockOptions.map(option => (
+                          <MenuItem value={option.value} className={classes.menuItem}>
+                            <ListItemText
+                              primary={`${option.value}x (${option.name})`}
+                              primaryTypographyProps={{
+                                className: classes.primaryTypographyProps,
+                              }}
+                            />
+                          </MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
                     <Box style={{ marginTop: 15, marginBottom: 15 }}>
