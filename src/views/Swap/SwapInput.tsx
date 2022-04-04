@@ -5,6 +5,7 @@ type ISwapInput = {
   value: string;
   name: string;
   onChange?: (name: string, value: string) => void;
+  onBlur?: (name: string, value: string) => void;
   disabled?: boolean;
   rightLabel?: React.ReactNode | string;
   leftLabel?: React.ReactNode | string;
@@ -83,6 +84,7 @@ function SwapInput({
   name,
   type,
   value,
+  onBlur,
   onChange,
   disabled,
   leftLabel,
@@ -110,6 +112,11 @@ function SwapInput({
         onChange={e => {
           if (onChange) {
             onChange(name, e.target.value);
+          }
+        }}
+        onBlur={e => {
+          if (onBlur) {
+            onBlur(name, e.target.value);
           }
         }}
         labelWidth={0}

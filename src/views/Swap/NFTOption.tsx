@@ -1,4 +1,5 @@
 import { makeStyles } from "@material-ui/styles";
+import { ethers } from "ethers";
 import { NFT } from "src/helpers/useUserNfts";
 
 type Props = {
@@ -41,7 +42,7 @@ function NFTOption({ nft, onClick, active }: Props) {
       <div>
         <div className={classes.itemName}>{nft.name}</div>
         <div style={{ fontSize: 14, fontWeight: 700, lineHeight: "24px" }}>
-          20.0 <span className={classes.itemValue}>(${nft.price.toString()})</span>
+          {nft.formattedPrice} <span className={classes.itemValue}>(${nft.usdcPrice})</span>
         </div>
       </div>
     </div>

@@ -25,6 +25,7 @@ import PassiveIncomeNFTSwap from "src/abi/PassiveIncomeNFTSwap.json";
 import { clearPendingTxn, fetchPendingTxns, isPendingTxn, txnButtonText } from "src/slices/PendingTxnsSlice";
 import { error } from "src/slices/MessagesSlice";
 import PassiveIncomeNFT from "src/abi/PassiveIncomeNFT.json";
+import NidhiLegacyNFT from "src/abi/NidhiLegacyNFT.json";
 import useUserNFTs, { NFT } from "src/helpers/useUserNfts";
 import { ReactComponent as ArrowDown } from "src/assets/icons/arrow-down.svg";
 import { ReactComponent as TNGBL } from "src/assets/icons/tngbl.svg";
@@ -206,13 +207,12 @@ const useStyles = makeStyles(theme => ({
 
 function SwapNFT() {
   const [lockDuration, setLockDuration] = React.useState(MIN_LOCK_DURATION);
-  const [quantity, setQuantity] = React.useState("0.0");
-  const [isSwapPhase, setIsSwapPhase] = React.useState(false);
   const [onlyLock, setOnlyLock] = React.useState(false);
   const [selectedNft, setSelectedNft] = React.useState<NFT>();
   const [currentView, setCurrentView] = React.useState(0);
+  const [isApprovedForAll, setIsApprovedForAll] = React.useState<boolean>(false);
   const classes = useStyles();
-  const { provider, chainID } = useWeb3Context();
+  const { address, provider, chainID } = useWeb3Context();
   const lockOptions = useLockOptions();
 
   const dispatch = useDispatch();
@@ -221,6 +221,32 @@ function SwapNFT() {
     return state.pendingTransactions;
   });
 
+  React.useEffect(() => {
+    async function getIsApprovedForAll() {
+      if (provider && chainID) {
+        try {
+          const nidhiLegacyNFTContract = new ethers.Contract(
+            addresses[chainID].NIDHI_LEGACY_NFT,
+            NidhiLegacyNFT,
+            provider,
+          );
+
+          const _isApprovedForAll = await nidhiLegacyNFTContract.isApprovedForAll(
+            address,
+            addresses[chainID].PASSIVE_INCOME_NFT,
+          );
+
+          setIsApprovedForAll(_isApprovedForAll);
+        } catch (err: any) {
+          dispatch(error(err.message));
+          console.log("err", err);
+        }
+      }
+    }
+
+    getIsApprovedForAll();
+  }, [address, chainID, provider]);
+
   const userNFTs = useUserNFTs();
 
   const swapGuru = async () => {
@@ -228,10 +254,13 @@ function SwapNFT() {
     let isError;
     try {
       const signer = provider.getSigner();
+      const swapContract = new ethers.Contract(
+        addresses[chainID].PASSIVE_INCOME_NFT_SWAP,
+        PassiveIncomeNFTSwap,
+        signer,
+      );
 
-      const passiveIncomeNFTSwapAddress = addresses[chainID].PASSIVE_INCOME_NFT_SWAP;
-      const swapContract = new ethers.Contract(passiveIncomeNFTSwapAddress, PassiveIncomeNFTSwap, signer);
-      swapTx = await swapContract.swap(selectedNft, lockDuration, onlyLock);
+      swapTx = await swapContract.swap(selectedNft?.tokenId, lockDuration, onlyLock);
 
       dispatch(
         fetchPendingTxns({
@@ -242,18 +271,17 @@ function SwapNFT() {
       );
 
       await swapTx.wait();
-    } catch ({ message }) {
+    } catch (err: any) {
       isError = true;
       setOnlyLock(true);
-      dispatch(error("The multiplier not being available for the amount of tokens"));
-      console.log("message", message);
+      dispatch(error(err.message));
+      console.log("err", err);
     } finally {
       if (swapTx) {
         dispatch(clearPendingTxn(swapTx.hash));
       }
 
       if (!isError) {
-        setIsSwapPhase(false);
         setOnlyLock(false);
       }
     }
@@ -264,10 +292,9 @@ function SwapNFT() {
     let isError = false;
     try {
       const signer = provider.getSigner();
-      const guru_address = addresses[chainID].GURU_ADDRESS;
-      const guruContract = new ethers.Contract(guru_address, PassiveIncomeNFT, signer);
+      const nidhiLegacyNFTContract = new ethers.Contract(addresses[chainID].GURU_ADDRESS, NidhiLegacyNFT, signer);
 
-      approveTx = await guruContract.approve(guru_address, ethers.constants.MaxUint256);
+      approveTx = await nidhiLegacyNFTContract.setApprovalForAll(addresses[chainID].PASSIVE_INCOME_NFT_SWAP, true);
 
       dispatch(
         fetchPendingTxns({
@@ -278,13 +305,13 @@ function SwapNFT() {
       );
 
       await approveTx.wait();
-    } catch (err) {
+    } catch (err: any) {
       isError = true;
-      dispatch(error("There was an error approving the transaction, please try again"));
+      dispatch(error(err.message));
       console.log("error", err);
     } finally {
       if (!isError) {
-        setIsSwapPhase(true);
+        setIsApprovedForAll(true);
       }
       if (approveTx) {
         dispatch(clearPendingTxn(approveTx.hash));
@@ -294,29 +321,19 @@ function SwapNFT() {
 
   const onSubmit = async () => {
     if (!selectedNft) {
+      dispatch(error("Please select a Passive Income NFT"));
       return;
     }
-    if (isSwapPhase) {
+    if (isApprovedForAll) {
       await swapGuru();
-      return;
+    } else {
+      await onApproval();
     }
-
-    await onApproval();
   };
 
   const setNft = (nft: NFT) => {
     setSelectedNft(nft);
     setCurrentView(0);
-
-    handleSelectedNFT(nft);
-  };
-
-  const handleSelectedNFT = async (nft: NFT) => {
-    const signer = provider.getSigner();
-    const passiveIncomeNFTAddress = addresses[chainID].PASSIVE_INCOME_NFT;
-
-    const guruContract = new ethers.Contract(passiveIncomeNFTAddress, PassiveIncomeNFT, signer);
-    // const claimableIncome = await guruContract.claimableIncome(nft.tokenId.toString());
   };
 
   return (
@@ -337,7 +354,7 @@ function SwapNFT() {
                     <div className={classes.nftPicker} onClick={() => setCurrentView(1)}>
                       <div className={classes.nftPickerLabels}>
                         <span className={classes.inputSecondaryLabel}>From</span>
-                        <span className={classes.inputSecondaryLabel}>${selectedNft?.price.toString()}</span>
+                        <span className={classes.inputSecondaryLabel}>${selectedNft?.usdcPrice || "0.0"}</span>
                       </div>
                       <div className={classes.nftPickerValue}>
                         <div className={classes.primaryLabelWrapper}>
@@ -351,12 +368,12 @@ function SwapNFT() {
                     </Box>
                     <SwapInput
                       name="receive"
-                      value={quantity}
+                      value={selectedNft?.formattedPrice || "0.0"}
                       disabled
                       leftLabel={<span>3,3+ NFT + Image NFT</span>}
                       leftSecondaryLabel={<span className={classes.inputSecondaryLabel}>Receive</span>}
                       rightSecondaryLabel={
-                        <span className={classes.inputSecondaryLabel}>${selectedNft?.price.toString()}</span>
+                        <span className={classes.inputSecondaryLabel}>${selectedNft?.usdcPrice || "0.0"}</span>
                       }
                       rightLabel={
                         <div className={classes.rightAdornmentIcon}>
@@ -373,7 +390,7 @@ function SwapNFT() {
                       <Select
                         labelId="tnft-select-label"
                         id="tnft-select"
-                        value={24}
+                        value={lockDuration}
                         MenuProps={{ classes: { list: classes.menuList } }}
                         className={`${classes.swapInput} ${classes.swampSelect}`}
                         inputProps={{ disableUnderline: true }}
@@ -407,7 +424,7 @@ function SwapNFT() {
                       className={classes.buttonSwap}
                       disabled={isPendingTxn(pendingTransactions, "nft_swap")}
                     >
-                      {txnButtonText(pendingTransactions, "nft_swap", isSwapPhase ? "Swap" : "Approve")}
+                      {txnButtonText(pendingTransactions, "nft_swap", isApprovedForAll ? "Swap" : "Approve")}
                     </Button>
                   </>
                 ) : (
