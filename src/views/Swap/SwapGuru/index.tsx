@@ -30,6 +30,7 @@ import { ReactComponent as TNGBL } from "src/assets/icons/tngbl.svg";
 import { ReactComponent as CaretDownIcon } from "src/assets/icons/caret-down.svg";
 import useLockOptions, { MIN_LOCK_DURATION } from "../useLockOptions";
 import getPrice from "src/helpers/getPrice";
+import debounce from "lodash/debounce";
 
 const useStyles = makeStyles(theme => ({
   swapModal: {
@@ -325,9 +326,7 @@ function SwapGuru() {
                   type="number"
                   onChange={(name, value) => {
                     setModel(currentState => ({ ...currentState, [name]: value }));
-                  }}
-                  onBlur={(_, value) => {
-                    getUSDCPrice(value);
+                    debounce(() => getUSDCPrice(value), 200)();
                   }}
                   leftLabel={
                     <>
