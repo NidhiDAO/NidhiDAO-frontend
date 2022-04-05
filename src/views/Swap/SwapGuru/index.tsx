@@ -31,6 +31,7 @@ import { ReactComponent as CaretDownIcon } from "src/assets/icons/caret-down.svg
 import useLockOptions, { MIN_LOCK_DURATION } from "../useLockOptions";
 import getPrice from "src/helpers/getPrice";
 import debounce from "lodash/debounce";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   swapModal: {
@@ -191,6 +192,7 @@ function SwapGuru() {
   const { provider, chainID } = useWeb3Context();
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const ohmBalance = useSelector((state: any) => state.account.balances && state.account.balances.ohm);
   const lockOptions = useLockOptions();
@@ -234,6 +236,7 @@ function SwapGuru() {
     } finally {
       if (swapTx) {
         dispatch(clearPendingTxn(swapTx.hash));
+        history.goBack();
       }
 
       if (!isError) {

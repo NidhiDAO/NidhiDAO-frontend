@@ -262,7 +262,7 @@ function App() {
             </Route>
 
             {/* <Route path="/swap"> */}
-            <Route exact path="/swap/guru-to-tgbl">
+            <Route exact path="/swap/guru-to-33nft">
               <SwapGuru />
             </Route>
             <Route exact path={`/swap/nft-to-33nft`}>
