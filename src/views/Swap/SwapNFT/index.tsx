@@ -292,7 +292,7 @@ function SwapNFT() {
     let isError = false;
     try {
       const signer = provider.getSigner();
-      const nidhiLegacyNFTContract = new ethers.Contract(addresses[chainID].GURU_ADDRESS, NidhiLegacyNFT, signer);
+      const nidhiLegacyNFTContract = new ethers.Contract(addresses[chainID].NIDHI_LEGACY_NFT, NidhiLegacyNFT, signer);
 
       approveTx = await nidhiLegacyNFTContract.setApprovalForAll(addresses[chainID].PASSIVE_INCOME_NFT_SWAP, true);
 
