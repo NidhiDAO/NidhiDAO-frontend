@@ -32,6 +32,7 @@ import { ReactComponent as TNGBL } from "src/assets/icons/tngbl.svg";
 import { ReactComponent as CaretDownIcon } from "src/assets/icons/caret-down.svg";
 import { ReactComponent as ArrowBack } from "src/assets/icons/arrow-back.svg";
 import useLockOptions, { MIN_LOCK_DURATION } from "../useLockOptions";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   swapModal: {
@@ -216,6 +217,7 @@ function SwapNFT() {
   const lockOptions = useLockOptions();
 
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const pendingTransactions = useSelector((state: any) => {
     return state.pendingTransactions;
@@ -279,6 +281,7 @@ function SwapNFT() {
     } finally {
       if (swapTx) {
         dispatch(clearPendingTxn(swapTx.hash));
+        history.goBack();
       }
 
       if (!isError) {

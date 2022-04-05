@@ -187,7 +187,7 @@ function NavContent() {
 
               <div className="dapp-menu-data swap">
                 <div className="swap-menu">
-                  <Link component={NavLink} to={`/swap/guru-to-tgbl`} className="swap">
+                  <Link component={NavLink} to={`/swap/guru-to-33nft`} className="swap">
                     <Typography variant="body2">GURU to 3,3+NFT</Typography>
                   </Link>
                   <Link component={NavLink} to={`/swap/nft-to-33nft`} className="swap">
