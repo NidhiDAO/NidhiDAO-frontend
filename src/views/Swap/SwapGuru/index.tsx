@@ -29,6 +29,7 @@ import { ReactComponent as ArrowDown } from "src/assets/icons/arrow-down.svg";
 import { ReactComponent as TNGBL } from "src/assets/icons/tngbl.svg";
 import { ReactComponent as CaretDownIcon } from "src/assets/icons/caret-down.svg";
 import useLockOptions, { MIN_LOCK_DURATION } from "../useLockOptions";
+import getPrice from "src/helpers/getPrice";
 
 const useStyles = makeStyles(theme => ({
   swapModal: {
@@ -197,6 +198,7 @@ function SwapGuru() {
 
   const setMax = () => {
     setModel(currentState => ({ ...currentState, pay: ohmBalance, receive: ohmBalance }));
+    getUSDCPrice(ohmBalance);
   };
 
   const swapGuru = async () => {
@@ -217,17 +219,17 @@ function SwapGuru() {
       dispatch(
         fetchPendingTxns({
           txnHash: swapTx.hash,
-          text: "Swaping GURU to NFTs",
+          text: "Swapping GURU to NFTs",
           type: "guru_swap",
         }),
       );
 
       await swapTx.wait();
-    } catch ({ message }) {
+    } catch (err: any) {
       isError = true;
       setOnlyLock(true);
-      dispatch(error("The multiplier not being available for the amount of tokens"));
-      console.log("message", message);
+      dispatch(error(err.message));
+      console.error("error", err);
     } finally {
       if (swapTx) {
         dispatch(clearPendingTxn(swapTx.hash));
@@ -288,6 +290,22 @@ function SwapGuru() {
     await onApproval();
   };
 
+  const getUSDCPrice = async (tokenAmount: string) => {
+    try {
+      const value = await getPrice({
+        addressIn: addresses[chainID].TANGIBLE_ADDRESS,
+        addressOut: addresses[chainID].USDC_ADDRESS,
+        tokenAmount: tokenAmount,
+        provider,
+      });
+
+      setModel(currentModel => ({ ...currentModel, receive: value }));
+    } catch (err: any) {
+      console.error("err", err);
+      dispatch(error(err.message));
+    }
+  };
+
   return (
     <Fade in={true} mountOnEnter unmountOnExit>
       <Grid container id="bond-view">
@@ -307,6 +325,9 @@ function SwapGuru() {
                   type="number"
                   onChange={(name, value) => {
                     setModel(currentState => ({ ...currentState, [name]: value }));
+                  }}
+                  onBlur={(_, value) => {
+                    getUSDCPrice(value);
                   }}
                   leftLabel={
                     <>
@@ -362,7 +383,7 @@ function SwapGuru() {
                     IconComponent={() => <SvgIcon component={CaretDownIcon} htmlColor="transparent" />}
                   >
                     {lockOptions.map((option: any) => (
-                      <MenuItem value={option.value} className={classes.menuItem}>
+                      <MenuItem value={option.value} className={classes.menuItem} key={option.value}>
                         <ListItemText
                           primary={option.name}
                           primaryTypographyProps={{

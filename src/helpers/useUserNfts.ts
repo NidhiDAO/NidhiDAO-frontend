@@ -5,6 +5,8 @@ import { useWeb3Context } from "src/hooks/web3Context";
 import NidhiMarket from "../abi/NidhiMarket.json";
 import NidhiNFT from "../abi/NidhiNFT.json";
 import { error } from "src/slices/MessagesSlice";
+import getPrice from "./getPrice";
+import { addresses } from "src/constants";
 
 export interface NFT {
   itemId: BigNumberish;
@@ -14,12 +16,14 @@ export interface NFT {
   price: BigNumberish;
   totalValue: BigNumberish;
   description: string;
+  formattedPrice: string;
+  usdcPrice: string;
 }
 
 const useUserNFTs = (): NFT[] => {
   const isFetching = React.useRef(false);
   const [nfts, setNfts] = React.useState<Array<NFT>>([]);
-  const { address, provider } = useWeb3Context();
+  const { address, chainID, provider } = useWeb3Context();
   const signer = provider.getSigner();
   const dispatch = useDispatch();
 
@@ -46,6 +50,19 @@ const useUserNFTs = (): NFT[] => {
             items.map(async (item: any) => {
               const meta = await tokenContract.metadata(item.tokenId.toNumber());
 
+              const formattedPrice = ethers.utils.formatUnits(item.price, "gwei");
+
+              let usdcPrice = formattedPrice;
+
+              if (item.price.toNumber() > 0) {
+                usdcPrice = await getPrice({
+                  addressIn: addresses[chainID].TANGIBLE_ADDRESS,
+                  addressOut: addresses[chainID].USDC_ADDRESS,
+                  tokenAmount: formattedPrice,
+                  provider,
+                });
+              }
+
               const img = `https://infura-ipfs.io/ipfs/${meta?.image}`;
               const nft = {
                 itemId: item.itemId,
@@ -55,6 +72,8 @@ const useUserNFTs = (): NFT[] => {
                 price: item.price,
                 totalValue: item.totalValue,
                 description: item.description,
+                formattedPrice,
+                usdcPrice,
               };
 
               return nft;
@@ -69,7 +88,7 @@ const useUserNFTs = (): NFT[] => {
       console.log("error", err);
       dispatch(error("There was an error approving the transaction, please try again"));
     }
-  }, [nfts, address, marketContract, tokenContract]);
+  }, [nfts, address, chainID, marketContract, tokenContract]);
 
   return nfts;
 };
