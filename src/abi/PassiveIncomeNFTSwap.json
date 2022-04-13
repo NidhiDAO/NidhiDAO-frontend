@@ -22,6 +22,13 @@
   },
   {
     "inputs": [],
+    "name": "minLockDuration",
+    "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "nidhiLegacyNFT",
     "outputs": [{ "internalType": "contract NidhiLegacyNFT", "name": "", "type": "address" }],
     "stateMutability": "view",
@@ -50,6 +57,13 @@
   },
   { "inputs": [], "name": "renounceOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
   {
+    "inputs": [{ "internalType": "uint8", "name": "minLockDuration_", "type": "uint8" }],
+    "name": "setMinLockDuration",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "staking",
     "outputs": [{ "internalType": "contract Staking", "name": "", "type": "address" }],
@@ -67,7 +81,8 @@
     "inputs": [
       { "internalType": "uint256", "name": "tokenId", "type": "uint256" },
       { "internalType": "uint8", "name": "lockDurationInMonths", "type": "uint8" },
-      { "internalType": "bool", "name": "onlyLock", "type": "bool" }
+      { "internalType": "bool", "name": "onlyLock", "type": "bool" },
+      { "internalType": "bool", "name": "generateRevenue", "type": "bool" }
     ],
     "name": "swap",
     "outputs": [],
@@ -78,7 +93,8 @@
     "inputs": [
       { "internalType": "uint256", "name": "amountIn", "type": "uint256" },
       { "internalType": "uint8", "name": "lockDurationInMonths", "type": "uint8" },
-      { "internalType": "bool", "name": "onlyLock", "type": "bool" }
+      { "internalType": "bool", "name": "onlyLock", "type": "bool" },
+      { "internalType": "bool", "name": "generateRevenue", "type": "bool" }
     ],
     "name": "swapGURU",
     "outputs": [],

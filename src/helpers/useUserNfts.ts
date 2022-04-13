@@ -18,6 +18,8 @@ export interface NFT {
   description: string;
   formattedPrice: string;
   usdcPrice: string;
+  intrinsicValue: BigNumberish;
+  redeemableValue: BigNumberish;
 }
 
 const useUserNFTs = (): NFT[] => {
@@ -46,8 +48,14 @@ const useUserNFTs = (): NFT[] => {
           isFetching.current = true;
           const items = await marketContract.fetchItemsByOwner(address, 0, 10, false);
 
+          const intrinsicValuePromises = items.map(async (item: any) => {
+            return await marketContract.intrinsicValue(item.tokenId);
+          });
+
+          const intrinsicValues = await Promise.all(intrinsicValuePromises);
+
           const _nfts: any = await Promise.all(
-            items.map(async (item: any) => {
+            items.map(async (item: any, idx: number) => {
               const meta = await tokenContract.metadata(item.tokenId.toNumber());
 
               const formattedPrice = ethers.utils.formatUnits(item.price, "gwei");
@@ -74,6 +82,8 @@ const useUserNFTs = (): NFT[] => {
                 description: item.description,
                 formattedPrice,
                 usdcPrice,
+                intrinsicValue: intrinsicValues[idx],
+                redeemableValue: item.redeemableValue,
               };
 
               return nft;

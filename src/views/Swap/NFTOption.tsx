@@ -42,7 +42,8 @@ function NFTOption({ nft, onClick, active }: Props) {
       <div>
         <div className={classes.itemName}>{nft.name}</div>
         <div style={{ fontSize: 14, fontWeight: 700, lineHeight: "24px" }}>
-          {nft.formattedPrice} <span className={classes.itemValue}>(${nft.usdcPrice})</span>
+          {ethers.utils.formatUnits(nft.intrinsicValue, "gwei")}{" "}
+          <span className={classes.itemValue}>(${ethers.utils.formatUnits(nft.redeemableValue, "gwei")})</span>
         </div>
       </div>
     </div>

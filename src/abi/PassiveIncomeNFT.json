@@ -86,6 +86,13 @@
   },
   {
     "inputs": [],
+    "name": "REVENUE_MANAGER_ROLE",
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "SNAPPER_ROLE",
     "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
     "stateMutability": "view",
@@ -152,6 +159,16 @@
     "outputs": [
       { "internalType": "uint256", "name": "free", "type": "uint256" },
       { "internalType": "uint256", "name": "max", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256[]", "name": "tokenIds", "type": "uint256[]" }],
+    "name": "claimableIncomes",
+    "outputs": [
+      { "internalType": "uint256[]", "name": "free", "type": "uint256[]" },
+      { "internalType": "uint256[]", "name": "max", "type": "uint256[]" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -236,10 +253,19 @@
     "type": "function"
   },
   {
+    "inputs": [{ "internalType": "uint256", "name": "lockedAmount", "type": "uint256" }],
+    "name": "maxLockPeriodForAmount",
+    "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       { "internalType": "address", "name": "minter", "type": "address" },
       { "internalType": "uint256", "name": "lockedAmount", "type": "uint256" },
-      { "internalType": "uint8", "name": "lockDurationInMonths", "type": "uint8" }
+      { "internalType": "uint8", "name": "lockDurationInMonths", "type": "uint8" },
+      { "internalType": "bool", "name": "onlyLock", "type": "bool" },
+      { "internalType": "bool", "name": "generateRevenue", "type": "bool" }
     ],
     "name": "mint",
     "outputs": [{ "internalType": "uint256", "name": "tokenId", "type": "uint256" }],
@@ -316,6 +342,16 @@
       { "internalType": "bool", "name": "approved", "type": "bool" }
     ],
     "name": "setApprovalForAll",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "tokenId", "type": "uint256" },
+      { "internalType": "bool", "name": "generate", "type": "bool" }
+    ],
+    "name": "setGenerateRevenue",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

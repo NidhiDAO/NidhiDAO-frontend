@@ -25,14 +25,14 @@ import PassiveIncomeNFTSwap from "src/abi/PassiveIncomeNFTSwap.json";
 import { clearPendingTxn, fetchPendingTxns, isPendingTxn, txnButtonText } from "src/slices/PendingTxnsSlice";
 import { error } from "src/slices/MessagesSlice";
 import PassiveIncomeNFT from "src/abi/PassiveIncomeNFT.json";
-import NidhiLegacyNFT from "src/abi/NidhiLegacyNFT.json";
 import useUserNFTs, { NFT } from "src/helpers/useUserNfts";
 import { ReactComponent as ArrowDown } from "src/assets/icons/arrow-down.svg";
 import { ReactComponent as TNGBL } from "src/assets/icons/tngbl.svg";
 import { ReactComponent as CaretDownIcon } from "src/assets/icons/caret-down.svg";
 import { ReactComponent as ArrowBack } from "src/assets/icons/arrow-back.svg";
-import useLockOptions, { MIN_LOCK_DURATION } from "../useLockOptions";
 import { useHistory } from "react-router-dom";
+import useApprovedForAll from "../useIsApprovedForAll";
+import useGetLockPeriods from "../useLockPeriods";
 
 const useStyles = makeStyles(theme => ({
   swapModal: {
@@ -207,49 +207,25 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function SwapNFT() {
-  const [lockDuration, setLockDuration] = React.useState(MIN_LOCK_DURATION);
+  const [lockDuration, setLockDuration] = React.useState("");
   const [onlyLock, setOnlyLock] = React.useState(false);
   const [selectedNft, setSelectedNft] = React.useState<NFT>();
   const [currentView, setCurrentView] = React.useState(0);
-  const [isApprovedForAll, setIsApprovedForAll] = React.useState<boolean>(false);
   const classes = useStyles();
-  const { address, provider, chainID } = useWeb3Context();
-  const lockOptions = useLockOptions();
+  const { provider, chainID } = useWeb3Context();
 
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const [isApprovedForAll, setIsApprovedForAll] = useApprovedForAll();
 
   const pendingTransactions = useSelector((state: any) => {
     return state.pendingTransactions;
   });
 
-  React.useEffect(() => {
-    async function getIsApprovedForAll() {
-      if (provider && chainID) {
-        try {
-          const nidhiLegacyNFTContract = new ethers.Contract(
-            addresses[chainID].NIDHI_LEGACY_NFT,
-            NidhiLegacyNFT,
-            provider,
-          );
-
-          const _isApprovedForAll = await nidhiLegacyNFTContract.isApprovedForAll(
-            address,
-            addresses[chainID].PASSIVE_INCOME_NFT,
-          );
-
-          setIsApprovedForAll(_isApprovedForAll);
-        } catch (err: any) {
-          dispatch(error(err.message));
-          console.log("err", err);
-        }
-      }
-    }
-
-    getIsApprovedForAll();
-  }, [address, chainID, provider]);
-
   const userNFTs = useUserNFTs();
+
+  const lockOptions = useGetLockPeriods();
 
   const swapGuru = async () => {
     let swapTx;
@@ -262,7 +238,7 @@ function SwapNFT() {
         signer,
       );
 
-      swapTx = await swapContract.swap(selectedNft?.tokenId, lockDuration, onlyLock);
+      swapTx = await swapContract.swap(selectedNft?.tokenId, lockDuration, onlyLock, false);
 
       dispatch(
         fetchPendingTxns({
@@ -295,7 +271,11 @@ function SwapNFT() {
     let isError = false;
     try {
       const signer = provider.getSigner();
-      const nidhiLegacyNFTContract = new ethers.Contract(addresses[chainID].NIDHI_LEGACY_NFT, NidhiLegacyNFT, signer);
+      const nidhiLegacyNFTContract = new ethers.Contract(
+        addresses[chainID].PASSIVE_INCOME_NFT,
+        PassiveIncomeNFT,
+        signer,
+      );
 
       approveTx = await nidhiLegacyNFTContract.setApprovalForAll(addresses[chainID].PASSIVE_INCOME_NFT_SWAP, true);
 
@@ -323,8 +303,8 @@ function SwapNFT() {
   };
 
   const onSubmit = async () => {
-    if (!selectedNft) {
-      dispatch(error("Please select a Passive Income NFT"));
+    if (!selectedNft || !lockDuration) {
+      dispatch(error("Please fill the form"));
       return;
     }
     if (isApprovedForAll) {

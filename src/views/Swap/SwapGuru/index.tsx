@@ -28,10 +28,11 @@ import { ReactComponent as GURU } from "src/assets/icons/guru.svg";
 import { ReactComponent as ArrowDown } from "src/assets/icons/arrow-down.svg";
 import { ReactComponent as TNGBL } from "src/assets/icons/tngbl.svg";
 import { ReactComponent as CaretDownIcon } from "src/assets/icons/caret-down.svg";
-import useLockOptions, { MIN_LOCK_DURATION } from "../useLockOptions";
 import getPrice from "src/helpers/getPrice";
 import debounce from "lodash/debounce";
 import { useHistory } from "react-router-dom";
+import useApprovedForAll from "../useIsApprovedForAll";
+import useGetLockPeriods from "../useLockPeriods";
 
 const useStyles = makeStyles(theme => ({
   swapModal: {
@@ -185,9 +186,8 @@ function SwapGuru() {
   const [model, setModel] = React.useState({
     pay: "",
     receive: "",
-    lockPeriod: MIN_LOCK_DURATION,
+    lockPeriod: "",
   });
-  const [isSwapPhase, setIsSwapPhase] = React.useState(false);
   const [onlyLock, setOnlyLock] = React.useState(false);
   const { provider, chainID } = useWeb3Context();
   const classes = useStyles();
@@ -195,7 +195,9 @@ function SwapGuru() {
   const history = useHistory();
 
   const ohmBalance = useSelector((state: any) => state.account.balances && state.account.balances.ohm);
-  const lockOptions = useLockOptions();
+  const lockOptions = useGetLockPeriods();
+
+  const [isApprovedForAll, setIsApprovedForAll] = useApprovedForAll();
 
   const pendingTransactions = useSelector((state: any) => state.pendingTransactions);
 
@@ -217,7 +219,8 @@ function SwapGuru() {
       );
 
       const swapAmount = ethers.utils.parseUnits(model.pay, "gwei");
-      swapTx = await swapContract.swapGURU(swapAmount, model.lockPeriod, onlyLock);
+      debugger;
+      swapTx = await swapContract.swapGURU(swapAmount, model.lockPeriod, onlyLock, false);
 
       dispatch(
         fetchPendingTxns({
@@ -240,7 +243,6 @@ function SwapGuru() {
       }
 
       if (!isError) {
-        setIsSwapPhase(false);
         setOnlyLock(false);
       }
     }
@@ -272,7 +274,7 @@ function SwapGuru() {
       console.log("error", err);
     } finally {
       if (!isError) {
-        setIsSwapPhase(true);
+        setIsApprovedForAll(true);
       }
       if (approveTx) {
         dispatch(clearPendingTxn(approveTx.hash));
@@ -286,7 +288,7 @@ function SwapGuru() {
       dispatch(error("Please enter a value!"));
       return;
     }
-    if (isSwapPhase) {
+    if (isApprovedForAll) {
       await swapGuru();
       return;
     }
@@ -409,7 +411,7 @@ function SwapGuru() {
                   className={classes.buttonSwap}
                   disabled={isPendingTxn(pendingTransactions, "guru_swap")}
                 >
-                  {txnButtonText(pendingTransactions, "guru_swap", isSwapPhase ? "Swap" : "Approve")}
+                  {txnButtonText(pendingTransactions, "guru_swap", isApprovedForAll ? "Swap" : "Approve")}
                 </Button>
               </Box>
             </Paper>
