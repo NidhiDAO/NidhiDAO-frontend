@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Backdrop,
   Button,
@@ -14,13 +14,12 @@ import {
   Select,
   ListItemText,
 } from "@material-ui/core";
-import { ethers } from "ethers";
+import { BigNumber, ethers, utils } from "ethers";
 import { useDispatch, useSelector } from "react-redux";
 import SwapHeader from "../SwapHeader";
 import SwapInput from "../SwapInput";
 import { useWeb3Context } from "src/hooks/web3Context";
-import { clearPendingTxn, fetchPendingTxns, isPendingTxn, txnButtonText } from "src/slices/PendingTxnsSlice";
-import { error } from "src/slices/MessagesSlice";
+import { error, info } from "src/slices/MessagesSlice";
 import { addresses } from "src/constants";
 import PassiveIncomeNFT from "src/abi/PassiveIncomeNFT.json";
 import PassiveIncomeNFTSwap from "src/abi/PassiveIncomeNFTSwap.json";
@@ -28,10 +27,10 @@ import { ReactComponent as GURU } from "src/assets/icons/guru.svg";
 import { ReactComponent as ArrowDown } from "src/assets/icons/arrow-down.svg";
 import { ReactComponent as TNGBL } from "src/assets/icons/tngbl.svg";
 import { ReactComponent as CaretDownIcon } from "src/assets/icons/caret-down.svg";
-import useLockOptions, { MIN_LOCK_DURATION } from "../useLockOptions";
 import getPrice from "src/helpers/getPrice";
 import debounce from "lodash/debounce";
-import { useHistory } from "react-router-dom";
+import { loadAccountDetails } from "src/slices/AccountSlice";
+import useLockOptions, { MIN_LOCK_DURATION } from "../useLockOptions";
 
 const useStyles = makeStyles(theme => ({
   swapModal: {
@@ -181,33 +180,53 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+type TransactionStatus = "needs-approval" | "can-swap" | "processing-request";
+
+interface ModelState {
+  pay: string;
+  receive: string;
+  lockPeriod: number;
+}
+
+const defaultModelState: ModelState = {
+  pay: "",
+  receive: "",
+  lockPeriod: MIN_LOCK_DURATION,
+};
+
+const buttonLabels: Record<TransactionStatus, string> = {
+  "can-swap": "Swap",
+  "needs-approval": "Approve",
+  "processing-request": "Pending...",
+};
+
 function SwapGuru() {
-  const [model, setModel] = React.useState({
-    pay: "",
-    receive: "",
-    lockPeriod: MIN_LOCK_DURATION,
-  });
-  const [isSwapPhase, setIsSwapPhase] = React.useState(false);
-  const [onlyLock, setOnlyLock] = React.useState(false);
-  const { provider, chainID } = useWeb3Context();
+  const [model, setModel] = useState<ModelState>(defaultModelState);
+
+  const { provider, chainID, address } = useWeb3Context();
   const classes = useStyles();
   const dispatch = useDispatch();
-  const history = useHistory();
+
+  const [transactionStatus, setTransactionStatus] = useState<TransactionStatus>("processing-request");
 
   const ohmBalance = useSelector((state: any) => state.account.balances && state.account.balances.ohm);
-  const lockOptions = useLockOptions();
-
-  const pendingTransactions = useSelector((state: any) => state.pendingTransactions);
+  const piNftSwapAllowance =
+    useSelector((state: any) => state.account.allowances && state.account.allowances.piNftSwapAllowance) ||
+    BigNumber.from(0);
 
   const setMax = () => {
     setModel(currentState => ({ ...currentState, pay: ohmBalance, receive: ohmBalance }));
     getUSDCPrice(ohmBalance);
   };
 
-  const swapGuru = async () => {
-    let swapTx;
-    let isError;
+  const handleSwapGuru = async () => {
+    if (!chainID || !address || !provider) {
+      return;
+    }
+
     try {
+      setTransactionStatus("processing-request");
+
       const signer = provider.getSigner();
 
       const swapContract = new ethers.Contract(
@@ -217,81 +236,35 @@ function SwapGuru() {
       );
 
       const swapAmount = ethers.utils.parseUnits(model.pay, "gwei");
-      swapTx = await swapContract.swapGURU(swapAmount, model.lockPeriod, onlyLock);
+      const response = await swapContract.swapGURU(swapAmount, model.lockPeriod, false, true);
 
-      dispatch(
-        fetchPendingTxns({
-          txnHash: swapTx.hash,
-          text: "Swapping GURU to NFTs",
-          type: "guru_swap",
-        }),
-      );
+      await response.wait();
 
-      await swapTx.wait();
+      setTransactionStatus("can-swap");
+      setModel(defaultModelState);
+      dispatch(info("Swapping successfully completed."));
+      dispatch(loadAccountDetails({ networkID: chainID, address, provider }));
     } catch (err: any) {
-      isError = true;
-      setOnlyLock(true);
-      dispatch(error(err.message));
-      console.error("error", err);
-    } finally {
-      if (swapTx) {
-        dispatch(clearPendingTxn(swapTx.hash));
-        history.goBack();
-      }
-
-      if (!isError) {
-        setIsSwapPhase(false);
-        setOnlyLock(false);
-      }
+      setTransactionStatus("can-swap");
     }
   };
 
-  const onApproval = async () => {
-    let approveTx = null;
-    let isError = false;
+  const handleApprove = async () => {
     try {
+      setTransactionStatus("processing-request");
+
+      const { GURU_ADDRESS, PASSIVE_INCOME_NFT_SWAP } = addresses[chainID];
+
       const signer = provider.getSigner();
-      const guru_address = addresses[chainID].GURU_ADDRESS;
-      const passiveIncomeNFTAddress = addresses[chainID].PASSIVE_INCOME_NFT_SWAP;
-      const guruContract = new ethers.Contract(guru_address, PassiveIncomeNFT, signer);
+      const guruContract = new ethers.Contract(GURU_ADDRESS, PassiveIncomeNFT, signer);
 
-      approveTx = await guruContract.approve(passiveIncomeNFTAddress, ethers.constants.MaxUint256);
+      const response = await guruContract.approve(PASSIVE_INCOME_NFT_SWAP, ethers.constants.MaxUint256);
 
-      dispatch(
-        fetchPendingTxns({
-          txnHash: approveTx.hash,
-          text: "Approving GURU Swap",
-          type: "guru_swap",
-        }),
-      );
-
-      await approveTx.wait();
+      await response.wait();
+      setTransactionStatus("can-swap");
     } catch (err) {
-      isError = true;
-      dispatch(error("There was an error approving the transaction, please try again"));
-      console.log("error", err);
-    } finally {
-      if (!isError) {
-        setIsSwapPhase(true);
-      }
-      if (approveTx) {
-        dispatch(clearPendingTxn(approveTx.hash));
-      }
+      setTransactionStatus("needs-approval");
     }
-  };
-
-  const onSubmit = async () => {
-    const pay = Number(model.pay);
-    if (isNaN(pay) || pay === 0) {
-      dispatch(error("Please enter a value!"));
-      return;
-    }
-    if (isSwapPhase) {
-      await swapGuru();
-      return;
-    }
-
-    await onApproval();
   };
 
   const getUSDCPrice = async (tokenAmount: string) => {
@@ -309,6 +282,34 @@ function SwapGuru() {
       dispatch(error(err.message));
     }
   };
+
+  useEffect(() => {
+    if (ohmBalance && piNftSwapAllowance) {
+      const allowance = utils.formatUnits(piNftSwapAllowance, "gwei");
+
+      if (+allowance < +ohmBalance) {
+        setTransactionStatus("needs-approval");
+      } else {
+        setTransactionStatus("can-swap");
+      }
+    }
+  }, [ohmBalance, piNftSwapAllowance]);
+
+  useEffect(() => {
+    if (chainID && address && provider) {
+      dispatch(loadAccountDetails({ networkID: chainID, address, provider }));
+    }
+  }, [chainID, address, provider]);
+
+  const submitHandlerByStatus: Record<TransactionStatus, () => void> = {
+    "can-swap": handleSwapGuru,
+    "needs-approval": handleApprove,
+    "processing-request": () => {},
+  };
+
+  const onSubmit = submitHandlerByStatus[transactionStatus];
+
+  const lockOptions = useLockOptions();
 
   return (
     <Fade in={true} mountOnEnter unmountOnExit>
@@ -380,7 +381,7 @@ function SwapGuru() {
                     className={`${classes.swapInput} ${classes.swampSelect}`}
                     inputProps={{ disableUnderline: true }}
                     onChange={({ target }) => {
-                      setModel(currentState => ({ ...currentState, lockPeriod: target.value as string }));
+                      setModel(currentState => ({ ...currentState, lockPeriod: target.value as number }));
                     }}
                     IconComponent={() => <SvgIcon component={CaretDownIcon} htmlColor="transparent" />}
                   >
@@ -407,9 +408,9 @@ function SwapGuru() {
                   color="primary"
                   id="bond-btn"
                   className={classes.buttonSwap}
-                  disabled={isPendingTxn(pendingTransactions, "guru_swap")}
+                  disabled={transactionStatus === "processing-request"}
                 >
-                  {txnButtonText(pendingTransactions, "guru_swap", isSwapPhase ? "Swap" : "Approve")}
+                  {buttonLabels[transactionStatus]}
                 </Button>
               </Box>
             </Paper>

@@ -126,6 +126,7 @@ export const loadAccountDetails = createAsyncThunk(
     let aOHMAbleToClaim = 0;
     let poolBalance = BigNumber.from(0);
     let poolAllowance = BigNumber.from(0);
+    let piNftSwapAllowance = BigNumber.from(0);
 
     const daiContract = new ethers.Contract(addresses[networkID].DAI_ADDRESS as string, ierc20Abi, provider) as IERC20;
     const daiBalance = await daiContract.balanceOf(address);
@@ -137,6 +138,7 @@ export const loadAccountDetails = createAsyncThunk(
         provider,
       ) as IERC20;
       ohmBalance = await ohmContract.balanceOf(address);
+      piNftSwapAllowance = await ohmContract.allowance(address, addresses[networkID].PASSIVE_INCOME_NFT_SWAP);
       stakeAllowance = await ohmContract.allowance(address, addresses[networkID].STAKING_HELPER_ADDRESS);
     }
 
@@ -207,6 +209,9 @@ export const loadAccountDetails = createAsyncThunk(
         wsohmAsSohm: ethers.utils.formatUnits(wsohmAsSohm, "gwei"),
         pool: ethers.utils.formatUnits(poolBalance, "gwei"),
         aguru: ethers.utils.formatUnits(aguruBalance, "gwei"),
+      },
+      allowances: {
+        piNftSwapAllowance,
       },
       staking: {
         ohmStake: +stakeAllowance,
