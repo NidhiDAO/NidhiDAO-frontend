@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Backdrop,
   Button,
@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import SwapHeader from "../SwapHeader";
 import SwapInput from "../SwapInput";
 import { useWeb3Context } from "src/hooks/web3Context";
-import { error, info } from "src/slices/MessagesSlice";
+import { error as errorAction, info, dismissTimeout } from "src/slices/MessagesSlice";
 import { addresses } from "src/constants";
 import PassiveIncomeNFT from "src/abi/PassiveIncomeNFT.json";
 import PassiveIncomeNFTSwap from "src/abi/PassiveIncomeNFTSwap.json";
@@ -30,7 +30,7 @@ import { ReactComponent as CaretDownIcon } from "src/assets/icons/caret-down.svg
 import getPrice from "src/helpers/getPrice";
 import debounce from "lodash/debounce";
 import { loadAccountDetails } from "src/slices/AccountSlice";
-import useLockOptions, { MIN_LOCK_DURATION } from "../useLockOptions";
+import useMultiplierOptions, { minLockDuration } from "../useMultiplierOptions";
 
 const useStyles = makeStyles(theme => ({
   swapModal: {
@@ -191,7 +191,7 @@ interface ModelState {
 const defaultModelState: ModelState = {
   pay: "",
   receive: "",
-  lockPeriod: MIN_LOCK_DURATION,
+  lockPeriod: minLockDuration,
 };
 
 const buttonLabels: Record<TransactionStatus, string> = {
@@ -201,11 +201,15 @@ const buttonLabels: Record<TransactionStatus, string> = {
 };
 
 function SwapGuru() {
-  const [model, setModel] = useState<ModelState>(defaultModelState);
-
   const { provider, chainID, address } = useWeb3Context();
-  const classes = useStyles();
+
   const dispatch = useDispatch();
+
+  const classes = useStyles();
+
+  const amountErrorRef = useRef(false);
+
+  const [model, setModel] = useState<ModelState>(defaultModelState);
 
   const [transactionStatus, setTransactionStatus] = useState<TransactionStatus>("processing-request");
 
@@ -246,6 +250,7 @@ function SwapGuru() {
       dispatch(loadAccountDetails({ networkID: chainID, address, provider }));
     } catch (err: any) {
       setTransactionStatus("can-swap");
+      dispatch(errorAction("Swapping token"));
     }
   };
 
@@ -264,6 +269,7 @@ function SwapGuru() {
       setTransactionStatus("can-swap");
     } catch (err) {
       setTransactionStatus("needs-approval");
+      dispatch(errorAction("Approving token"));
     }
   };
 
@@ -278,8 +284,7 @@ function SwapGuru() {
 
       setModel(currentModel => ({ ...currentModel, receive: value }));
     } catch (err: any) {
-      console.error("err", err);
-      dispatch(error(err.message));
+      dispatch(errorAction(err.message));
     }
   };
 
@@ -301,6 +306,17 @@ function SwapGuru() {
     }
   }, [chainID, address, provider]);
 
+  useEffect(() => {
+    if (!amountErrorRef.current && +model.pay > +ohmBalance) {
+      amountErrorRef.current = true;
+      dispatch(errorAction(`You can't swap more than ${ohmBalance}$`));
+
+      setTimeout(() => {
+        amountErrorRef.current = false;
+      }, 8 * 1000);
+    }
+  }, [model, ohmBalance, dispatch]);
+
   const submitHandlerByStatus: Record<TransactionStatus, () => void> = {
     "can-swap": handleSwapGuru,
     "needs-approval": handleApprove,
@@ -309,7 +325,11 @@ function SwapGuru() {
 
   const onSubmit = submitHandlerByStatus[transactionStatus];
 
-  const lockOptions = useLockOptions();
+  const { isLoading, dropdownOptions } = useMultiplierOptions();
+
+  const isAmountOverBalance = +model.pay > +ohmBalance;
+
+  const isSubmitDisabled = isLoading || isAmountOverBalance || transactionStatus === "processing-request";
 
   return (
     <Fade in={true} mountOnEnter unmountOnExit>
@@ -385,10 +405,10 @@ function SwapGuru() {
                     }}
                     IconComponent={() => <SvgIcon component={CaretDownIcon} htmlColor="transparent" />}
                   >
-                    {lockOptions.map((option: any) => (
+                    {dropdownOptions.map(option => (
                       <MenuItem value={option.value} className={classes.menuItem} key={option.value}>
                         <ListItemText
-                          primary={option.name}
+                          primary={option.label}
                           primaryTypographyProps={{
                             className: classes.primaryTypographyProps,
                           }}
@@ -408,7 +428,7 @@ function SwapGuru() {
                   color="primary"
                   id="bond-btn"
                   className={classes.buttonSwap}
-                  disabled={transactionStatus === "processing-request"}
+                  disabled={isSubmitDisabled}
                 >
                   {buttonLabels[transactionStatus]}
                 </Button>

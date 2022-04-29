@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const MESSAGES_MAX_DISPLAY_DURATION = 60000;
+export const dismissTimeout = 60000;
 let nb_messages = 0;
 
 interface Message {
@@ -51,7 +51,7 @@ const messagesSlice = createSlice({
     // Finds and removes obsolete messages
     handle_obsolete(state) {
       let activeMessages = state.items.filter(message => {
-        return Date.now() - message.created < MESSAGES_MAX_DISPLAY_DURATION;
+        return Date.now() - message.created < dismissTimeout;
       });
       if (state.items.length != activeMessages.length) {
         state.items = activeMessages;
