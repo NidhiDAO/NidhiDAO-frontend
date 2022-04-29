@@ -313,7 +313,7 @@ function SwapGuru() {
 
       setTimeout(() => {
         amountErrorRef.current = false;
-      }, 8 * 1000);
+      }, 6000);
     }
   }, [model, ohmBalance, dispatch]);
 
