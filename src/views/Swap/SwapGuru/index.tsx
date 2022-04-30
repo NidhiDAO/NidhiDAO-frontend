@@ -419,7 +419,14 @@ function SwapGuru() {
                 </FormControl>
                 <Box style={{ marginTop: 15, marginBottom: 15 }}>
                   <span className={classes.info}>
-                    1 to 1 swap. <span className={classes.colorYellow}>LEARN MORE</span>
+                    1 to 1 swap.{" "}
+                    <a
+                      href="https://medium.com/nidhidao/how-to-swap-your-guru-and-your-passive-income-nfts-for-tngbl-3-3-nfts-ca98625e675a"
+                      target="_blank"
+                      className={classes.colorYellow}
+                    >
+                      LEARN MORE
+                    </a>
                   </span>
                 </Box>
                 <Button
