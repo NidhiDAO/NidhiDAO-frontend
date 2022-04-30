@@ -19,9 +19,9 @@ import { useDispatch, useSelector } from "react-redux";
 import SwapHeader from "../SwapHeader";
 import SwapInput from "../SwapInput";
 import { useWeb3Context } from "src/hooks/web3Context";
-import { error as errorAction, info, dismissTimeout } from "src/slices/MessagesSlice";
+import { error as errorAction, info } from "src/slices/MessagesSlice";
 import { addresses } from "src/constants";
-import PassiveIncomeNFT from "src/abi/PassiveIncomeNFT.json";
+import Ierc20 from "src/abi/IERC20.json";
 import PassiveIncomeNFTSwap from "src/abi/PassiveIncomeNFTSwap.json";
 import { ReactComponent as GURU } from "src/assets/icons/guru.svg";
 import { ReactComponent as ArrowDown } from "src/assets/icons/arrow-down.svg";
@@ -180,7 +180,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type TransactionStatus = "needs-approval" | "can-swap" | "processing-request";
+type TransactionStatus = "needs-approval" | "can-swap" | "processing-request" | "wallet-not-connected";
 
 interface ModelState {
   pay: string;
@@ -198,10 +198,11 @@ const buttonLabels: Record<TransactionStatus, string> = {
   "can-swap": "Swap",
   "needs-approval": "Approve",
   "processing-request": "Pending...",
+  "wallet-not-connected": "Connect wallet",
 };
 
 function SwapGuru() {
-  const { provider, chainID, address } = useWeb3Context();
+  const { provider, chainID, address, connect } = useWeb3Context();
 
   const dispatch = useDispatch();
 
@@ -261,7 +262,7 @@ function SwapGuru() {
       const { GURU_ADDRESS, PASSIVE_INCOME_NFT_SWAP } = addresses[chainID];
 
       const signer = provider.getSigner();
-      const guruContract = new ethers.Contract(GURU_ADDRESS, PassiveIncomeNFT, signer);
+      const guruContract = new ethers.Contract(GURU_ADDRESS, Ierc20.abi, signer);
 
       const response = await guruContract.approve(PASSIVE_INCOME_NFT_SWAP, ethers.constants.MaxUint256);
 
@@ -317,10 +318,17 @@ function SwapGuru() {
     }
   }, [model, ohmBalance, dispatch]);
 
+  useEffect(() => {
+    if (!address) {
+      setTransactionStatus("wallet-not-connected");
+    }
+  }, [address]);
+
   const submitHandlerByStatus: Record<TransactionStatus, () => void> = {
     "can-swap": handleSwapGuru,
     "needs-approval": handleApprove,
     "processing-request": () => {},
+    "wallet-not-connected": connect,
   };
 
   const onSubmit = submitHandlerByStatus[transactionStatus];

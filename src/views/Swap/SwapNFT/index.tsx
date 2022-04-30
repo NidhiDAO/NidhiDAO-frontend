@@ -203,16 +203,17 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type TransactionStatus = "needs-approval" | "can-swap" | "processing-request";
+type TransactionStatus = "needs-approval" | "can-swap" | "processing-request" | "wallet-not-connected";
 
 const buttonLabels: Record<TransactionStatus, string> = {
   "can-swap": "Swap",
   "needs-approval": "Approve",
   "processing-request": "Pending...",
+  "wallet-not-connected": "Connect wallet",
 };
 
 function SwapNFT() {
-  const { address, provider, chainID } = useWeb3Context();
+  const { address, provider, chainID, connect } = useWeb3Context();
 
   const dispatch = useDispatch();
 
@@ -303,10 +304,17 @@ function SwapNFT() {
     }
   }, [address, provider, chainID, dispatch]);
 
+  useEffect(() => {
+    if (!address) {
+      setTransactionStatus("wallet-not-connected");
+    }
+  }, [address]);
+
   const submitHandlerByStatus: Record<TransactionStatus, () => void> = {
     "can-swap": handleSwap,
     "needs-approval": handleApprove,
     "processing-request": () => {},
+    "wallet-not-connected": connect,
   };
 
   const onSubmit = submitHandlerByStatus[transactionStatus];
