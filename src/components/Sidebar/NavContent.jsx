@@ -8,6 +8,7 @@ import { ReactComponent as StakeIcon } from "../../assets/icons/stake.svg";
 import { ReactComponent as ActiveStakeIcon } from "../../assets/icons/active-stake.svg";
 import { ReactComponent as DashboardIcon } from "../../assets/icons/dashboard.svg";
 import { ReactComponent as NidhiIcon } from "../../assets/icons/nidhiHeader.svg";
+import { ReactComponent as SwapIcon } from "../../assets/icons/swap.svg";
 import { ReactComponent as WalletIcon } from "../../assets/icons/wallet.svg";
 // import { ReactComponent as PoolTogetherIcon } from "../../assets/icons/33-together.svg";
 import { trim, shorten } from "../../helpers";
@@ -175,6 +176,23 @@ function NavContent() {
                         )}
                       </Link>
                     ))}
+                </div>
+              </div>
+              <div className="dapp-menu-data swap-title">
+                <Typography variant="h6">
+                  <SvgIcon color="primary" component={SwapIcon} />
+                  Swap
+                </Typography>
+              </div>
+
+              <div className="dapp-menu-data swap">
+                <div className="swap-menu">
+                  <Link component={NavLink} to={`/swap/guru-to-33nft`} className="swap">
+                    <Typography variant="body2">GURU to 3,3+NFT</Typography>
+                  </Link>
+                  <Link component={NavLink} to={`/swap/nft-to-33nft`} className="swap">
+                    <Typography variant="body2">NFT to 3,3+ NFT</Typography>
+                  </Link>
                 </div>
               </div>
               {/*

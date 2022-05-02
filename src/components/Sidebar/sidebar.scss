@@ -62,16 +62,19 @@
   display: flex;
   align-items: center;
 }
-.dapp-nav a {
-  margin-top: 0.7rem;
-  margin-left: 33px;
-  align-items: center;
-  margin-bottom: 0.5rem;
-  svg {
-    width: 20px;
-    height: 20px;
-    margin-right: 12px;
-    vertical-align: -4px;
+.dapp-nav {
+  a,
+  .swap-title {
+    margin-top: 0.7rem;
+    margin-left: 33px;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    svg {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+      vertical-align: -4px;
+    }
   }
 }
 
@@ -117,6 +120,23 @@
       float: right;
       margin-left: 33px;
     }
+  }
+}
+
+.swap-menu {
+  text-align: left;
+  color: #999999;
+  padding-left: 33px;
+  margin-top: 0px;
+
+  > p {
+    margin-left: 33px;
+  }
+  .swap {
+    display: block;
+    padding: unset;
+    margin-bottom: 1px;
+    text-decoration: none !important;
   }
 }
 
